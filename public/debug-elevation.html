@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Elevation Chart Debug</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <h1>Debug Elevation Chart</h1>
+    <div style="width: 800px; height: 400px;">
+        <canvas id="debugChart"></canvas>
+    </div>
+    
+    <script>
+        console.log('Chart.js loaded:', typeof Chart !== 'undefined');
+        
+        if (typeof Chart !== 'undefined') {
+            const ctx = document.getElementById('debugChart');
+            const elevationData = [150, 150, 1400];
+            const dayLabels = ["Day 1", "Day 2", "Day 3"];
+            
+            console.log('Elevation data:', elevationData);
+            console.log('Day labels:', dayLabels);
+            
+            try {
+                new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: dayLabels,
+                        datasets: [{
+                            label: 'Elevation (m)',
+                            data: elevationData,
+                            borderColor: 'rgb(34, 197, 94)',
+                            backgroundColor: 'rgba(34, 197, 94, 0.1)',
+                            borderWidth: 3,
+                            fill: true,
+                            tension: 0.4,
+                            pointBackgroundColor: 'rgb(34, 197, 94)',
+                            pointBorderColor: '#fff',
+                            pointBorderWidth: 2,
+                            pointRadius: 6,
+                            pointHoverRadius: 8
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'top'
+                            }
+                        },
+                        scales: {
+                            y: {
+                                beginAtZero: false,
+                                title: {
+                                    display: true,
+                                    text: 'Elevation (meters)'
+                                }
+                            },
+                            x: {
+                                title: {
+                                    display: true,
+                                    text: 'Days'
+                                }
+                            }
+                        }
+                    }
+                });
+                console.log('Chart created successfully');
+            } catch (error) {
+                console.error('Error creating chart:', error);
+            }
+        } else {
+            console.error('Chart.js not loaded');
+        }
+    </script>
+</body>
+</html>

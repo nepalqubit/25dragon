@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RevX Chatbot Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .chatbot-demo {
+            border: 2px solid #007cba;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .time-demo {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .pattern-demo {
+            background: #f0f8ff;
+            padding: 10px;
+            border-left: 4px solid #007cba;
+            margin: 10px 0;
+        }
+        .example {
+            background: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 5px 0;
+            font-family: monospace;
+        }
+        .user-msg {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .bot-msg {
+            color: #009900;
+            font-style: italic;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .feature-list {
+            list-style-type: none;
+            padding: 0;
+        }
+        .feature-list li {
+            background: #e8f4fd;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 4px solid #007cba;
+        }
+        .current-time {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 10px;
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🤖 RevX Chatbot - Enhanced Training Demo</h1>
+        
+        <div class="current-time">
+            <strong>Current Time:</strong> <span id="current-time"></span><br>
+            <strong>Time Period:</strong> <span id="time-period"></span><br>
+            <strong>Expected Greeting Type:</strong> <span id="greeting-type"></span>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>🕐 Time-Based Greetings</h2>
+            <p>The chatbot now provides contextual greetings based on your local time:</p>
+            
+            <div class="time-demo">
+                <h3>Morning (5 AM - 12 PM)</h3>
+                <div class="example">
+                    <div class="user-msg">User: "Hello"</div>
+                    <div class="bot-msg">Bot: "Good morning! Hope you're having a great start to your day!"</div>
+                </div>
+            </div>
+            
+            <div class="time-demo">
+                <h3>Afternoon (12 PM - 5 PM)</h3>
+                <div class="example">
+                    <div class="user-msg">User: "Hi there"</div>
+                    <div class="bot-msg">Bot: "Good afternoon! How's your day going so far?"</div>
+                </div>
+            </div>
+            
+            <div class="time-demo">
+                <h3>Evening (5 PM - 10 PM)</h3>
+                <div class="example">
+                    <div class="user-msg">User: "Hey"</div>
+                    <div class="bot-msg">Bot: "Good evening! How can I help you tonight?"</div>
+                </div>
+            </div>
+            
+            <div class="time-demo">
+                <h3>Night (10 PM - 5 AM)</h3>
+                <div class="example">
+                    <div class="user-msg">User: "Hello"</div>
+                    <div class="bot-msg">Bot: "Good evening! Working late? How can I help?"</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>🧠 Enhanced Pattern Recognition</h2>
+            <p>The chatbot now understands various communication styles:</p>
+            
+            <div class="pattern-demo">
+                <h3>Emotional Intelligence</h3>
+                <div class="example">
+                    <div class="user-msg">User: "I'm feeling sad today"</div>
+                    <div class="bot-msg">Bot: "I'm sorry to hear you're feeling down. While I can't replace professional help, I'm here to listen and chat if that helps."</div>
+                </div>
+                <div class="example">
+                    <div class="user-msg">User: "I'm so excited!"</div>
+                    <div class="bot-msg">Bot: "That's wonderful to hear! I love when people are in good spirits. What's making your day so great?"</div>
+                </div>
+            </div>
+            
+            <div class="pattern-demo">
+                <h3>Modern Slang Recognition</h3>
+                <div class="example">
+                    <div class="user-msg">User: "That's lit!"</div>
+                    <div class="bot-msg">Bot: "Awesome! What would you like to know?"</div>
+                </div>
+                <div class="example">
+                    <div class="user-msg">User: "No cap, this is amazing"</div>
+                    <div class="bot-msg">Bot: "Great! How can I help you further?"</div>
+                </div>
+            </div>
+            
+            <div class="pattern-demo">
+                <h3>Regional Variations</h3>
+                <div class="example">
+                    <div class="user-msg">User: "Cheers mate!" (British/Australian)</div>
+                    <div class="bot-msg">Bot: "You're very welcome! Happy to help!"</div>
+                </div>
+                <div class="example">
+                    <div class="user-msg">User: "That's awesome dude!" (American)</div>
+                    <div class="bot-msg">Bot: "Fantastic! Your positive energy is contagious."</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>💬 Comprehensive Response Categories</h2>
+            <ul class="feature-list">
+                <li><strong>Greeting Variations:</strong> 20+ different greeting patterns (formal, informal, time-specific)</li>
+                <li><strong>Conversation Starters:</strong> "How are you?" with 10+ variations</li>
+                <li><strong>Emotional Expressions:</strong> Happiness, sadness, surprise, encouragement</li>
+                <li><strong>Polite Expressions:</strong> Thank you, you're welcome, apologies</li>
+                <li><strong>Question Patterns:</strong> Information seeking, clarification requests</li>
+                <li><strong>Agreement/Disagreement:</strong> Various ways to agree or disagree</li>
+                <li><strong>Farewell Patterns:</strong> Formal and informal goodbyes</li>
+                <li><strong>Modern Communication:</strong> Internet slang, text speak, generational language</li>
+            </ul>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>🔧 Technical Features</h2>
+            <ul class="feature-list">
+                <li><strong>Timezone Detection:</strong> Automatically detects user's local timezone</li>
+                <li><strong>Fuzzy Matching:</strong> 70% similarity threshold for phrase recognition</li>
+                <li><strong>Word Similarity:</strong> 80% similarity for individual word matching</li>
+                <li><strong>Multi-layer Matching:</strong> Direct phrase, fuzzy, and word-by-word matching</li>
+                <li><strong>Context Awareness:</strong> Understands conversation flow and context</li>
+                <li><strong>Extensible Training:</strong> Easy to add new patterns and responses</li>
+            </ul>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>📚 Training Data Examples</h2>
+            <p>The chatbot has been trained with hundreds of conversation patterns including:</p>
+            
+            <div class="pattern-demo">
+                <h3>Basic Interactions</h3>
+                <div class="example">
+                    <strong>Patterns:</strong> help, support, assistance, assist, aid<br>
+                    <strong>Responses:</strong> "I'm here to help! What do you need assistance with?"
+                </div>
+            </div>
+            
+            <div class="pattern-demo">
+                <h3>Identity Questions</h3>
+                <div class="example">
+                    <strong>Patterns:</strong> who are you, what are you, tell me about yourself<br>
+                    <strong>Responses:</strong> "I'm RevX Chatbot, your friendly AI assistant!"
+                </div>
+            </div>
+            
+            <div class="pattern-demo">
+                <h3>Capability Inquiries</h3>
+                <div class="example">
+                    <strong>Patterns:</strong> what can you do, your capabilities, what are you capable of<br>
+                    <strong>Responses:</strong> "I can help answer questions, provide information, and have conversations with you!"
+                </div>
+            </div>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>🚀 Implementation Status</h2>
+            <ul class="feature-list">
+                <li>✅ Time-based greeting system implemented</li>
+                <li>✅ Enhanced pattern recognition with fuzzy matching</li>
+                <li>✅ Comprehensive response database (200+ patterns)</li>
+                <li>✅ Modern slang and regional variation support</li>
+                <li>✅ Emotional intelligence responses</li>
+                <li>✅ Timezone detection and user context</li>
+                <li>✅ Extensible training data structure</li>
+                <li>✅ Detailed documentation and examples</li>
+            </ul>
+        </div>
+
+        <div class="chatbot-demo">
+            <h2>📖 Usage Instructions</h2>
+            <ol>
+                <li><strong>WordPress Integration:</strong> Activate the RevX Chatbot plugin in your WordPress admin</li>
+                <li><strong>Automatic Greetings:</strong> The chatbot will greet users based on their local time</li>
+                <li><strong>Natural Conversation:</strong> Users can interact using natural language, slang, or formal speech</li>
+                <li><strong>Continuous Learning:</strong> Add new patterns to the responses.json file as needed</li>
+                <li><strong>Customization:</strong> Modify time periods and responses to match your brand voice</li>
+            </ol>
+        </div>
+    </div>
+
+    <script>
+        // Display current time and expected greeting
+        function updateTimeDisplay() {
+            const now = new Date();
+            const currentHour = now.getHours();
+            const timeString = now.toLocaleTimeString();
+            
+            let timePeriod, greetingType;
+            
+            if (currentHour >= 5 && currentHour < 12) {
+                timePeriod = 'Morning';
+                greetingType = 'Good morning! Hope you\'re having a great start to your day!';
+            } else if (currentHour >= 12 && currentHour < 17) {
+                timePeriod = 'Afternoon';
+                greetingType = 'Good afternoon! How\'s your day going so far?';
+            } else if (currentHour >= 17 && currentHour < 22) {
+                timePeriod = 'Evening';
+                greetingType = 'Good evening! How can I help you tonight?';
+            } else {
+                timePeriod = 'Night';
+                greetingType = 'Good evening! Working late? How can I help?';
+            }
+            
+            document.getElementById('current-time').textContent = timeString;
+            document.getElementById('time-period').textContent = timePeriod;
+            document.getElementById('greeting-type').textContent = greetingType;
+        }
+        
+        // Update time display every second
+        updateTimeDisplay();
+        setInterval(updateTimeDisplay, 1000);
+    </script>
+</body>
+</html>

@@ -1,5 +1,24 @@
 # WordPress Deployment Guide for Dragon Latest Project
 
+🚀 **NEW: Automatic Deployment System** - This WordPress installation now includes an intelligent auto-deployment system that automatically configures your site for any server environment.
+
+## Quick Deployment (Recommended)
+
+### Option 1: Auto-Deployment (Easiest)
+1. Upload all files to your new server
+2. Import the database to your production database
+3. Update database credentials in `wp-config.php` if needed
+4. Visit: `https://your-new-domain.com/auto-deploy.php`
+5. The system will automatically:
+   - Detect your new domain
+   - Update all URLs in the database
+   - Configure environment settings
+   - Enable HTTPS if available
+   - Delete itself for security
+
+### Option 2: Manual URL Update
+If you prefer manual control, use: `https://your-new-domain.com/deploy-url-update.php`
+
 This guide ensures your WordPress site can be deployed to any server without URL or configuration issues.
 
 ## 1. Database URL Management

@@ -73,27 +73,107 @@ $table_prefix = 'wp_';
 
 /* Add any custom values between this line and the "stop editing" line. */
 
+/**
+ * Dynamic URL Configuration for Any Server Deployment
+ * This automatically detects the correct URLs based on the server environment
+ */
+if (!defined('WP_SITEURL')) {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') || $_SERVER['SERVER_PORT'] == 443 ? 'https://' : 'http://';
+    $domain = $_SERVER['HTTP_HOST'];
+    $path = str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
+    define('WP_SITEURL', $protocol . $domain . rtrim($path, '/'));
+}
+
+if (!defined('WP_HOME')) {
+    define('WP_HOME', WP_SITEURL);
+}
+
+/**
+ * Force SSL in admin if HTTPS is detected
+ */
+if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+    define('FORCE_SSL_ADMIN', true);
+}
+
+/**
+ * Content URL Configuration
+ * Ensures wp-content URLs work correctly on any domain
+ */
+if (!defined('WP_CONTENT_URL')) {
+    define('WP_CONTENT_URL', WP_HOME . '/wp-content');
+}
+
+/**
+ * Plugin URL Configuration
+ */
+if (!defined('WP_PLUGIN_URL')) {
+    define('WP_PLUGIN_URL', WP_CONTENT_URL . '/plugins');
+}
+
+/**
+ * Automatic Environment Detection
+ */
+if (!defined('WP_ENVIRONMENT_TYPE')) {
+    // Detect environment based on domain
+    $host = $_SERVER['HTTP_HOST'] ?? '';
+    if (strpos($host, '.local') !== false || strpos($host, 'localhost') !== false || strpos($host, '127.0.0.1') !== false) {
+        define('WP_ENVIRONMENT_TYPE', 'local');
+    } elseif (strpos($host, 'staging') !== false || strpos($host, 'dev') !== false) {
+        define('WP_ENVIRONMENT_TYPE', 'staging');
+    } else {
+        define('WP_ENVIRONMENT_TYPE', 'production');
+    }
+}
+
 
 
 /**
- * For developers: WordPress debugging mode.
- *
- * Change this to true to enable the display of notices during development.
- * It is strongly recommended that plugin and theme developers use WP_DEBUG
- * in their development environments.
- *
- * For information on other constants that can be used for debugging,
- * visit the documentation.
- *
- * @link https://wordpress.org/support/article/debugging-in-wordpress/
+ * Environment-Aware Debug Configuration
+ * Automatically adjusts debug settings based on environment
  */
-if ( ! defined( 'WP_DEBUG' ) ) {
-	define( 'WP_DEBUG', true );
-	define( 'WP_DEBUG_LOG', true );
-	define( 'WP_DEBUG_DISPLAY', false );
+if (!defined('WP_DEBUG')) {
+    if (WP_ENVIRONMENT_TYPE === 'production') {
+        // Production: Disable all debugging
+        define('WP_DEBUG', false);
+        define('WP_DEBUG_LOG', false);
+        define('WP_DEBUG_DISPLAY', false);
+        define('SCRIPT_DEBUG', false);
+        
+        // Security settings for production
+        define('DISALLOW_FILE_EDIT', true);
+        define('WP_POST_REVISIONS', 3);
+        define('AUTOSAVE_INTERVAL', 300);
+        
+    } elseif (WP_ENVIRONMENT_TYPE === 'staging') {
+        // Staging: Enable logging but not display
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', false);
+        define('SCRIPT_DEBUG', false);
+        
+    } else {
+        // Local/Development: Enable all debugging
+        define('WP_DEBUG', true);
+        define('WP_DEBUG_LOG', true);
+        define('WP_DEBUG_DISPLAY', true);
+        define('SCRIPT_DEBUG', true);
+    }
 }
 
-define( 'WP_ENVIRONMENT_TYPE', 'local' );
+/**
+ * Performance Optimizations
+ */
+define('WP_MEMORY_LIMIT', '512M');
+define('WP_MAX_EXECUTION_TIME', 300);
+
+/**
+ * Security Enhancements
+ */
+// Disable XML-RPC if not needed
+define('XMLRPC_ENABLED', false);
+
+// Limit login attempts (basic protection)
+define('WP_FAIL2BAN_BLOCKED_USERS', ['admin', 'administrator', 'root']);
 /* That's all, stop editing! Happy publishing. */
 
 /** Absolute path to the WordPress directory. */

@@ -68,7 +68,7 @@
     Deny from all
 </Files>
 
-# Block access to deployment files (remove after deployment)
+# Block access to deployment files (auto-managed)
 <Files "deploy-url-update.php">
     Order Allow,Deny
     Deny from all
@@ -79,15 +79,39 @@
     Deny from all
 </Files>
 
+<Files ".deployment-lock">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
+<Files ".delete-auto-deploy">
+    Order Allow,Deny
+    Deny from all
+</Files>
+
 # Prevent directory browsing
 Options -Indexes
 
-# Force HTTPS (uncomment when SSL certificate is installed)
+# Force HTTPS (auto-enabled by deployment script when HTTPS is detected)
 # <IfModule mod_rewrite.c>
 #     RewriteEngine On
 #     RewriteCond %{HTTPS} off
 #     RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 # </IfModule>
+
+# Additional security for production
+<IfModule mod_rewrite.c>
+    # Block access to sensitive files
+    RewriteRule ^wp-config\.php$ - [F,L]
+    RewriteRule ^wp-config-production\.php$ - [F,L]
+    RewriteRule ^\.deployment-lock$ - [F,L]
+    RewriteRule ^\.delete-auto-deploy$ - [F,L]
+    
+    # Block access to theme and plugin files directly
+    RewriteRule ^wp-content/themes/.*/.*\.(php|inc)$ - [F,L]
+    RewriteRule ^wp-content/plugins/.*/.*\.(php|inc)$ - [F,L]
+RewriteRule ^wp-includes/.*\.(php|inc)$ - [F,L]
+</IfModule>
 
 # BEGIN WordPress
 # The directives (lines) between "BEGIN WordPress" and "END WordPress" are

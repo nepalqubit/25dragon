@@ -1,5 +1,16 @@
 # 🚀 WordPress Deployment Checklist - Dragon Latest Project
 
+## ⚡ Quick Auto-Deployment (Recommended)
+- [ ] Upload all files to production server
+- [ ] Import database to production database server
+- [ ] Update database credentials in `wp-config.php` (if different)
+- [ ] Visit `https://your-domain.com/auto-deploy.php`
+- [ ] Follow the auto-deployment instructions
+- [ ] Test website functionality
+- [ ] The deployment script will auto-delete for security
+
+## 🔧 Manual Deployment Process (Alternative)
+
 ## ✅ Pre-Deployment Preparation
 
 ### 1. Backup Everything

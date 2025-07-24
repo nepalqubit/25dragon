@@ -272,10 +272,10 @@ class TZnew_FAQ_Widget extends \Elementor\Widget_Base {
                 $faq_post = get_post($faq_id);
                 if ($faq_post && $faq_post->post_type === 'faq') {
                     $faqs[] = [
-                        'question' => get_field('question', $faq_id),
-                        'answer' => get_field('answer', $faq_id),
-                        'category' => get_field('category', $faq_id),
-                        'order' => get_field('display_order', $faq_id) ?: 999,
+                        'question' => tznew_get_field_safe('question', '', $faq_id),
+                    'answer' => tznew_get_field_safe('answer', '', $faq_id),
+                    'category' => tznew_get_field_safe('category', '', $faq_id),
+                    'order' => tznew_get_field_safe('display_order', 999, $faq_id),
                     ];
                 }
             }
@@ -300,10 +300,10 @@ class TZnew_FAQ_Widget extends \Elementor\Widget_Base {
             
             foreach ($general_faqs as $faq_post) {
                 $faqs[] = [
-                    'question' => get_field('question', $faq_post->ID),
-                    'answer' => get_field('answer', $faq_post->ID),
-                    'category' => get_field('category', $faq_post->ID),
-                    'order' => get_field('display_order', $faq_post->ID) ?: 999,
+                    'question' => tznew_get_field_safe('question', '', $faq_post->ID),
+                    'answer' => tznew_get_field_safe('answer', '', $faq_post->ID),
+                    'category' => tznew_get_field_safe('category', '', $faq_post->ID),
+                    'order' => tznew_get_field_safe('display_order', 999, $faq_post->ID),
                 ];
             }
         }

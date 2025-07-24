@@ -395,20 +395,28 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 
 <style>
 .view-toggle {
-	@apply p-2 rounded-md transition-all duration-300 text-gray-600;
+    padding: 0.5rem;
+    border-radius: 0.375rem;
+    transition-property: all;
+    transition-duration: 300ms;
+    color: rgb(75 85 99);
 }
 .view-toggle.active {
-	@apply bg-white text-blue-600 shadow-sm;
+    background-color: white;
+    color: rgb(37 99 235);
+    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
 }
 .view-toggle:hover {
-	@apply text-blue-600;
+    color: rgb(37 99 235);
 }
 
 .trek-type-toggle {
-	@apply text-gray-600 hover:text-blue-600;
+    color: rgb(75 85 99); /* text-gray-600 */
 }
 .trek-type-toggle.active {
-	@apply bg-blue-600 text-white shadow-md;
+    background-color: rgb(37 99 235);
+    color: white;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
 }
 
 .trek-card .stretched-link::after {
@@ -423,13 +431,17 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 
 /* List view styles */
 .list-view .trek-card {
-	@apply flex flex-row h-auto;
+    display: flex;
+    flex-direction: row;
+    height: auto;
 }
 .list-view .trek-card .relative {
-	@apply w-64 h-48 flex-shrink-0;
+width: 16rem; /* w-64 */
+height: 12rem; /* h-48 */ 
+flex-shrink: 0;
 }
 .list-view .trek-card .p-6 {
-	@apply flex-1 flex flex-col justify-between;
+flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between;
 }
 </style>
 

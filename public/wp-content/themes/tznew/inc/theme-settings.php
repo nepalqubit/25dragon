@@ -21,7 +21,7 @@ if (!defined('ABSPATH')) {
  */
 function tznew_get_theme_setting($field_name, $default = '') {
     if (function_exists('get_field')) {
-        $value = get_field($field_name, 'option');
+        $value = tznew_get_field_safe($field_name, '', 'option');
         return !empty($value) ? $value : $default;
     }
     return $default;

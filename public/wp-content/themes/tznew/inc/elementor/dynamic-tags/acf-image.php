@@ -67,9 +67,9 @@ class TZNEW_ACF_Image_Tag extends Data_Tag {
         // Check if it's a theme options field
         if ( strpos( $field_key, 'options_' ) === 0 ) {
             $field_name = str_replace( 'options_', '', $field_key );
-            $image = get_field( $field_name, 'option' );
+            $image = tznew_get_field_safe( $field_name, 'option' );
         } else {
-            $image = get_field( $field_key );
+            $image = tznew_get_field_safe( $field_key );
         }
 
         if ( empty( $image ) ) {

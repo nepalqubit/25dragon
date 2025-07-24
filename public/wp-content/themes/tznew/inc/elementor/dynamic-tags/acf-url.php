@@ -68,9 +68,9 @@ class TZNEW_ACF_URL_Tag extends Tag {
         // Check if it's a theme options field
         if ( strpos( $field_key, 'options_' ) === 0 ) {
             $field_name = str_replace( 'options_', '', $field_key );
-            $value = get_field( $field_name, 'option' );
+            $value = tznew_get_field_safe( $field_name, 'option' );
         } else {
-            $value = get_field( $field_key );
+            $value = tznew_get_field_safe( $field_key );
         }
 
         // Handle different ACF URL field formats

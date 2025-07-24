@@ -526,7 +526,7 @@ function tznew_scripts() {
         ));
         
         foreach ($treks as $trek) {
-            $itinerary = get_field('itinerary', $trek->ID);
+            $itinerary = tznew_get_field_safe('itinerary', '', $trek->ID);
             
             if ($itinerary && is_array($itinerary)) {
                 // Get the first day with coordinates as the main location
@@ -541,10 +541,10 @@ function tznew_scripts() {
                             'url' => get_permalink($trek->ID),
                             'latitude' => floatval($coordinates['latitude']),
                             'longitude' => floatval($coordinates['longitude']),
-                            'duration' => get_field('duration', $trek->ID),
-                            'difficulty' => get_field('difficulty', $trek->ID),
-                            'max_altitude' => get_field('max_altitude', $trek->ID),
-                            'rating' => get_field('rating', $trek->ID)
+                            'duration' => tznew_get_field_safe('duration', '', $trek->ID),
+                            'difficulty' => tznew_get_field_safe('difficulty', '', $trek->ID),
+                            'max_altitude' => tznew_get_field_safe('max_altitude', '', $trek->ID),
+                            'rating' => tznew_get_field_safe('rating', '', $trek->ID)
                         );
                         
                         $trek_locations[] = $trek_data;
@@ -575,13 +575,13 @@ function tznew_scripts() {
             $region_name = $region->name;
             
             // Check if this region should be shown on the map
-            $show_on_map = get_field('show_on_regional_adventure_map', 'region_' . $region->term_id);
+            $show_on_map = tznew_get_field_safe('show_on_regional_adventure_map', false, 'region_' . $region->term_id);
             if (!$show_on_map) {
                 continue;
             }
             
             // Get coordinates from ACF fields
-            $region_coordinates = get_field('region_coordinates', 'region_' . $region->term_id);
+            $region_coordinates = tznew_get_field_safe('region_coordinates', array(), 'region_' . $region->term_id);
             if (!$region_coordinates || empty($region_coordinates['latitude']) || empty($region_coordinates['longitude'])) {
                 continue;
             }
@@ -627,11 +627,11 @@ function tznew_scripts() {
                     'title' => get_the_title($trek->ID),
                     'url' => get_permalink($trek->ID),
                     'type' => 'trekking',
-                    'duration' => get_field('duration', $trek->ID),
-                    'difficulty' => get_field('difficulty', $trek->ID),
-                    'max_altitude' => get_field('max_altitude', $trek->ID),
-                    'rating' => get_field('rating', $trek->ID),
-                    'overview' => wp_trim_words(get_field('overview', $trek->ID), 15),
+                    'duration' => tznew_get_field_safe('duration', '', $trek->ID),
+                    'difficulty' => tznew_get_field_safe('difficulty', '', $trek->ID),
+                    'max_altitude' => tznew_get_field_safe('max_altitude', '', $trek->ID),
+                    'rating' => tznew_get_field_safe('rating', '', $trek->ID),
+                    'overview' => wp_trim_words(tznew_get_field_safe('overview', '', $trek->ID), 15),
                     'thumbnail' => get_the_post_thumbnail_url($trek->ID, 'medium')
                 );
             }
@@ -643,11 +643,11 @@ function tznew_scripts() {
                     'title' => get_the_title($tour->ID),
                     'url' => get_permalink($tour->ID),
                     'type' => 'tours',
-                    'duration' => get_field('duration', $tour->ID),
-                    'tour_type' => get_field('tour_type', $tour->ID),
-                    'cost' => get_field('cost', $tour->ID),
-                    'rating' => get_field('rating', $tour->ID),
-                    'overview' => wp_trim_words(get_field('overview', $tour->ID), 15),
+                    'duration' => tznew_get_field_safe('duration', '', $tour->ID),
+                    'tour_type' => tznew_get_field_safe('tour_type', '', $tour->ID),
+                    'cost' => tznew_get_field_safe('cost', '', $tour->ID),
+                    'rating' => tznew_get_field_safe('rating', '', $tour->ID),
+                    'overview' => wp_trim_words(tznew_get_field_safe('overview', '', $tour->ID), 15),
                     'thumbnail' => get_the_post_thumbnail_url($tour->ID, 'medium')
                 );
             }

@@ -3,6 +3,11 @@
  * Enhanced styling with animations and modern design
  */
 
+/* Override Tailwind pt-20 class */
+.pt-20 {
+  padding-top: 0 !important;
+}
+
 /* CSS Variables for consistent theming - Green to Blue Gradient */
 :root {
   --primary-color: #16a34a;

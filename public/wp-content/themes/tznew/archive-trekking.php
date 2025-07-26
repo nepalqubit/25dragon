@@ -206,7 +206,7 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 						);
 						?>
 					</h2>
-					<?php if (is_search() || !empty($_GET['region']) || !empty($_GET['difficulty']) || !empty($_GET['duration']) || !empty($_GET['sort'])) : ?>
+					<?php if (is_search() || !empty(sanitize_text_field($_GET['region'] ?? '')) || !empty(sanitize_text_field($_GET['difficulty'] ?? '')) || !empty(sanitize_text_field($_GET['duration'] ?? '')) || !empty(sanitize_text_field($_GET['sort'] ?? ''))) : ?>
 						<p class="text-gray-600 mt-1">
 							<?php esc_html_e('Showing filtered results', 'tznew'); ?>
 						</p>
@@ -393,22 +393,37 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 	</section>
 </main><!-- #main -->
 
+<?php
+}
+?>
+
 <style>
 .view-toggle {
-	@apply p-2 rounded-md transition-all duration-300 text-gray-600;
+	padding: 0.5rem;
+	border-radius: 0.375rem;
+	transition: all 0.3s ease;
+	color: #6b7280;
 }
 .view-toggle.active {
-	@apply bg-white text-blue-600 shadow-sm;
+	background-color: white;
+	color: #2563eb;
+	box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 .view-toggle:hover {
-	@apply text-blue-600;
+	color: #2563eb;
 }
 
 .trek-type-toggle {
-	@apply text-gray-600 hover:text-blue-600;
+	color: #6b7280;
+	transition: color 0.3s ease;
+}
+.trek-type-toggle:hover {
+	color: #2563eb;
 }
 .trek-type-toggle.active {
-	@apply bg-blue-600 text-white shadow-md;
+	background-color: #2563eb;
+	color: white;
+	box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .trek-card .stretched-link::after {
@@ -423,13 +438,20 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 
 /* List view styles */
 .list-view .trek-card {
-	@apply flex flex-row h-auto;
+	display: flex;
+	flex-direction: row;
+	height: auto;
 }
 .list-view .trek-card .relative {
-	@apply w-64 h-48 flex-shrink-0;
+	width: 16rem;
+	height: 12rem;
+	flex-shrink: 0;
 }
 .list-view .trek-card .p-6 {
-	@apply flex-1 flex flex-col justify-between;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
 }
 </style>
 
@@ -439,67 +461,75 @@ document.addEventListener('DOMContentLoaded', function() {
 	const viewToggles = document.querySelectorAll('.view-toggle');
 	const container = document.getElementById('treks-container');
 	
-	viewToggles.forEach(toggle => {
-		toggle.addEventListener('click', function() {
-			const view = this.dataset.view;
-			
-			// Update active state
-			viewToggles.forEach(t => t.classList.remove('active'));
-			this.classList.add('active');
-			
-			// Update container classes
-			if (view === 'list') {
-				container.className = 'space-y-6 list-view transition-all duration-300';
-			} else {
-				container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-300';
-			}
+	if (viewToggles && container) {
+		viewToggles.forEach(toggle => {
+			toggle.addEventListener('click', function() {
+				const view = this.dataset.view;
+				
+				// Update active state
+				viewToggles.forEach(t => t.classList.remove('active'));
+				this.classList.add('active');
+				
+				// Update container classes
+				if (view === 'list') {
+					container.className = 'space-y-6 list-view transition-all duration-300';
+				} else {
+					container.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 transition-all duration-300';
+				}
+			});
 		});
-	});
+	}
 	
 	// Trek type toggle functionality
 	const trekTypeToggles = document.querySelectorAll('.trek-type-toggle');
-	trekTypeToggles.forEach(toggle => {
-		toggle.addEventListener('click', function() {
-			const trekType = this.id.replace('-btn', '').replace('-', '_');
-			
-			// Update active state
-			trekTypeToggles.forEach(t => t.classList.remove('active'));
-			this.classList.add('active');
-			
-			// Redirect with trek type parameter
-			const url = new URL(window.location);
-			if (trekType === 'all_treks') {
-				url.searchParams.delete('trek_type');
-			} else {
-				url.searchParams.set('trek_type', trekType.replace('_treks', ''));
-			}
-			window.location.href = url.toString();
+	if (trekTypeToggles) {
+		trekTypeToggles.forEach(toggle => {
+			toggle.addEventListener('click', function() {
+				const trekType = this.id.replace('-btn', '').replace('-', '_');
+				
+				// Update active state
+				trekTypeToggles.forEach(t => t.classList.remove('active'));
+				this.classList.add('active');
+				
+				// Redirect with trek type parameter
+				const url = new URL(window.location);
+				if (trekType === 'all_treks') {
+					url.searchParams.delete('trek_type');
+				} else {
+					url.searchParams.set('trek_type', trekType.replace('_treks', ''));
+				}
+				window.location.href = url.toString();
+			});
 		});
-	});
+	}
 	
 	// Set active state based on URL parameter
 	const urlParams = new URLSearchParams(window.location.search);
 	const trekType = urlParams.get('trek_type');
-	if (trekType === 'featured') {
-		document.getElementById('featured-treks-btn').classList.add('active');
-		document.getElementById('all-treks-btn').classList.remove('active');
-	} else if (trekType === 'popular') {
-		document.getElementById('popular-treks-btn').classList.add('active');
-		document.getElementById('all-treks-btn').classList.remove('active');
+	const allTreksBtn = document.getElementById('all-treks-btn');
+	const featuredTreksBtn = document.getElementById('featured-treks-btn');
+	const popularTreksBtn = document.getElementById('popular-treks-btn');
+	
+	if (trekType === 'featured' && featuredTreksBtn && allTreksBtn) {
+		featuredTreksBtn.classList.add('active');
+		allTreksBtn.classList.remove('active');
+	} else if (trekType === 'popular' && popularTreksBtn && allTreksBtn) {
+		popularTreksBtn.classList.add('active');
+		allTreksBtn.classList.remove('active');
 	}
 	
 	// Auto-submit form on select change
 	const selects = document.querySelectorAll('#trekking-filter select');
-	selects.forEach(select => {
-		select.addEventListener('change', function() {
-			document.getElementById('trekking-filter').submit();
+	const form = document.getElementById('trekking-filter');
+	if (selects && form) {
+		selects.forEach(select => {
+			select.addEventListener('change', function() {
+				form.submit();
+			});
 		});
-	});
+	}
 });
 </script>
-    <?php
-}
-?>
 
 <?php
 get_footer();

@@ -508,16 +508,31 @@ get_header();
 		<!-- Interactive Map JavaScript -->
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
-			// Initialize the map with attribution control disabled
-			const map = L.map('trek-map', {
-				attributionControl: false
-			}).setView([28.3949, 84.1240], 7); // Center on Nepal
+			// Check if Leaflet is loaded
+			if (typeof L === 'undefined') {
+				console.error('Leaflet library not loaded');
+				document.getElementById('trek-count').textContent = 'Map library not loaded';
+				return;
+			}
 			
-			// Add tile layer
-			L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-				attribution: '',
-				maxZoom: 18
-			}).addTo(map);
+			// Check if map container exists
+			const mapContainer = document.getElementById('trek-map');
+			if (!mapContainer) {
+				console.error('Map container not found');
+				return;
+			}
+			
+			try {
+				// Initialize the map with attribution control disabled
+				const map = L.map('trek-map', {
+					attributionControl: false
+				}).setView([28.3949, 84.1240], 7); // Center on Nepal
+				
+				// Add tile layer
+				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+					attribution: '',
+					maxZoom: 18
+				}).addTo(map);
 			
 			// Custom marker icon for regional destinations
 			const regionIcon = L.divIcon({
@@ -557,41 +572,41 @@ get_header();
 				]
 			};
 			
-			// Fetch regional destinations
-			fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=get_all_locations')
-				.then(response => response.json())
-				.then(data => {
+				// Fetch regional destinations
+				fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=get_all_locations')
+					.then(response => {
+						if (!response.ok) {
+							throw new Error(`HTTP error! status: ${response.status}`);
+						}
+						return response.json();
+					})
+					.then(data => {
 					if (data.success && data.data.length > 0) {
 						const bounds = L.latLngBounds();
 						let totalTreks = 0;
 						let totalTours = 0;
 						
 						data.data.forEach(region => {
-				if (region.latitude && region.longitude) {
-					totalTreks += region.trekking_count;
-					totalTours += region.tours_count;
-					
-					// Get region boundary coordinates with flexible matching
-					const regionSlug = region.region_slug.toLowerCase();
-					let boundary = null;
-					
-					// First try exact match
-					boundary = regionBoundaries[regionSlug];
-					
-					// If no exact match, try partial matching
-					if (!boundary) {
-						for (const [key, coords] of Object.entries(regionBoundaries)) {
-							if (regionSlug.includes(key) || key.includes(regionSlug)) {
-								boundary = coords;
-								console.log('Found boundary match:', key, 'for region:', regionSlug);
-								break;
-							}
-						}
-					}
-					
-					if (!boundary) {
-						console.log('No boundary found for region:', regionSlug, 'Available:', Object.keys(regionBoundaries));
-					}
+							if (region.latitude && region.longitude) {
+								totalTreks += region.trekking_count;
+								totalTours += region.tours_count;
+								
+								// Get region boundary coordinates with flexible matching
+								const regionSlug = region.region_slug.toLowerCase();
+								let boundary = null;
+								
+								// First try exact match
+								boundary = regionBoundaries[regionSlug];
+								
+								// If no exact match, try partial matching
+								if (!boundary) {
+									for (const [key, coords] of Object.entries(regionBoundaries)) {
+										if (regionSlug.includes(key) || key.includes(regionSlug)) {
+											boundary = coords;
+											break;
+										}
+									}
+								}
 					
 						
 						// Build regional popup content with routes
@@ -668,76 +683,76 @@ get_header();
 									</div>
 								`;
 								
-							// Create region polygon if boundary exists
-							if (boundary) {
-								const polygon = L.polygon(boundary, {
-								color: '#3b82f6',
-								fillColor: '#3b82f6',
-								fillOpacity: 0.3,
-								weight: 3,
-								opacity: 0.8,
-								className: 'region-polygon'
-							}).addTo(map);
-								
-								// Add hover effects
-								polygon.on('mouseover', function(e) {
-								this.setStyle({
-									fillOpacity: 0.6,
-									weight: 4,
-									opacity: 1.0
-								});
+								// Create region polygon if boundary exists
+								if (boundary) {
+									const polygon = L.polygon(boundary, {
+										color: '#3b82f6',
+										fillColor: '#3b82f6',
+										fillOpacity: 0.3,
+										weight: 3,
+										opacity: 0.8,
+										className: 'region-polygon'
+									}).addTo(map);
 									
-									// Show region name tooltip
-									const tooltip = L.tooltip({
-										permanent: false,
-										direction: 'top',
-										className: 'region-tooltip'
-									})
-									.setContent(`<strong>${region.region_name}</strong><br/>${region.trekking_count} Treks, ${region.tours_count} Tours`)
-									.setLatLng(e.latlng)
-									.addTo(map);
-									
-									polygon._tooltip = tooltip;
-								});
-								
-								polygon.on('mouseout', function(e) {
-								this.setStyle({
-									fillOpacity: 0.3,
-									weight: 3,
-									opacity: 0.8
-								});
-									
-									// Remove tooltip
-									if (this._tooltip) {
-										map.removeLayer(this._tooltip);
-									}
-								});
-								
-								// Add click event for detailed popup
-								polygon.on('click', function(e) {
-									L.popup({
-										maxWidth: 400,
-										className: 'custom-popup regional-popup'
-									})
-									.setContent(popupContent)
-									.setLatLng(e.latlng)
-									.openOn(map);
-								});
-								
-								bounds.extend(boundary);
-							} else {
-								// Fallback to marker if no boundary defined
-								const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
-									.addTo(map)
-									.bindPopup(popupContent, {
-										maxWidth: 400,
-										className: 'custom-popup regional-popup'
+									// Add hover effects
+									polygon.on('mouseover', function(e) {
+										this.setStyle({
+											fillOpacity: 0.6,
+											weight: 4,
+											opacity: 1.0
+										});
+										
+										// Show region name tooltip
+										const tooltip = L.tooltip({
+											permanent: false,
+											direction: 'top',
+											className: 'region-tooltip'
+										})
+										.setContent(`<strong>${region.region_name}</strong><br/>${region.trekking_count} Treks, ${region.tours_count} Tours`)
+										.setLatLng(e.latlng)
+										.addTo(map);
+										
+										polygon._tooltip = tooltip;
 									});
-								
-								bounds.extend([region.latitude, region.longitude]);
-						}
-					}
-				});
+									
+									polygon.on('mouseout', function(e) {
+										this.setStyle({
+											fillOpacity: 0.3,
+											weight: 3,
+											opacity: 0.8
+										});
+										
+										// Remove tooltip
+										if (this._tooltip) {
+											map.removeLayer(this._tooltip);
+										}
+									});
+									
+									// Add click event for detailed popup
+									polygon.on('click', function(e) {
+										L.popup({
+											maxWidth: 400,
+											className: 'custom-popup regional-popup'
+										})
+										.setContent(popupContent)
+										.setLatLng(e.latlng)
+										.openOn(map);
+									});
+									
+									bounds.extend(boundary);
+								} else {
+									// Fallback to marker if no boundary defined
+									const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
+										.addTo(map)
+										.bindPopup(popupContent, {
+											maxWidth: 400,
+											className: 'custom-popup regional-popup'
+										});
+									
+									bounds.extend([region.latitude, region.longitude]);
+								}
+							}
+						});
 						
 						// Fit map to show all markers
 						if (bounds.isValid()) {
@@ -751,38 +766,42 @@ get_header();
 						document.getElementById('trek-count').textContent = 'No regions found';
 					}
 				})
-				.catch(error => {
-					console.error('Error loading regions:', error);
-					document.getElementById('trek-count').textContent = 'Error loading regions';
+					.catch(error => {
+						console.error('Error loading regions:', error);
+						document.getElementById('trek-count').textContent = 'Error loading regions: ' + error.message;
 					});
-			
-			// Map toggle functionality
-			const mapToggleBtn = document.getElementById('map-toggle-btn');
-			const mapToggleIcon = document.getElementById('map-toggle-icon');
-			const mapToggleText = document.getElementById('map-toggle-text');
-			const mapContainer = document.getElementById('trek-map');
-			let mapVisible = true;
-			
-			mapToggleBtn.addEventListener('click', function() {
-				if (mapVisible) {
-					// Hide map
-					mapContainer.style.display = 'none';
-					mapToggleIcon.className = 'fas fa-eye-slash';
-					mapToggleText.textContent = 'Show Map';
-					mapVisible = false;
-				} else {
-					// Show map
-					mapContainer.style.display = 'block';
-					mapToggleIcon.className = 'fas fa-eye';
-					mapToggleText.textContent = 'Hide Map';
-					mapVisible = true;
-					
-					// Invalidate map size to ensure proper rendering
-					setTimeout(() => {
-						map.invalidateSize();
-					}, 100);
-				}
-			});
+				
+				// Map toggle functionality
+				const mapToggleBtn = document.getElementById('map-toggle-btn');
+				const mapToggleIcon = document.getElementById('map-toggle-icon');
+				const mapToggleText = document.getElementById('map-toggle-text');
+				const mapContainer = document.getElementById('trek-map');
+				let mapVisible = true;
+				
+				mapToggleBtn.addEventListener('click', function() {
+					if (mapVisible) {
+						// Hide map
+						mapContainer.style.display = 'none';
+						mapToggleIcon.className = 'fas fa-eye-slash';
+						mapToggleText.textContent = 'Show Map';
+						mapVisible = false;
+					} else {
+						// Show map
+						mapContainer.style.display = 'block';
+						mapToggleIcon.className = 'fas fa-eye';
+						mapToggleText.textContent = 'Hide Map';
+						mapVisible = true;
+						
+						// Invalidate map size to ensure proper rendering
+						setTimeout(() => {
+							map.invalidateSize();
+						}, 100);
+					}
+				});
+			} catch (error) {
+				console.error('Error initializing map:', error);
+				document.getElementById('trek-count').textContent = 'Error initializing map';
+			}
 		});
 		</script>
 		

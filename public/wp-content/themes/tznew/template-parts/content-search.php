@@ -122,7 +122,7 @@
 				// For custom post types, show relevant taxonomies
 				if ($post_type == 'trekking') :
 					$regions = get_the_terms(get_the_ID(), 'region');
-					$duration = tznew_get_field_safe('duration');
+					$duration = get_field('duration');
 					
 					if ($regions && !is_wp_error($regions) && !empty($regions)) :
 						?>
@@ -148,7 +148,7 @@
 				elseif ($post_type == 'tours') :
 					$regions = get_the_terms(get_the_ID(), 'region');
 					$tour_types = get_the_terms(get_the_ID(), 'tour_type');
-					$duration = tznew_get_field_safe('duration');
+					$duration = get_field('duration');
 					
 					if ($regions && !is_wp_error($regions) && !empty($regions)) : ?>
 						<span class="inline-flex items-center gap-1 bg-blue-50 text-blue-700 text-xs font-medium px-3 py-1 rounded-full border border-blue-200">

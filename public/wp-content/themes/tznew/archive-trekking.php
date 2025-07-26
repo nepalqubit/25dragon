@@ -64,9 +64,9 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 	<section class="archive-filters bg-white shadow-lg relative z-20 -mt-8 mx-4 md:mx-8 rounded-2xl overflow-hidden">
 		<div class="container mx-auto px-6 py-8">
 			<form method="GET" class="trek-filter-form" id="trekking-filter">
-				<div class="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-6">
+				<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 mb-6">
 					<!-- Search -->
-					<div class="lg:col-span-2">
+					<div class="md:col-span-2 lg:col-span-2 xl:col-span-3">
 						<label for="search" class="block text-sm font-medium text-gray-700 mb-2">
 							<i class="fas fa-search mr-1"></i>
 							<?php esc_html_e('Search Treks', 'tznew'); ?>
@@ -395,28 +395,20 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 
 <style>
 .view-toggle {
-    padding: 0.5rem;
-    border-radius: 0.375rem;
-    transition-property: all;
-    transition-duration: 300ms;
-    color: rgb(75 85 99);
+	@apply p-2 rounded-md transition-all duration-300 text-gray-600;
 }
 .view-toggle.active {
-    background-color: white;
-    color: rgb(37 99 235);
-    box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+	@apply bg-white text-blue-600 shadow-sm;
 }
 .view-toggle:hover {
-    color: rgb(37 99 235);
+	@apply text-blue-600;
 }
 
 .trek-type-toggle {
-    color: rgb(75 85 99); /* text-gray-600 */
+	@apply text-gray-600 hover:text-blue-600;
 }
 .trek-type-toggle.active {
-    background-color: rgb(37 99 235);
-    color: white;
-    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+	@apply bg-blue-600 text-white shadow-md;
 }
 
 .trek-card .stretched-link::after {
@@ -431,17 +423,13 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 
 /* List view styles */
 .list-view .trek-card {
-    display: flex;
-    flex-direction: row;
-    height: auto;
+	@apply flex flex-row h-auto;
 }
 .list-view .trek-card .relative {
-width: 16rem; /* w-64 */
-height: 12rem; /* h-48 */ 
-flex-shrink: 0;
+	@apply w-64 h-48 flex-shrink-0;
 }
 .list-view .trek-card .p-6 {
-flex: 1 1 auto; display: flex; flex-direction: column; justify-content: space-between;
+	@apply flex-1 flex flex-col justify-between;
 }
 </style>
 

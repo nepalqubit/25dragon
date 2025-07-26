@@ -66,9 +66,9 @@ class TZNEW_ACF_Text_Tag extends Tag {
         // Check if it's a theme options field
         if ( strpos( $field_key, 'options_' ) === 0 ) {
             $field_name = str_replace( 'options_', '', $field_key );
-            $value = tznew_get_field_safe( $field_name, 'option' );
+            $value = get_field( $field_name, 'option' );
         } else {
-            $value = tznew_get_field_safe( $field_key );
+            $value = get_field( $field_key );
         }
 
         if ( empty( $value ) ) {

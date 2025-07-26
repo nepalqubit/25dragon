@@ -577,15 +577,8 @@ TZnew_ACF_Database_Manager::get_instance();
 /**
  * Helper functions for safe field access
  */
-function tznew_get_field_safe($field_name, $default = '', $post_id = false) {
-    // Check if ACF is available
+function tznew_get_field_safe($field_name, $post_id = false, $default = '') {
     if (!function_exists('get_field')) {
-        return $default;
-    }
-    
-    // Check if 'init' action has fired to prevent early translation loading
-    if (!did_action('init')) {
-        // If init hasn't fired yet, return default to prevent early ACF calls
         return $default;
     }
     
@@ -598,11 +591,6 @@ function tznew_have_rows_safe($field_name, $post_id = false) {
         return false;
     }
     
-    // Check if 'init' action has fired to prevent early translation loading
-    if (!did_action('init')) {
-        return false;
-    }
-    
     return have_rows($field_name, $post_id);
 }
 
@@ -611,26 +599,8 @@ function tznew_get_sub_field_safe($field_name, $default = '') {
         return $default;
     }
     
-    // Check if 'init' action has fired to prevent early translation loading
-    if (!did_action('init')) {
-        return $default;
-    }
-    
     $value = get_sub_field($field_name);
     return !empty($value) ? $value : $default;
-}
-
-function tznew_the_row_safe() {
-    if (!function_exists('the_row')) {
-        return false;
-    }
-    
-    // Check if 'init' action has fired to prevent early translation loading
-    if (!did_action('init')) {
-        return false;
-    }
-    
-    return the_row();
 }
 
 /**

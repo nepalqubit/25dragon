@@ -21,7 +21,7 @@ $trekking_title = isset($_GET['trekking_title']) ? sanitize_text_field(urldecode
 $post_title = $tour_title ?: $trekking_title ?: get_the_title($post_id);
 
 $post_type = get_post_type($post_id);
-$cost_info = tznew_get_field_safe('cost_info', '', $post_id);
+$cost_info = get_field('cost_info', $post_id);
 $price = $cost_info['price_usd'] ?? 0;
 ?>
 

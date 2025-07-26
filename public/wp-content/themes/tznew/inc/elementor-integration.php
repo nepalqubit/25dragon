@@ -107,7 +107,7 @@ function tznew_get_elementor_field($field_name, $post_id = null) {
     }
     
     if (function_exists('get_field')) {
-        return tznew_get_field_safe($field_name, '', $post_id);
+        return get_field($field_name, $post_id);
     }
     
     return get_post_meta($post_id, $field_name, true);

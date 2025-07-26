@@ -958,7 +958,7 @@ get_header();
 								<?php if (!empty($popular_regions)) : ?>
 									<div class="space-y-2">
 										<?php foreach ($popular_regions as $region) : 
-											$region_description = tznew_get_field_safe('region_description', '', 'region_' . $region->term_id);
+											$region_description = get_field('region_description', 'region_' . $region->term_id);
 											$trek_count = $region->count;
 											$region_link = get_term_link($region);
 										?>

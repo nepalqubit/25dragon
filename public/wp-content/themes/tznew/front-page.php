@@ -1764,12 +1764,11 @@ get_header();
 						</div>
 					</div>
 				<?php endforeach; ?>
-				else :
-					?>
-					<div class="col-span-full text-center py-12">
-						<p class="text-gray-600 text-lg"><?php esc_html_e('No trekking regions found.', 'tznew'); ?></p>
-					</div>
-				<?php endif; ?>
+			<?php else : ?>
+				<div class="col-span-full text-center py-12">
+					<p class="text-gray-600 text-lg"><?php esc_html_e('No trekking regions found.', 'tznew'); ?></p>
+				</div>
+			<?php endif; ?>
 			</div>
 			
 			<!-- View All Regions Link -->

@@ -60,14 +60,16 @@ $price = $cost_info['price_usd'] ?? 0;
         <!-- Step 1: Personal Information -->
         <div class="form-step active" data-step="1">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">1</span>
                         <?php esc_html_e('Personal Information', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 1 of 4', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Tell us about yourself so we can personalize your experience.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Tell us about yourself so we can personalize your experience.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 1 of 4', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -159,14 +161,16 @@ $price = $cost_info['price_usd'] ?? 0;
         <!-- Step 2: Trip Details -->
         <div class="form-step" data-step="2">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">2</span>
                         <?php esc_html_e('Trip Details', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 2 of 4', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('When would you like to travel and how many people will join you?', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('When would you like to travel and how many people will join you?', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 2 of 4', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -250,14 +254,16 @@ $price = $cost_info['price_usd'] ?? 0;
         <!-- Step 3: Additional Information -->
         <div class="form-step" data-step="3">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">3</span>
                         <?php esc_html_e('Additional Information', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 3 of 4', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Help us customize your experience with your preferences and requirements.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Help us customize your experience with your preferences and requirements.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 3 of 4', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="form-group">
@@ -384,14 +390,16 @@ $price = $cost_info['price_usd'] ?? 0;
         <!-- Step 4: Review & Submit -->
         <div class="form-step" data-step="4">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-orange-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">4</span>
                         <?php esc_html_e('Review & Submit', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 4 of 4', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Review your information and submit your booking request.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Review your information and submit your booking request.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 4 of 4', 'tznew'); ?></span>
+                </div>
             </div>
             
             <!-- Booking Summary -->

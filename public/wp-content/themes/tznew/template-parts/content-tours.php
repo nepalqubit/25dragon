@@ -630,16 +630,18 @@ if (!defined('ABSPATH')) {
                             }
                         }
                         
-                        if (processedCoordinates.length === 0) {
-                            console.warn('No valid coordinates found for map initialization');
-                            return;
+                        // Initialize map with first valid coordinate or default Nepal coordinates
+                        let mapCenter = [28.3949, 84.1240]; // Default Nepal center coordinates
+                        if (processedCoordinates.length > 0) {
+                            const firstCoord = processedCoordinates[0];
+                            mapCenter = [firstCoord.lat, firstCoord.lng];
+                        } else {
+                            console.warn('No valid coordinates found, using default Nepal center coordinates');
                         }
                         
-                        // Initialize map with first valid coordinate and attribution control disabled
-                        const firstCoord = processedCoordinates[0];
                         const map = L.map('tour-route-map', {
                             attributionControl: false
-                        }).setView([firstCoord.lat, firstCoord.lng], 10);
+                        }).setView(mapCenter, 10);
                         
                         // Add tile layer
                         L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -649,6 +651,7 @@ if (!defined('ABSPATH')) {
                     
                         // Create route segments with processed coordinates
                         const routeSegments = [];
+                        if (processedCoordinates.length > 1) {
                         for (let i = 0; i < processedCoordinates.length - 1; i++) {
                             const startCoord = [processedCoordinates[i].lat, processedCoordinates[i].lng];
                             const endCoord = [processedCoordinates[i + 1].lat, processedCoordinates[i + 1].lng];
@@ -703,6 +706,7 @@ if (!defined('ABSPATH')) {
                                 }
                             }
                         }
+                        } // Close the if statement for processedCoordinates.length > 1
                         
                         // Create a feature group for fitting bounds
                         const allSegments = L.featureGroup(routeSegments);
@@ -763,8 +767,13 @@ if (!defined('ABSPATH')) {
                         });
                         
                         // Fit map to show all markers and route segments
-                        const allMapElements = L.featureGroup([allSegments]);
-                        map.fitBounds(allMapElements.getBounds(), { padding: [20, 20] });
+                        if (routeSegments.length > 0) {
+                            const allMapElements = L.featureGroup([allSegments]);
+                            map.fitBounds(allMapElements.getBounds(), { padding: [20, 20] });
+                        } else {
+                            // If no route data, keep the default center view
+                            map.setView([28.3949, 84.1240], 7);
+                        }
                         
                         // Add map controls
                         L.control.scale().addTo(map);

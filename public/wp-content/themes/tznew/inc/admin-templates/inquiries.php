@@ -261,7 +261,169 @@ foreach ($statuses as $status) {
 <div class="wrap">
     <h1 class="wp-heading-inline">Manage Inquiries</h1>
     
-    <?php if ($action === 'view' && $inquiry_id): ?>
+    <?php if ($action === 'edit' && $inquiry_id): ?>
+        <?php
+        $inquiry = get_post($inquiry_id);
+        if ($inquiry && $inquiry->post_type === 'inquiry'):
+            // Handle edit form submission
+            if ($_POST && wp_verify_nonce($_POST['edit_inquiry_nonce'], 'edit_inquiry_action')) {
+                // Update inquiry details
+                $fields = [
+                    'customer_name', 'customer_email', 'customer_phone', 'customer_country',
+                    'related_tour', 'travel_dates', 'group_size', 'budget_range',
+                    'special_requirements', 'customer_message'
+                ];
+                
+                foreach ($fields as $field) {
+                    if (isset($_POST[$field])) {
+                        update_post_meta($inquiry_id, '_' . $field, sanitize_text_field($_POST[$field]));
+                    }
+                }
+                
+                // Update inquiry status
+                if (isset($_POST['inquiry_status'])) {
+                    wp_set_object_terms($inquiry_id, $_POST['inquiry_status'], 'inquiry_status');
+                }
+                
+                // Log the edit
+                $existing_notes = get_post_meta($inquiry_id, '_admin_notes', true);
+                $edit_note = date('Y-m-d H:i:s') . ' - ' . wp_get_current_user()->display_name . ': Inquiry details updated';
+                $updated_notes = $existing_notes ? $existing_notes . "\n" . $edit_note : $edit_note;
+                update_post_meta($inquiry_id, '_admin_notes', $updated_notes);
+                
+                echo '<div class="notice notice-success"><p>Inquiry updated successfully!</p></div>';
+            }
+            
+            // Get current values
+            $customer_name = get_post_meta($inquiry_id, '_customer_name', true);
+            $customer_email = get_post_meta($inquiry_id, '_customer_email', true);
+            $customer_phone = get_post_meta($inquiry_id, '_customer_phone', true);
+            $customer_country = get_post_meta($inquiry_id, '_customer_country', true);
+            $related_tour = get_post_meta($inquiry_id, '_related_tour', true);
+            $travel_dates = get_post_meta($inquiry_id, '_travel_dates', true);
+            $group_size = get_post_meta($inquiry_id, '_group_size', true);
+            $budget_range = get_post_meta($inquiry_id, '_budget_range', true);
+            $special_requirements = get_post_meta($inquiry_id, '_special_requirements', true);
+            $customer_message = get_post_meta($inquiry_id, '_customer_message', true);
+            $current_status = wp_get_post_terms($inquiry_id, 'inquiry_status');
+        ?>
+        
+        <a href="<?php echo admin_url('admin.php?page=inquiry-management&action=view&inquiry_id=' . $inquiry_id); ?>" class="page-title-action">← Back to View</a>
+        
+        <div class="inquiry-edit-form" style="margin-top: 20px;">
+            <form method="post" class="inquiry-edit-form-container">
+                <?php wp_nonce_field('edit_inquiry_action', 'edit_inquiry_nonce'); ?>
+                
+                <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 20px;">
+                    <!-- Main Edit Form -->
+                    <div class="postbox">
+                        <div class="postbox-header">
+                            <h2>Edit Inquiry Details - #<?php echo $inquiry_id; ?></h2>
+                        </div>
+                        <div class="inside">
+                            <table class="form-table">
+                                <tr>
+                                    <th><label for="customer_name">Customer Name:</label></th>
+                                    <td><input type="text" id="customer_name" name="customer_name" value="<?php echo esc_attr($customer_name); ?>" class="regular-text" required></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="customer_email">Email:</label></th>
+                                    <td><input type="email" id="customer_email" name="customer_email" value="<?php echo esc_attr($customer_email); ?>" class="regular-text" required></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="customer_phone">Phone:</label></th>
+                                    <td><input type="tel" id="customer_phone" name="customer_phone" value="<?php echo esc_attr($customer_phone); ?>" class="regular-text"></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="customer_country">Country:</label></th>
+                                    <td><input type="text" id="customer_country" name="customer_country" value="<?php echo esc_attr($customer_country); ?>" class="regular-text"></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="related_tour">Tour/Trip:</label></th>
+                                    <td>
+                                        <select id="related_tour" name="related_tour" class="regular-text">
+                                            <option value="">Select a tour...</option>
+                                            <?php
+                                            $tours = get_posts(['post_type' => 'tour', 'numberposts' => -1]);
+                                            foreach ($tours as $tour) {
+                                                echo '<option value="' . $tour->ID . '"' . selected($related_tour, $tour->ID, false) . '>' . esc_html($tour->post_title) . '</option>';
+                                            }
+                                            ?>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label for="travel_dates">Travel Dates:</label></th>
+                                    <td><input type="text" id="travel_dates" name="travel_dates" value="<?php echo esc_attr($travel_dates); ?>" class="regular-text" placeholder="e.g., March 15-25, 2024"></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="group_size">Group Size:</label></th>
+                                    <td><input type="number" id="group_size" name="group_size" value="<?php echo esc_attr($group_size); ?>" class="small-text" min="1" max="50"></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="budget_range">Budget Range:</label></th>
+                                    <td>
+                                        <select id="budget_range" name="budget_range" class="regular-text">
+                                            <option value="under_1000" <?php selected($budget_range, 'under_1000'); ?>>Under $1,000</option>
+                                            <option value="1000_2500" <?php selected($budget_range, '1000_2500'); ?>>$1,000 - $2,500</option>
+                                            <option value="2500_5000" <?php selected($budget_range, '2500_5000'); ?>>$2,500 - $5,000</option>
+                                            <option value="5000_10000" <?php selected($budget_range, '5000_10000'); ?>>$5,000 - $10,000</option>
+                                            <option value="over_10000" <?php selected($budget_range, 'over_10000'); ?>>Over $10,000</option>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label for="special_requirements">Special Requirements:</label></th>
+                                    <td><textarea id="special_requirements" name="special_requirements" rows="4" class="large-text"><?php echo esc_textarea($special_requirements); ?></textarea></td>
+                                </tr>
+                                <tr>
+                                    <th><label for="customer_message">Customer Message:</label></th>
+                                    <td><textarea id="customer_message" name="customer_message" rows="4" class="large-text" readonly><?php echo esc_textarea($customer_message); ?></textarea></td>
+                                </tr>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Status & Actions Sidebar -->
+                    <div>
+                        <div class="postbox">
+                            <div class="postbox-header">
+                                <h3>Inquiry Status</h3>
+                            </div>
+                            <div class="inside">
+                                <select name="inquiry_status" class="widefat">
+                                    <?php foreach ($statuses as $status): ?>
+                                        <option value="<?php echo esc_attr($status->slug); ?>" <?php selected(!empty($current_status) ? $current_status[0]->slug : '', $status->slug); ?>>
+                                            <?php echo esc_html($status->name); ?>
+                                        </option>
+                                    <?php endforeach; ?>
+                                </select>
+                            </div>
+                        </div>
+                        
+                        <div class="postbox">
+                            <div class="postbox-header">
+                                <h3>Actions</h3>
+                            </div>
+                            <div class="inside">
+                                <p class="submit">
+                                    <input type="submit" class="button-primary" value="Update Inquiry">
+                                </p>
+                                <p>
+                                    <a href="<?php echo admin_url('admin.php?page=inquiry-management&action=view&inquiry_id=' . $inquiry_id); ?>" class="button">Cancel</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <?php else: ?>
+            <div class="notice notice-error"><p>Inquiry not found.</p></div>
+        <?php endif; ?>
+        
+    <?php elseif ($action === 'view' && $inquiry_id): ?>
         <?php
         $inquiry = get_post($inquiry_id);
         if ($inquiry && $inquiry->post_type === 'inquiry'):
@@ -396,33 +558,37 @@ foreach ($statuses as $status) {
                         </div>
                         <div class="inside">
                             <div class="admin-actions-grid">
-                                <a href="mailto:<?php echo esc_attr($customer_email); ?>" class="action-btn email-btn">
+                                <button type="button" class="action-btn email-btn" onclick="showEmailModal('<?php echo esc_js($customer_email); ?>', '<?php echo esc_js($customer_name); ?>', '<?php echo esc_js($inquiry_id); ?>')">
                                     <span class="dashicons dashicons-email"></span>
-                                    <span>Email</span>
-                                </a>
+                                    <span>Send Email</span>
+                                </button>
                                 <a href="tel:<?php echo esc_attr($customer_phone); ?>" class="action-btn call-btn">
                                     <span class="dashicons dashicons-phone"></span>
                                     <span>Call</span>
                                 </a>
-                                <button type="button" class="action-btn confirm-btn" onclick="openConfirmModal()">
+                                <button type="button" class="action-btn confirm-btn" onclick="showModal('confirmModal')">
                                     <span class="dashicons dashicons-yes-alt"></span>
                                     <span>Confirm</span>
                                 </button>
-                                <button type="button" class="action-btn quote-btn" onclick="openQuoteModal()">
+                                <button type="button" class="action-btn quote-btn" onclick="showModal('quoteModal')">
                                     <span class="dashicons dashicons-money-alt"></span>
                                     <span>Send Quote</span>
                                 </button>
-                                <button type="button" class="action-btn reject-btn" onclick="openRejectModal()">
+                                <button type="button" class="action-btn reject-btn" onclick="showModal('rejectModal')">
                                     <span class="dashicons dashicons-dismiss"></span>
                                     <span>Reject</span>
                                 </button>
-                                <button type="button" class="action-btn reply-btn" onclick="toggleReplyForm()">
-                                    <span class="dashicons dashicons-admin-comments"></span>
-                                    <span>Reply</span>
-                                </button>
+                                <a href="<?php echo admin_url('admin.php?page=inquiry-management&action=edit&inquiry_id=' . $inquiry_id); ?>" class="action-btn edit-btn">
+                                    <span class="dashicons dashicons-edit"></span>
+                                    <span>Edit</span>
+                                </a>
                                 <button type="button" class="action-btn print-btn" onclick="printInquiry()">
                                     <span class="dashicons dashicons-printer"></span>
                                     <span>Print</span>
+                                </button>
+                                <button type="button" class="action-btn export-btn" onclick="exportInquiry()">
+                                    <span class="dashicons dashicons-download"></span>
+                                    <span>Export</span>
                                 </button>
                             </div>
                         </div>
@@ -625,17 +791,126 @@ foreach ($statuses as $status) {
     <?php endif; ?>
 </div>
 
-<!-- Modal Dialogs -->
+<!-- Enhanced Modal Dialogs -->
+<!-- Email Modal -->
+<div id="emailModal" class="admin-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>📧 Send Email</h3>
+            <span class="close" onclick="hideModal('emailModal')">&times;</span>
+        </div>
+        <form method="post" action="">
+            <input type="hidden" name="action" value="send_email">
+            <input type="hidden" name="inquiry_id" value="<?php echo isset($inquiry_id) ? $inquiry_id : ''; ?>">
+            <?php wp_nonce_field('inquiry_action', 'inquiry_nonce'); ?>
+            
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="email_template">Email Template:</label>
+                    <select id="email_template" name="email_template" onchange="loadEmailTemplate()">
+                        <option value="custom">Custom Email</option>
+                        <option value="confirmation">Inquiry Confirmation</option>
+                        <option value="quote_request">Quote Request Response</option>
+                        <option value="follow_up">Follow-up Email</option>
+                        <option value="thank_you">Thank You Email</option>
+                        <option value="information">Additional Information</option>
+                    </select>
+                </div>
+                
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="email_to">To:</label>
+                        <input type="email" id="email_to" name="email_to" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_cc">CC (Optional):</label>
+                        <input type="email" id="email_cc" name="email_cc">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_subject">Subject:</label>
+                    <input type="text" id="email_subject" name="email_subject" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="email_message">Message:</label>
+                    <textarea id="email_message" name="email_message" rows="8" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" name="send_copy" value="1"> Send a copy to myself
+                    </label>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="button" onclick="hideModal('emailModal')">Cancel</button>
+                <button type="submit" class="button button-primary">📧 Send Email</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Quote Modal -->
+<div id="quoteModal" class="admin-modal" style="display: none;">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>💰 Send Quote</h3>
+            <span class="close" onclick="hideModal('quoteModal')">&times;</span>
+        </div>
+        <form method="post" action="">
+            <input type="hidden" name="action" value="send_quote">
+            <input type="hidden" name="inquiry_id" value="<?php echo isset($inquiry_id) ? $inquiry_id : ''; ?>">
+            <?php wp_nonce_field('inquiry_action', 'inquiry_nonce'); ?>
+            
+            <div class="modal-body">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="quote_amount">Quote Amount ($):</label>
+                        <input type="number" id="quote_amount" name="quote_amount" step="0.01" min="0" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="quote_validity">Valid Until:</label>
+                        <input type="date" id="quote_validity" name="quote_validity" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quote_inclusions">Inclusions:</label>
+                    <textarea id="quote_inclusions" name="quote_inclusions" rows="4" placeholder="What's included in this quote..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quote_exclusions">Exclusions:</label>
+                    <textarea id="quote_exclusions" name="quote_exclusions" rows="3" placeholder="What's not included..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="quote_notes">Additional Notes:</label>
+                    <textarea id="quote_notes" name="quote_notes" rows="3" placeholder="Terms, conditions, or additional information..."></textarea>
+                </div>
+            </div>
+            
+            <div class="modal-footer">
+                <button type="button" class="button" onclick="hideModal('quoteModal')">Cancel</button>
+                <button type="submit" class="button button-primary">💰 Send Quote</button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <!-- Confirm Inquiry Modal -->
 <div id="confirmModal" class="admin-modal" style="display: none;">
     <div class="modal-content">
         <div class="modal-header">
             <h3>✅ Confirm Inquiry</h3>
-            <span class="close" onclick="closeModal('confirmModal')">&times;</span>
+            <span class="close" onclick="hideModal('confirmModal')">&times;</span>
         </div>
         <form method="post" action="">
             <input type="hidden" name="action" value="confirm_inquiry">
-            <input type="hidden" name="inquiry_id" value="<?php echo $inquiry_id; ?>">
+            <input type="hidden" name="inquiry_id" value="<?php echo isset($inquiry_id) ? $inquiry_id : ''; ?>">
             <?php wp_nonce_field('inquiry_action', 'inquiry_nonce'); ?>
             
             <div class="modal-body">
@@ -646,7 +921,7 @@ foreach ($statuses as $status) {
             </div>
             
             <div class="modal-footer">
-                <button type="button" class="button" onclick="closeModal('confirmModal')">Cancel</button>
+                <button type="button" class="button" onclick="hideModal('confirmModal')">Cancel</button>
                 <button type="submit" class="button button-primary">✅ Confirm Inquiry</button>
             </div>
         </form>
@@ -658,11 +933,11 @@ foreach ($statuses as $status) {
     <div class="modal-content">
         <div class="modal-header">
             <h3>❌ Reject Inquiry</h3>
-            <span class="close" onclick="closeModal('rejectModal')">&times;</span>
+            <span class="close" onclick="hideModal('rejectModal')">&times;</span>
         </div>
         <form method="post" action="">
             <input type="hidden" name="action" value="reject_inquiry">
-            <input type="hidden" name="inquiry_id" value="<?php echo $inquiry_id; ?>">
+            <input type="hidden" name="inquiry_id" value="<?php echo isset($inquiry_id) ? $inquiry_id : ''; ?>">
             <?php wp_nonce_field('inquiry_action', 'inquiry_nonce'); ?>
             
             <div class="modal-body">
@@ -952,44 +1227,110 @@ foreach ($statuses as $status) {
 </style>
 
 <script>
-function openConfirmModal() {
-    document.getElementById('confirmModal').style.display = 'block';
-}
-
-function openRejectModal() {
-    document.getElementById('rejectModal').style.display = 'block';
-}
-
-function openQuoteModal() {
-    // Set default validity date to 30 days from now
-    const validityDate = new Date();
-    validityDate.setDate(validityDate.getDate() + 30);
-    document.getElementById('quote_validity').value = validityDate.toISOString().split('T')[0];
+// Enhanced Modal Functions
+function showModal(modalId) {
+    document.getElementById(modalId).style.display = 'block';
     
-    document.getElementById('quoteModal').style.display = 'block';
+    // Set default values for quote modal
+    if (modalId === 'quoteModal') {
+        const validityDate = new Date();
+        validityDate.setDate(validityDate.getDate() + 30);
+        document.getElementById('quote_validity').value = validityDate.toISOString().split('T')[0];
+    }
 }
 
-function closeModal(modalId) {
+function hideModal(modalId) {
     document.getElementById(modalId).style.display = 'none';
 }
 
-function toggleReplyForm() {
-    const form = document.getElementById('reply-form');
-    form.style.display = form.style.display === 'none' ? 'block' : 'none';
+// Email Modal Functions
+function showEmailModal(email, name, inquiryId) {
+    document.getElementById('email_to').value = email;
+    document.getElementById('email_subject').value = 'Re: Your Travel Inquiry';
+    document.getElementById('email_message').value = `Dear ${name},\n\nThank you for your travel inquiry. We have received your request and our team is reviewing the details.\n\nWe will get back to you shortly with more information.\n\nBest regards,\n${document.title || 'Travel Team'}`;
+    
+    showModal('emailModal');
+}
+
+function loadEmailTemplate() {
+    const template = document.getElementById('email_template').value;
+    const subjectField = document.getElementById('email_subject');
+    const messageField = document.getElementById('email_message');
+    
+    const templates = {
+        'confirmation': {
+            subject: 'Travel Inquiry Confirmation',
+            message: 'Dear Customer,\n\nWe have received your travel inquiry and want to confirm that we are processing your request.\n\nOur team will review your requirements and get back to you within 24 hours with detailed information and recommendations.\n\nThank you for choosing us for your travel needs.\n\nBest regards,\nTravel Team'
+        },
+        'quote_request': {
+            subject: 'Travel Quote - As Requested',
+            message: 'Dear Customer,\n\nThank you for your interest in our travel services. Based on your inquiry, we have prepared a customized quote for your consideration.\n\nPlease find the detailed quote information attached. This quote is valid for 30 days from the date of this email.\n\nWe look forward to helping you plan your perfect trip.\n\nBest regards,\nTravel Team'
+        },
+        'follow_up': {
+            subject: 'Following Up on Your Travel Inquiry',
+            message: 'Dear Customer,\n\nWe wanted to follow up on your recent travel inquiry to see if you have any additional questions or if there is anything else we can help you with.\n\nOur team is here to assist you in planning the perfect trip that meets all your requirements.\n\nPlease feel free to reach out if you need any clarification or have additional requests.\n\nBest regards,\nTravel Team'
+        },
+        'thank_you': {
+            subject: 'Thank You for Your Travel Inquiry',
+            message: 'Dear Customer,\n\nThank you for taking the time to submit your travel inquiry. We truly appreciate your interest in our services.\n\nYour inquiry is important to us, and we are committed to providing you with the best possible travel experience.\n\nWe will be in touch soon with more details.\n\nBest regards,\nTravel Team'
+        },
+        'information': {
+            subject: 'Additional Information for Your Trip',
+            message: 'Dear Customer,\n\nWe hope this email finds you well. We wanted to provide you with some additional information that might be helpful for your upcoming trip planning.\n\nPlease find the relevant details below, and do not hesitate to contact us if you have any questions.\n\nWe are here to ensure your travel experience is exceptional.\n\nBest regards,\nTravel Team'
+        }
+    };
+    
+    if (templates[template]) {
+        subjectField.value = templates[template].subject;
+        messageField.value = templates[template].message;
+    }
 }
 
 function printInquiry() {
     window.print();
 }
 
+function exportInquiry() {
+    // Simple export functionality - could be enhanced to generate PDF
+    const inquiryData = {
+        id: '<?php echo isset($inquiry_id) ? $inquiry_id : ''; ?>',
+        customer: '<?php echo isset($customer_name) ? esc_js($customer_name) : ''; ?>',
+        email: '<?php echo isset($customer_email) ? esc_js($customer_email) : ''; ?>',
+        subject: '<?php echo isset($subject) ? esc_js($subject) : ''; ?>',
+        message: '<?php echo isset($message) ? esc_js($message) : ''; ?>'
+    };
+    
+    const dataStr = JSON.stringify(inquiryData, null, 2);
+    const dataBlob = new Blob([dataStr], {type: 'application/json'});
+    const url = URL.createObjectURL(dataBlob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `inquiry-${inquiryData.id}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+}
+
 // Close modal when clicking outside of it
 window.onclick = function(event) {
-    const modals = ['confirmModal', 'rejectModal', 'quoteModal'];
+    const modals = ['emailModal', 'confirmModal', 'rejectModal', 'quoteModal'];
     modals.forEach(modalId => {
         const modal = document.getElementById(modalId);
-        if (event.target === modal) {
+        if (modal && event.target === modal) {
             modal.style.display = 'none';
         }
     });
+}
+
+// Legacy function support
+function openConfirmModal() { showModal('confirmModal'); }
+function openRejectModal() { showModal('rejectModal'); }
+function openQuoteModal() { showModal('quoteModal'); }
+function closeModal(modalId) { hideModal(modalId); }
+
+function toggleReplyForm() {
+    const form = document.getElementById('reply-form');
+    if (form) {
+        form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    }
 }
 </script>

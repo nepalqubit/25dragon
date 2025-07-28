@@ -119,4 +119,4 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 <!-- Breadcrumbs Container -->
 <div id="breadcrumbs-container"></div>
 
-	<div id="content" class="site-content pt-20">
+	<div id="content" class="site-content <?php echo is_front_page() ? 'pt-0' : 'pt-20'; ?>">

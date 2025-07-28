@@ -21,6 +21,9 @@ if (!defined('ABSPATH')) {
             <?php _e('Monitor your bookings, inquiries, and system performance', 'tznew'); ?>
         </div>
     </div>
+    <div class="booking-dashboard-container">
+        <div class="dashboard-main-content">
+            <div class="dashboard-grid-container">
     
     <div class="booking-dashboard">
         <!-- Statistics Cards -->
@@ -268,6 +271,8 @@ if (!defined('ABSPATH')) {
                         <span class="status-label status-success"><?php _e('Enabled', 'tznew'); ?></span>
                     </div>
                 </div>
+            </div>
+        </div>
             </div>
         </div>
     </div>

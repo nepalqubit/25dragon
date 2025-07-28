@@ -164,6 +164,95 @@
             updateCSSProperty('--trek-bg-muted', newval);
         });
     });
+    
+    // ==========================================================================
+    // GRADIENT BACKGROUNDS
+    // ==========================================================================
+    
+    // Header Gradient Background
+    wp.customize('tznew_header_gradient_bg', function(value) {
+        value.bind(function(newval) {
+            if (newval) {
+                generateCSS('.site-header', 'background', newval);
+            } else {
+                // Remove the custom background if empty
+                var style = document.getElementById('tznew-customizer-preview');
+                if (style) {
+                    var css = style.innerHTML;
+                    var regex = new RegExp('\.site-header\s*\{[^}]*background\s*:[^;}]*;?[^}]*\}', 'g');
+                    style.innerHTML = css.replace(regex, '');
+                }
+            }
+        });
+    });
+    
+    // Footer Gradient Background
+    wp.customize('tznew_footer_gradient_bg', function(value) {
+        value.bind(function(newval) {
+            if (newval) {
+                generateCSS('.site-footer', 'background', newval);
+            } else {
+                // Remove the custom background if empty
+                var style = document.getElementById('tznew-customizer-preview');
+                if (style) {
+                    var css = style.innerHTML;
+                    var regex = new RegExp('\.site-footer\s*\{[^}]*background\s*:[^;}]*;?[^}]*\}', 'g');
+                    style.innerHTML = css.replace(regex, '');
+                }
+            }
+        });
+    });
+    
+    // Sidebar Gradient Background
+    wp.customize('tznew_sidebar_gradient_bg', function(value) {
+        value.bind(function(newval) {
+            if (newval) {
+                generateCSS('.sidebar', 'background', newval);
+            } else {
+                // Remove the custom background if empty
+                var style = document.getElementById('tznew-customizer-preview');
+                if (style) {
+                    var css = style.innerHTML;
+                    var regex = new RegExp('\.sidebar\s*\{[^}]*background\s*:[^;}]*;?[^}]*\}', 'g');
+                    style.innerHTML = css.replace(regex, '');
+                }
+            }
+        });
+    });
+    
+    // Content Gradient Background
+    wp.customize('tznew_content_gradient_bg', function(value) {
+        value.bind(function(newval) {
+            if (newval) {
+                generateCSS('.site-content', 'background', newval);
+            } else {
+                // Remove the custom background if empty
+                var style = document.getElementById('tznew-customizer-preview');
+                if (style) {
+                    var css = style.innerHTML;
+                    var regex = new RegExp('\.site-content\s*\{[^}]*background\s*:[^;}]*;?[^}]*\}', 'g');
+                    style.innerHTML = css.replace(regex, '');
+                }
+            }
+        });
+    });
+    
+    // Hero/Banner Gradient Background
+    wp.customize('tznew_hero_gradient_bg', function(value) {
+        value.bind(function(newval) {
+            if (newval) {
+                generateCSS('.hero-section, .banner-section, .page-banner', 'background', newval);
+            } else {
+                // Remove the custom background if empty
+                var style = document.getElementById('tznew-customizer-preview');
+                if (style) {
+                    var css = style.innerHTML;
+                    var regex = new RegExp('\.hero-section, \.banner-section, \.page-banner\s*\{[^}]*background\s*:[^;}]*;?[^}]*\}', 'g');
+                    style.innerHTML = css.replace(regex, '');
+                }
+            }
+        });
+    });
 
     // ==========================================================================
     // TYPOGRAPHY SETTINGS

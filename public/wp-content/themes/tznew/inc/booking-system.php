@@ -748,7 +748,7 @@ class TZnew_Booking_System {
             'inquiry_message' => sanitize_textarea_field($_POST['inquiry_message'] ?? ''),
             'travel_dates' => sanitize_text_field($_POST['travel_dates'] ?? ''),
             'group_size_inquiry' => sanitize_text_field($_POST['group_size_inquiry'] ?? ''),
-            'budget_range' => sanitize_text_field($_POST['budget_range'] ?? ''),
+            'budget_range_inquiry' => sanitize_text_field($_POST['budget_range_inquiry'] ?? ''),
             'contact_preference' => sanitize_text_field($_POST['contact_preference'] ?? ''),
             'response_urgency' => sanitize_text_field($_POST['response_urgency'] ?? ''),
             'newsletter_subscription' => isset($_POST['newsletter_subscription']) ? 1 : 0,

@@ -1146,7 +1146,7 @@
              }
              
              // Prepare form data
-             const formData = new FormData(this);
+             const formData = new FormData(this[0]);
              
              $.ajax({
                  url: tznew_ajax.ajax_url,
@@ -1220,7 +1220,7 @@
              }
              
              // Prepare form data
-             const formData = new FormData(this);
+             const formData = new FormData(this[0]);
              
              $.ajax({
                  url: tznew_ajax.ajax_url,
@@ -1301,7 +1301,7 @@
              }
              
              // Prepare form data
-             const formData = new FormData(this);
+             const formData = new FormData(this[0]);
              formData.append('action', 'tznew_submit_contact');
              
              $.ajax({
@@ -1462,10 +1462,10 @@
              $steps.removeClass('active');
              $steps.filter(`[data-step="${step}"]`).addClass('active');
              
-             // Update step indicators
-             $form.find('.step-header span').removeClass('bg-green-500 text-white').addClass('bg-gray-300 text-gray-600');
+             // Update step indicators - only target the numbered circle spans, not the "Step X of 3" text spans
+             $form.find('.step-header h3 span').removeClass('bg-green-500 text-white').addClass('bg-gray-300 text-gray-600');
              for (let i = 1; i <= step; i++) {
-                 $steps.filter(`[data-step="${i}"]`).find('.step-header span').removeClass('bg-gray-300 text-gray-600').addClass('bg-green-500 text-white');
+                 $steps.filter(`[data-step="${i}"]`).find('.step-header h3 span').removeClass('bg-gray-300 text-gray-600').addClass('bg-green-500 text-white');
              }
          }
          

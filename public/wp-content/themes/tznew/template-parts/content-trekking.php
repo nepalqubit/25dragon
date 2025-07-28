@@ -390,14 +390,14 @@ if (!defined('ABSPATH')) {
                             const routeCoordinates = <?php echo json_encode($route_coordinates); ?>;
                             
                             if (routeCoordinates.length > 0) {
-                                // Calculate center point
-                                const centerLat = routeCoordinates.reduce((sum, coord) => sum + coord.lat, 0) / routeCoordinates.length;
-                                const centerLng = routeCoordinates.reduce((sum, coord) => sum + coord.lng, 0) / routeCoordinates.length;
-                                
-                                // Initialize map with attribution control disabled
-                                const map = L.map('routeMap', {
-                                    attributionControl: false
-                                }).setView([centerLat, centerLng], 10);
+                // Calculate center point, fallback to Nepal center coordinates
+                const centerLat = routeCoordinates.length > 0 ? routeCoordinates.reduce((sum, coord) => sum + coord.lat, 0) / routeCoordinates.length : 28.3949;
+                const centerLng = routeCoordinates.length > 0 ? routeCoordinates.reduce((sum, coord) => sum + coord.lng, 0) / routeCoordinates.length : 84.1240;
+                
+                // Initialize map with attribution control disabled
+                const map = L.map('routeMap', {
+                    attributionControl: false
+                }).setView([centerLat, centerLng], 10);
                                 
                                 // Add OpenStreetMap tiles
                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -527,6 +527,9 @@ if (!defined('ABSPATH')) {
                                 // Fit map to show all segments and markers
                                 if (allSegments.getLayers().length > 0) {
                                     map.fitBounds(allSegments.getBounds(), { padding: [20, 20] });
+                                } else {
+                                    // If no route data, keep the default center view
+                                    map.setView([28.3949, 84.1240], 7);
                                 }
                                 
                                 // Add map controls

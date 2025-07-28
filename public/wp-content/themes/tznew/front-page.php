@@ -438,9 +438,9 @@ get_header();
 					}
 					</style>
 					<?php
-					wp_reset_postdata();
-				else :
-					?>
+wp_reset_postdata();
+?>
+<?php else : ?>
 					<p class="text-center"><?php esc_html_e('No featured treks found.', 'tznew'); ?></p>
 				<?php endif; ?>
 			</div>
@@ -526,7 +526,7 @@ get_header();
 				// Initialize the map with attribution control disabled
 				const map = L.map('trek-map', {
 					attributionControl: false
-				}).setView([28.3949, 84.1240], 7); // Center on Nepal
+				}).setView([27.7172, 85.3240], 7); // Center on Kathmandu
 				
 				// Add tile layer
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -534,54 +534,112 @@ get_header();
 					maxZoom: 18
 				}).addTo(map);
 			
-			// Custom marker icon for regional destinations
+			// Custom marker icons for different elements
 			const regionIcon = L.divIcon({
 				html: '<i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i>',
 				iconSize: [40, 40],
 				className: 'custom-div-icon region-icon'
 			});
 			
-			// Define regional boundaries (approximate polygons for each region)
-			const regionBoundaries = {
-				'everest': [
-					[27.7, 86.5], [28.2, 86.5], [28.2, 87.3], [27.7, 87.3]
-				],
-				'annapurna': [
-					[28.2, 83.4], [28.9, 83.4], [28.9, 84.2], [28.2, 84.2]
-				],
-				'langtang': [
-					[27.9, 85.2], [28.5, 85.2], [28.5, 85.9], [27.9, 85.9]
-				],
-				'manaslu': [
-					[28.2, 84.2], [28.8, 84.2], [28.8, 84.9], [28.2, 84.9]
-				],
-				'mustang': [
-					[28.4, 83.4], [29.1, 83.4], [29.1, 84.2], [28.4, 84.2]
-				],
-				'dolpo': [
-					[28.7, 82.4], [29.5, 82.4], [29.5, 83.4], [28.7, 83.4]
-				],
-				'rara': [
-					[29.2, 81.7], [29.8, 81.7], [29.8, 82.4], [29.2, 82.4]
-				],
-				'makalu': [
-					[27.5, 86.8], [28.2, 86.8], [28.2, 87.5], [27.5, 87.5]
-				],
-				'kanchenjunga': [
-					[27.4, 87.8], [28.0, 87.8], [28.0, 88.5], [27.4, 88.5]
-				]
+			const trekIcon = L.divIcon({
+				html: '<i class="fas fa-mountain text-green-600 text-xl"></i>',
+				iconSize: [30, 30],
+				className: 'custom-div-icon trek-icon'
+			});
+			
+			const tourIcon = L.divIcon({
+				html: '<i class="fas fa-route text-purple-600 text-xl"></i>',
+				iconSize: [30, 30],
+				className: 'custom-div-icon tour-icon'
+			});
+			
+			// Color scheme for regions
+			const regionColors = {
+				'everest': '#ef4444',
+				'annapurna': '#10b981',
+				'langtang': '#3b82f6',
+				'manaslu': '#f59e0b',
+				'mustang': '#8b5cf6',
+				'dolpo': '#06b6d4',
+				'rara': '#84cc16',
+				'makalu': '#f97316',
+				'kanchenjunga': '#ec4899'
 			};
 			
+			// Define regional boundaries with accurate polygon coordinates for Nepal's trekking regions
+		const regionBoundaries = {
+			'everest': [
+				[27.65, 86.4], [28.05, 86.4], [28.05, 87.1], [27.65, 87.1], [27.65, 86.4]
+			],
+			'annapurna': [
+				[28.1, 83.6], [28.7, 83.6], [28.7, 84.0], [28.1, 84.0], [28.1, 83.6]
+			],
+			'langtang': [
+				[27.9, 85.2], [28.4, 85.2], [28.4, 85.7], [27.9, 85.7], [27.9, 85.2]
+			],
+			'manaslu': [
+				[28.3, 84.3], [28.7, 84.3], [28.7, 84.8], [28.3, 84.8], [28.3, 84.3]
+			],
+			'mustang': [
+				[28.8, 83.5], [29.2, 83.5], [29.2, 84.1], [28.8, 84.1], [28.8, 83.5]
+			],
+			'dolpo': [
+				[28.7, 82.8], [29.3, 82.8], [29.3, 83.4], [28.7, 83.4], [28.7, 82.8]
+			],
+			'rara': [
+				[29.4, 82.0], [29.6, 82.0], [29.6, 82.3], [29.4, 82.3], [29.4, 82.0]
+			],
+			'makalu': [
+				[27.4, 86.8], [28.0, 86.8], [28.0, 87.4], [27.4, 87.4], [27.4, 86.8]
+			],
+			'kanchenjunga': [
+				[27.3, 87.8], [27.9, 87.8], [27.9, 88.3], [27.3, 88.3], [27.3, 87.8]
+			]
+		};
+
+		// Trek route coordinates for popular routes in each region
+		const trekRoutes = {
+			'everest': [
+				[27.6875, 86.7317], // Lukla Airport
+				[27.8028, 86.7158], // Namche Bazaar
+				[27.8369, 86.7647], // Tengboche
+				[27.8758, 86.8289], // Dingboche
+				[27.8881, 86.8531], // Lobuche
+				[27.9861, 86.9211]  // Everest Base Camp
+			],
+			'annapurna': [
+				[28.2096, 83.9856], // Besisahar
+				[28.3500, 84.1200], // Manang
+				[28.4500, 84.0800], // Thorong Phedi
+				[28.4800, 84.0200], // Muktinath
+				[28.3700, 83.9400]  // Jomsom
+			],
+			'langtang': [
+				[28.1000, 85.3200], // Syabrubesi
+				[28.2000, 85.4500], // Langtang Village
+				[28.2096, 85.5200], // Kyanjin Gompa
+				[28.2500, 85.5500]  // Kyanjin Ri
+			],
+			'manaslu': [
+				[28.2300, 84.6700], // Soti Khola
+				[28.3500, 84.8000], // Samagaon
+				[28.4200, 84.5800], // Dharamsala
+				[28.4500, 84.5500]  // Larkya La Pass
+			]
+		};
+			
 				// Fetch regional destinations
-				fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=get_all_locations')
-					.then(response => {
-						if (!response.ok) {
-							throw new Error(`HTTP error! status: ${response.status}`);
-						}
-						return response.json();
-					})
-					.then(data => {
-					if (data.success && data.data.length > 0) {
+			console.log('Loading regional destinations...');
+			fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=get_all_locations')
+				.then(response => {
+					if (!response.ok) {
+						throw new Error(`HTTP error! status: ${response.status}`);
+					}
+					return response.json();
+				})
+				.then(data => {
+				console.log('Regions loaded:', data);
+				if (data.success && data.data.length > 0) {
 						const bounds = L.latLngBounds();
 						let totalTreks = 0;
 						let totalTours = 0;
@@ -609,23 +667,41 @@ get_header();
 								}
 					
 						
-						// Build regional popup content with routes
+						// Build enhanced regional popup content with trek visualization
 						let popupContent = `
-							<div class="p-4 min-w-80 max-w-96">
-								<div class="mb-4">
-									<h3 class="text-xl font-bold text-gray-900 mb-2">
+							<div class="p-4 min-w-96 max-w-lg">
+								<div class="mb-4 border-b pb-3">
+									<h3 class="text-2xl font-bold text-gray-900 mb-2">
 										<i class="fas fa-mountain text-blue-600 mr-2"></i>
 										${region.region_name}
 									</h3>
-									<div class="flex gap-4 text-sm text-gray-600 mb-3">
-										<span><i class="fas fa-hiking text-green-600 mr-1"></i>${region.trekking_count} Treks</span>
-										<span><i class="fas fa-car text-blue-600 mr-1"></i>${region.tours_count} Tours</span>
-										<span><i class="fas fa-route text-purple-600 mr-1"></i>${region.routes_count} Total Routes</span>
+									<div class="flex gap-4 text-sm">
+										<span class="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full">
+											<i class="fas fa-hiking mr-1"></i>${region.trekking_count} Treks
+										</span>
+										<span class="flex items-center bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+											<i class="fas fa-car mr-1"></i>${region.tours_count} Tours
+										</span>
+										<span class="flex items-center bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
+											<i class="fas fa-route mr-1"></i>${region.routes_count} Total Routes
+										</span>
 									</div>
 								</div>
 								
-								<div class="max-h-64 overflow-y-auto space-y-3">
-						`;
+								<div class="max-h-80 overflow-y-auto space-y-4">
+									<div class="text-sm font-semibold text-gray-700 mb-2">Available Treks & Tours:</div>
+							`;
+							
+							// Group routes by type
+							const treks = region.routes.filter(route => route.type === 'trekking');
+							const tours = region.routes.filter(route => route.type === 'tours');
+							
+							if (treks.length > 0) {
+								popupContent += `
+									<div class="border-l-4 border-green-500 pl-3">
+										<div class="font-semibold text-green-700 mb-2">Trekking Routes:</div>
+								`;
+							}
 								
 								// Add routes to popup
 								region.routes.forEach(route => {
@@ -684,84 +760,218 @@ get_header();
 								`;
 								
 								// Create region polygon if boundary exists
-								if (boundary) {
-									const polygon = L.polygon(boundary, {
-										color: '#3b82f6',
-										fillColor: '#3b82f6',
-										fillOpacity: 0.3,
+						if (boundary) {
+							const regionColor = regionColors[region.region_slug] || '#3b82f6';
+							
+							const polygon = L.polygon(boundary, {
+								color: regionColor,
+								fillColor: regionColor,
+								fillOpacity: 0.2,
+								weight: 2,
+								opacity: 0.8,
+								className: 'region-polygon'
+							}).addTo(map);
+							
+							// Store trek data with polygon for easy access
+							polygon.regionData = region;
+							
+							// Add trek and tour markers within the region
+								const trekMarkers = [];
+								const tourMarkers = [];
+								
+								// Create trek markers
+								const trekCount = Math.min(region.trekking_count, 2);
+								for (let i = 0; i < trekCount; i++) {
+									const offsetLat = (Math.random() - 0.5) * 0.04;
+									const offsetLng = (Math.random() - 0.5) * 0.04;
+									
+									const bounds = L.latLngBounds(boundary);
+									const center = bounds.getCenter();
+									const markerLat = center.lat + offsetLat;
+									const markerLng = center.lng + offsetLng;
+									
+									const trekMarker = L.marker([markerLat, markerLng], {icon: trekIcon})
+										.addTo(map)
+										.bindTooltip(`Trek in ${region.region_name}`, {
+												permanent: false,
+												direction: 'top',
+												className: 'custom-tooltip'
+											});
+									
+									trekMarkers.push(trekMarker);
+								}
+								
+								// Create tour markers
+								const tourCount = Math.min(region.tours_count, 2);
+								for (let i = 0; i < tourCount; i++) {
+									const offsetLat = (Math.random() - 0.5) * 0.04;
+									const offsetLng = (Math.random() - 0.5) * 0.04;
+									
+									const bounds = L.latLngBounds(boundary);
+									const center = bounds.getCenter();
+									const markerLat = center.lat + offsetLat + 0.02;
+									const markerLng = center.lng + offsetLng + 0.02;
+									
+									const tourMarker = L.marker([markerLat, markerLng], {icon: tourIcon})
+										.addTo(map)
+										.bindTooltip(`Tour in ${region.region_name}`, {
+												permanent: false,
+												direction: 'top',
+												className: 'custom-tooltip'
+											});
+									
+									tourMarkers.push(tourMarker);
+								}
+							
+							// Add hover effects with immediate popup
+								polygon.on('mouseover', function(e) {
+									this.setStyle({
+										fillOpacity: 0.4,
 										weight: 3,
+										opacity: 1.0
+									});
+									
+									// Create enhanced hover popup content
+									const hoverContent = `
+										<div class="bg-white rounded-lg p-3 shadow-lg" style="min-width: 200px;">
+											<div class="flex items-center mb-2">
+												<div class="w-3 h-3 rounded-full mr-2" style="background-color: ${regionColor}"></div>
+												<h4 class="font-bold text-gray-900">${region.region_name}</h4>
+											</div>
+											<div class="text-sm text-gray-600 mb-2">
+												${region.description || 'Explore amazing treks and tours in this region.'}
+											</div>
+											<div class="flex items-center gap-3 text-xs">
+												<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full">
+													<i class="fas fa-mountain mr-1"></i>${region.trekking_count} Treks
+												</span>
+												<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
+													<i class="fas fa-map-marked-alt mr-1"></i>${region.tours_count} Tours
+												</span>
+											</div>
+											<div class="mt-2 text-xs text-gray-500">
+												<em>Click to see all routes</em>
+											</div>
+										</div>
+									`;
+									
+									// Show immediate popup on hover
+									const hoverPopup = L.popup({
+										closeButton: false,
+										offset: [0, -10],
+										className: 'hover-popup'
+									})
+									.setContent(hoverContent)
+									.setLatLng(e.latlng)
+									.openOn(map);
+									
+									polygon._hoverPopup = hoverPopup;
+									
+									// Show trek markers
+									trekMarkers.forEach(marker => marker.setOpacity(1));
+								});
+								
+								polygon.on('mouseout', function(e) {
+									this.setStyle({
+										fillOpacity: 0.2,
+										weight: 2,
+										opacity: 0.8
+									});
+									
+									// Remove hover popup
+									if (this._hoverPopup) {
+										map.removeLayer(this._hoverPopup);
+									}
+									
+									// Hide trek markers
+									trekMarkers.forEach(marker => marker.setOpacity(0));
+								});
+							
+							// Add click event for detailed popup with trek routes
+							polygon.on('click', function(e) {
+								// Add trek route polyline if available
+								if (trekRoutes[region.region_slug]) {
+									const routeLine = L.polyline(trekRoutes[region.region_slug], {
+										color: regionColor,
+										weight: 4,
 										opacity: 0.8,
-										className: 'region-polygon'
+										dashArray: '5, 10'
 									}).addTo(map);
 									
-									// Add hover effects
-									polygon.on('mouseover', function(e) {
-										this.setStyle({
-											fillOpacity: 0.6,
-											weight: 4,
-											opacity: 1.0
-										});
-										
-										// Show region name tooltip
-										const tooltip = L.tooltip({
-											permanent: false,
-											direction: 'top',
-											className: 'region-tooltip'
-										})
-										.setContent(`<strong>${region.region_name}</strong><br/>${region.trekking_count} Treks, ${region.tours_count} Tours`)
-										.setLatLng(e.latlng)
-										.addTo(map);
-										
-										polygon._tooltip = tooltip;
-									});
-									
-									polygon.on('mouseout', function(e) {
-										this.setStyle({
-											fillOpacity: 0.3,
-											weight: 3,
-											opacity: 0.8
-										});
-										
-										// Remove tooltip
-										if (this._tooltip) {
-											map.removeLayer(this._tooltip);
+									// Auto-remove route after 5 seconds
+									setTimeout(() => {
+										if (map.hasLayer(routeLine)) {
+											map.removeLayer(routeLine);
 										}
-									});
-									
-									// Add click event for detailed popup
-									polygon.on('click', function(e) {
-										L.popup({
-											maxWidth: 400,
-											className: 'custom-popup regional-popup'
-										})
-										.setContent(popupContent)
-										.setLatLng(e.latlng)
-										.openOn(map);
-									});
-									
-									bounds.extend(boundary);
-								} else {
-									// Fallback to marker if no boundary defined
-									const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
-										.addTo(map)
-										.bindPopup(popupContent, {
-											maxWidth: 400,
-											className: 'custom-popup regional-popup'
-										});
-									
-									bounds.extend([region.latitude, region.longitude]);
+									}, 5000);
 								}
+								
+								L.popup({
+									maxWidth: 450,
+									className: 'custom-popup regional-popup'
+								})
+								.setContent(popupContent)
+								.setLatLng(e.latlng)
+								.openOn(map);
+							});
+							
+							bounds.extend(boundary);
+						} else {
+							// Fallback to marker if no boundary defined
+							const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
+								.addTo(map)
+								.bindPopup(popupContent, {
+									maxWidth: 450,
+									className: 'custom-popup regional-popup'
+								});
+							
+							bounds.extend([region.latitude, region.longitude]);
+						}
 							}
 						});
 						
 						// Fit map to show all markers
-						if (bounds.isValid()) {
-							map.fitBounds(bounds, {padding: [30, 30]});
-						}
-						
-						// Update counter
-						const totalRegions = data.data.length;
-						document.getElementById('trek-count').textContent = `${totalRegions} regions (${totalTreks} treks, ${totalTours} tours)`;
+					if (bounds.isValid()) {
+						map.fitBounds(bounds, {padding: [30, 30]});
+					}
+					
+					// Add map legend
+					const legend = L.control({position: 'bottomright'});
+					
+					legend.onAdd = function(map) {
+						const div = L.DomUtil.create('div', 'map-legend');
+						div.innerHTML = `
+							<div style="background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; min-width: 180px; border: 1px solid #e5e7eb;">
+								<h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #111827;">Map Legend</h4>
+								<div style="margin-bottom: 6px;">
+									<span style="display: inline-block; width: 20px; height: 3px; background: #3b82f6; margin-right: 8px; border-radius: 2px;"></span>
+									Trekking Region
+								</div>
+								<div style="margin-bottom: 6px;">
+									<span style="display: inline-block; width: 20px; height: 3px; background: #10b981; margin-right: 8px; border-radius: 2px; border-style: dashed;"></span>
+									Trek Route
+								</div>
+								<div style="margin-bottom: 6px;">
+									<span style="display: inline-block; width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; margin-right: 8px; border: 1px solid #d97706;"></span>
+									Trekking Point
+								</div>
+								<div style="margin-bottom: 6px;">
+									<span style="display: inline-block; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; margin-right: 8px; border: 1px solid #2563eb;"></span>
+									Tour Point
+								</div>
+								<div style="font-size: 10px; color: #6b7280; margin-top: 8px;">
+									<small><i class="fas fa-info-circle mr-1"></i>Click regions to explore<br/>Hover for details</small>
+								</div>
+							</div>
+						`;
+						return div;
+					};
+					
+					legend.addTo(map);
+					
+					// Update counter
+					const totalRegions = data.data.length;
+					document.getElementById('trek-count').textContent = `${totalRegions} regions (${totalTreks} treks, ${totalTours} tours)`;
 					} else {
 						document.getElementById('trek-count').textContent = 'No regions found';
 					}
@@ -769,6 +979,8 @@ get_header();
 					.catch(error => {
 						console.error('Error loading regions:', error);
 						document.getElementById('trek-count').textContent = 'Error loading regions: ' + error.message;
+						// Add test regions for debugging
+						addTestRegions();
 					});
 				
 				// Map toggle functionality
@@ -803,6 +1015,237 @@ get_header();
 				document.getElementById('trek-count').textContent = 'Error initializing map';
 			}
 		});
+		
+		// Function to add test regions when AJAX fails
+		function addTestRegions() {
+			console.log('Adding test regions...');
+			
+			const testRegions = [
+				{
+					region_name: "Everest Region",
+					region_slug: "everest",
+					description: "Home to the world's highest peak and legendary trekking routes.",
+					latitude: 27.9881,
+					longitude: 86.9250,
+					boundary: [
+						[27.5, 86.5],
+						[28.2, 86.5],
+						[28.2, 87.2],
+						[27.5, 87.2]
+					],
+					trekking_count: 12,
+					tours_count: 5,
+					image: "<?php echo get_template_directory_uri(); ?>/images/everest.jpg",
+					trekking_routes: [
+						{
+							title: "Everest Base Camp Trek",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/everest-base-camp.jpg",
+							duration: "14 days",
+							difficulty: "Challenging",
+							rating: 4.8,
+							link: "<?php echo home_url(); ?>/trek/everest-base-camp"
+						}
+					],
+					tours: [
+						{
+							title: "Everest Helicopter Tour",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/helicopter-tour.jpg",
+							duration: "1 day",
+							rating: 4.9,
+							link: "<?php echo home_url(); ?>/tour/everest-helicopter"
+						}
+					]
+				},
+				{
+					region_name: "Annapurna Region",
+					region_slug: "annapurna",
+					description: "Diverse landscapes from subtropical valleys to high mountain passes.",
+					latitude: 28.3333,
+					longitude: 83.8333,
+					boundary: [
+						[28.0, 83.5],
+						[28.6, 83.5],
+						[28.6, 84.2],
+						[28.0, 84.2]
+					],
+					trekking_count: 15,
+					tours_count: 8,
+					image: "<?php echo get_template_directory_uri(); ?>/images/annapurna.jpg",
+					trekking_routes: [
+						{
+							title: "Annapurna Circuit Trek",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/annapurna-circuit.jpg",
+							duration: "18 days",
+							difficulty: "Moderate",
+							rating: 4.7,
+							link: "<?php echo home_url(); ?>/trek/annapurna-circuit"
+						}
+					],
+					tours: [
+						{
+							title: "Pokhara Valley Tour",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/pokhara.jpg",
+							duration: "3 days",
+							rating: 4.6,
+							link: "<?php echo home_url(); ?>/tour/pokhara-valley"
+						}
+					]
+				},
+				{
+					region_name: "Langtang Region",
+					region_slug: "langtang",
+					description: "Closest trekking region to Kathmandu with beautiful valleys and peaks.",
+					latitude: 28.1333,
+					longitude: 85.5333,
+					boundary: [
+						[27.8, 85.2],
+						[28.4, 85.2],
+						[28.4, 85.8],
+						[27.8, 85.8]
+					],
+					trekking_count: 8,
+					tours_count: 3,
+					image: "<?php echo get_template_directory_uri(); ?>/images/langtang.jpg",
+					trekking_routes: [
+						{
+							title: "Langtang Valley Trek",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/langtang-valley.jpg",
+							duration: "10 days",
+							difficulty: "Moderate",
+							rating: 4.5,
+							link: "<?php echo home_url(); ?>/trek/langtang-valley"
+						}
+					],
+					tours: [
+						{
+							title: "Langtang Helicopter Tour",
+							thumbnail: "<?php echo get_template_directory_uri(); ?>/images/langtang-helicopter.jpg",
+							duration: "1 day",
+							rating: 4.8,
+							link: "<?php echo home_url(); ?>/tour/langtang-helicopter"
+						}
+					]
+				}
+			];
+			
+			const bounds = L.latLngBounds();
+			
+			testRegions.forEach(region => {
+				const regionColor = getRegionColor(region.region_slug);
+				
+				// Build popup content
+				let popupContent = `
+					<div class="bg-white rounded-lg p-4 max-w-md">
+						<div class="flex items-center mb-3">
+							<div class="w-4 h-4 rounded-full mr-3" style="background-color: ${regionColor}"></div>
+							<h3 class="text-lg font-bold text-gray-900">${region.region_name}</h3>
+						</div>
+						<div class="mb-3">
+							<p class="text-sm text-gray-600">${region.description}</p>
+						</div>
+						<div class="flex items-center gap-3 mb-4">
+							<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
+								<i class="fas fa-mountain mr-1"></i>${region.trekking_count} Treks
+							</span>
+							<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs">
+								<i class="fas fa-map-marked-alt mr-1"></i>${region.tours_count} Tours
+							</span>
+						</div>
+				`;
+				
+				// Add trek routes
+				if (region.trekking_routes && region.trekking_routes.length > 0) {
+					popupContent += `
+						<div class="mb-3">
+							<h4 class="font-semibold text-sm text-gray-900 mb-2">Popular Treks</h4>
+							${region.trekking_routes.map(trek => `
+								<div class="flex items-center mb-2 p-2 bg-gray-50 rounded">
+									<img src="${trek.thumbnail}" alt="${trek.title}" class="w-12 h-12 rounded object-cover mr-2">
+									<div>
+										<div class="font-medium text-sm">${trek.title}</div>
+										<div class="text-xs text-gray-500">${trek.duration} • ${trek.difficulty}</div>
+									</div>
+								</div>
+							`).join('')}
+						</div>
+					`;
+				}
+				
+				// Add tours
+				if (region.tours && region.tours.length > 0) {
+					popupContent += `
+						<div class="mb-3">
+							<h4 class="font-semibold text-sm text-gray-900 mb-2">Popular Tours</h4>
+							${region.tours.map(tour => `
+								<div class="flex items-center mb-2 p-2 bg-blue-50 rounded">
+									<img src="${tour.thumbnail}" alt="${tour.title}" class="w-12 h-12 rounded object-cover mr-2">
+									<div>
+										<div class="font-medium text-sm">${tour.title}</div>
+										<div class="text-xs text-gray-500">${tour.duration}</div>
+									</div>
+								</div>
+							`).join('')}
+						</div>
+					`;
+				}
+				
+				popupContent += `
+						<div class="flex gap-2">
+							<a href="<?php echo home_url(); ?>/regions/${region.region_slug}" class="flex-1 bg-blue-600 text-white text-center py-2 px-3 rounded text-sm hover:bg-blue-700 transition-colors">
+								View All Routes
+							</a>
+						</div>
+					</div>
+				`;
+				
+				// Create polygon
+				if (region.boundary && region.boundary.length > 0) {
+					const polygon = L.polygon(region.boundary, {
+						color: regionColor,
+						fillColor: regionColor,
+						fillOpacity: 0.2,
+						weight: 2,
+						opacity: 0.8
+					}).addTo(map);
+					
+					polygon.bindPopup(popupContent);
+					
+					// Add hover effects
+					polygon.on('mouseover', function(e) {
+						this.setStyle({
+							fillOpacity: 0.4,
+							weight: 3,
+							opacity: 1.0
+						});
+					});
+					
+					polygon.on('mouseout', function(e) {
+						this.setStyle({
+							fillOpacity: 0.2,
+							weight: 2,
+							opacity: 0.8
+						});
+					});
+					
+					bounds.extend(region.boundary);
+				} else {
+					// Fallback marker
+					const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
+						.addTo(map)
+						.bindPopup(popupContent);
+					
+					bounds.extend([region.latitude, region.longitude]);
+				}
+			});
+			
+			// Fit map to show all test regions
+			if (bounds.isValid()) {
+				map.fitBounds(bounds, {padding: [30, 30]});
+			}
+			
+			// Update counter
+			document.getElementById('trek-count').textContent = `Test: ${testRegions.length} regions`;
+		}
 		</script>
 		
 		<!-- Custom CSS for map icons -->
@@ -890,11 +1333,98 @@ get_header();
 		}
 		
 		.region-tooltip::before {
-			border-top-color: rgba(0, 0, 0, 0.8) !important;
-		}
-		</style>
+				border-top-color: rgba(0, 0, 0, 0.8) !important;
+			}
+			
+			/* Custom tooltip styles */
+			.custom-tooltip {
+				background: rgba(0, 0, 0, 0.9) !important;
+				border: none !important;
+				border-radius: 6px !important;
+				color: white !important;
+				font-size: 12px !important;
+				padding: 6px 10px !important;
+				box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+			}
+			
+			.custom-tooltip::before {
+				border-top-color: rgba(0, 0, 0, 0.9) !important;
+			}
+			
+			/* Enhanced map legend */
+			.map-legend {
+				margin: 10px !important;
+			}
+			
+			.map-legend .leaflet-control {
+				background: none !important;
+				box-shadow: none !important;
+			}
+			
+			/* Enhanced popup styles */
+			.regional-popup .leaflet-popup-content-wrapper {
+				border-radius: 12px !important;
+				overflow: hidden;
+				box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+			}
+			
+			/* Trek marker animation */
+			.trek-marker {
+				animation: pulse 2s infinite;
+			}
+			
+			@keyframes pulse {
+				0% {
+					transform: scale(1);
+					opacity: 1;
+				}
+				50% {
+					transform: scale(1.1);
+					opacity: 0.8;
+				}
+				100% {
+					transform: scale(1);
+					opacity: 1;
+				}
+			}
+			
+			/* Route line styling */
+			.route-line {
+				animation: dash 3s linear infinite;
+			}
+			
+			@keyframes dash {
+				to {
+					stroke-dashoffset: -20;
+				}
+			}
+			
+			/* Hover popup styles */
+			.hover-popup .leaflet-popup-content-wrapper {
+				background: white;
+				border-radius: 8px;
+				box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+				padding: 0;
+			}
+			
+			.hover-popup .leaflet-popup-content {
+				margin: 0;
+				padding: 0;
+			}
+			
+			.hover-popup .leaflet-popup-tip {
+				background: white;
+				box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+			}
+			
+			/* Enhanced region polygon hover */
+			.region-polygon:hover {
+				filter: brightness(1.1);
+			}
+			</style>
 	</section>
 
+	<?php if (get_theme_mod('tznew_show_trek_blocks', true)) : ?>
 	<!-- Interactive Trek Blocks Section -->
 	<section class="py-20 bg-gray-50">
 		<div class="container mx-auto px-4">
@@ -1069,7 +1599,9 @@ get_header();
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
+	<?php if (get_theme_mod('tznew_show_why_choose', true)) : ?>
 	<!-- Why Choose Nepal Trekking Section -->
 	<section class="py-20 bg-white">
 		<div class="container mx-auto px-4">
@@ -1120,8 +1652,9 @@ get_header();
 				</div>
 			</div>
 			
+			<?php if (get_theme_mod('tznew_statistics_show', true)) : ?>
 			<!-- Statistics Section -->
-			<div class="mt-20 bg-gradient-to-r from-green-600 to-teal-600 rounded-3xl p-12 text-white">
+			<div class="mt-20 statistics-section bg-gradient-to-r from-green-600 to-teal-600 rounded-3xl p-12 text-white">
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 					<div>
 						<div class="text-4xl font-bold mb-2">15+</div>
@@ -1141,8 +1674,10 @@ get_header();
 					</div>
 				</div>
 			</div>
+			<?php endif; ?>
 		</div>
 	</section>
+	<?php endif; ?>
 
 	<!-- What Our Trekkers Say Section -->
 	<section class="py-20 bg-gray-50">
@@ -1232,6 +1767,7 @@ get_header();
 		</div>
 	</section>
 
+	<?php if (get_theme_mod('tznew_show_popular_trips', true)) : ?>
 	<!-- Popular Trips Section -->
 	<section class="py-20 bg-white">
 		<div class="container mx-auto px-4">
@@ -1259,9 +1795,10 @@ get_header();
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
 				<?php
 				// Query for popular trekking posts only
+				$popular_trips_count = get_theme_mod('tznew_popular_trips_count', 3);
 				$popular_trekking_args = array(
 					'post_type'      => 'trekking',
-					'posts_per_page' => 3,
+					'posts_per_page' => intval($popular_trips_count),
 					'meta_key'       => 'popular',
 					'meta_value'     => '1',
 					'orderby'        => 'date',
@@ -1385,7 +1922,8 @@ get_header();
 	</section>
 
 	<!-- Plan Your Adventure Section -->
-	<section class="py-20 bg-gradient-to-br from-green-600 to-blue-600 text-white">
+	<?php if (get_theme_mod('tznew_adventure_show', true)) : ?>
+	<section class="adventure-section py-20 bg-gradient-to-br from-green-600 to-blue-600 text-white">
 		<div class="container mx-auto px-4">
 			<div class="max-w-4xl mx-auto text-center">
 				<h2 class="text-4xl lg:text-5xl font-bold mb-6">
@@ -1463,15 +2001,16 @@ get_header();
 			</div>
 		</div>
 	</section>
+	<?php endif; ?>
 
 	<?php
 	// Modern Popular Tours Section
-	if (function_exists('get_field')) :
+	if (function_exists('get_field') && get_theme_mod('tznew_popular_tours_show', true)) :
 		$popular_tours_title = tznew_get_field_safe('popular_tours_title', 'option');
 		$popular_tours_subtitle = tznew_get_field_safe('popular_tours_subtitle', 'option');
-		$popular_tours_count = tznew_get_field_safe('popular_tours_count', 'option') ?: 3;
+		$popular_tours_count = get_theme_mod('tznew_popular_tours_count', 6);
 		?>
-		<section class="popular-tours py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden">
+		<section class="popular-tours-section py-24 bg-gradient-to-br from-white via-blue-50 to-indigo-50 relative overflow-hidden">
 			<!-- Background Elements -->
 			<div class="absolute top-0 right-0 w-96 h-96 bg-blue-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
 			<div class="absolute bottom-0 left-0 w-96 h-96 bg-purple-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
@@ -1609,304 +2148,23 @@ get_header();
 					</div>
 					<?php
 					wp_reset_postdata();
-				else :
 					?>
-					<p class="text-center"><?php esc_html_e('No popular tours found.', 'tznew'); ?></p>
-				<?php endif; ?>
+				<?php else : ?>
+						<p class="text-center"><?php esc_html_e('No popular tours found.', 'tznew'); ?></p>
+					<?php endif; ?>
 			</div>
 		</section>
 	<?php endif; ?>
-
-	<?php
-	// Trekking Regions Section
-	$regions_title = get_theme_mod('tznew_regions_title', 'Popular Trekking Regions');
-	$regions_subtitle = get_theme_mod('tznew_regions_subtitle', 'Explore Nepal\'s most spectacular trekking regions, each offering unique landscapes, cultural experiences, and unforgettable adventures.');
-	
-	if (get_theme_mod('tznew_regions_show', true)) :
-	?>
-	<section class="trekking-regions py-24 bg-gradient-to-br from-green-50 via-emerald-50 to-teal-50 relative overflow-hidden">
-		<!-- Background Elements -->
-		<div class="absolute top-0 right-0 w-96 h-96 bg-green-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-		<div class="absolute bottom-0 left-0 w-96 h-96 bg-teal-100 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-		
-		<div class="container mx-auto px-4 relative z-10">
-			<div class="text-center mb-16">
-				<div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-6">
-					<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-						<path d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z"></path>
-					</svg>
-					Trekking Destinations
-				</div>
-				<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-				<?php echo esc_html($regions_title); ?>
-			</h2>
-			<p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"><?php echo esc_html($regions_subtitle); ?></p>
-				<div class="w-24 h-1 bg-gradient-to-r from-green-600 to-teal-600 mx-auto mt-6 rounded-full"></div>
-			</div>
-			
-			<div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-				<?php
-				// Get actual trekking regions from database
-				$regions = get_terms(array(
-					'taxonomy' => 'region',
-					'hide_empty' => true,
-					'number' => 3,
-					'orderby' => 'count',
-					'order' => 'DESC'
-				));
-				
-				// Fallback to all regions if none found
-				if (empty($regions) || is_wp_error($regions)) {
-					$regions = get_terms(array(
-						'taxonomy' => 'region',
-						'hide_empty' => false,
-						'number' => 3
-					));
-				}
-				
-				// Define default styling for regions
-				$region_styles = array(
-					'from-blue-600 to-indigo-700',
-					'from-green-600 to-emerald-700', 
-					'from-teal-600 to-cyan-700',
-					'from-purple-600 to-pink-700',
-					'from-orange-600 to-red-700'
-				);
-				
-				$region_icons = array(
-					'fas fa-mountain',
-					'fas fa-leaf',
-					'fas fa-water',
-					'fas fa-tree',
-					'fas fa-snowflake'
-				);
-				
-				if (!empty($regions) && !is_wp_error($regions)) :
-					foreach ($regions as $index => $region_term) :
-						// Count trekking packages in this region
-						$count_args = array(
-							'post_type' => 'trekking',
-							'post_status' => 'publish',
-							'posts_per_page' => -1,
-							'tax_query' => array(
-								array(
-									'taxonomy' => 'region',
-									'field' => 'term_id',
-									'terms' => $region_term->term_id,
-								),
-							),
-						);
-						$count_query = new WP_Query($count_args);
-						$trekking_count = $count_query->found_posts;
-						wp_reset_postdata();
-						
-						// Get archive link
-						$archive_link = get_term_link($region_term);
-						if (is_wp_error($archive_link)) {
-							$archive_link = add_query_arg('region', $region_term->slug, get_post_type_archive_link('trekking'));
-						}
-						
-						// Get region description from ACF or use default
-						$region_description = tznew_get_field_safe('description', 'region_' . $region_term->term_id);
-						if (empty($region_description)) {
-							$region_description = $region_term->description;
-						}
-						if (empty($region_description)) {
-							$region_description = 'Discover amazing trekking adventures in ' . $region_term->name . ' with breathtaking landscapes and unforgettable experiences.';
-						}
-						
-						// Assign styles cyclically
-						$color_class = $region_styles[$index % count($region_styles)];
-						$icon_class = $region_icons[$index % count($region_icons)];
-				?>
-					<div class="trekking-region-card group">
-						<div class="bg-white rounded-3xl shadow-lg overflow-hidden hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-3">
-							<!-- Header with Icon -->
-							<div class="bg-gradient-to-r <?php echo esc_attr($color_class); ?> p-8 text-white text-center">
-								<div class="w-20 h-20 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-									<i class="<?php echo esc_attr($icon_class); ?> text-3xl"></i>
-								</div>
-								<h3 class="text-2xl font-bold mb-2"><?php echo esc_html($region_term->name); ?></h3>
-								<div class="inline-flex items-center bg-white/20 backdrop-blur-sm px-4 py-2 rounded-full text-sm font-medium">
-									<svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-										<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-									</svg>
-									<?php echo number_format_i18n($trekking_count); ?> <?php echo _n('Trek', 'Treks', $trekking_count, 'tznew'); ?>
-								</div>
-							</div>
-							
-							<!-- Content -->
-							<div class="p-8">
-								<p class="text-gray-600 text-lg leading-relaxed mb-6"><?php echo esc_html($region_description); ?></p>
-								
-								<!-- Stats -->
-								<div class="grid grid-cols-2 gap-4 mb-6">
-									<div class="text-center p-4 bg-gray-50 rounded-xl">
-										<div class="text-2xl font-bold text-gray-900 mb-1"><?php echo number_format_i18n($trekking_count); ?></div>
-										<div class="text-sm text-gray-600"><?php echo _n('Trek Package', 'Trek Packages', $trekking_count, 'tznew'); ?></div>
-									</div>
-									<div class="text-center p-4 bg-gray-50 rounded-xl">
-										<div class="text-2xl font-bold text-gray-900 mb-1">4.8</div>
-										<div class="text-sm text-gray-600">Average Rating</div>
-									</div>
-								</div>
-								
-								<!-- CTA Button -->
-								<a href="<?php echo esc_url($archive_link); ?>" class="block w-full bg-gradient-to-r <?php echo esc_attr($color_class); ?> hover:shadow-lg text-white font-bold py-4 px-6 rounded-xl transition-all duration-300 transform hover:scale-105 text-center group">
-									<span class="flex items-center justify-center">
-										<span>Explore <?php echo esc_html($region_term->name); ?></span>
-										<svg class="w-5 h-5 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-											<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-										</svg>
-									</span>
-								</a>
-							</div>
-						</div>
-					</div>
-				<?php endforeach; ?>
-			<?php else : ?>
-				<div class="col-span-full text-center py-12">
-					<p class="text-gray-600 text-lg"><?php esc_html_e('No trekking regions found.', 'tznew'); ?></p>
-				</div>
-			<?php endif; ?>
-			</div>
-			
-			<!-- View All Regions Link -->
-			<div class="text-center mt-16">
-				<a href="<?php echo esc_url(get_post_type_archive_link('trekking')); ?>" class="inline-flex items-center bg-gradient-to-r from-gray-800 to-gray-900 hover:from-gray-900 hover:to-black text-white font-bold py-4 px-8 rounded-full transition-all duration-300 transform hover:scale-105 hover:shadow-xl">
-					<svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-					</svg>
-					<?php esc_html_e('View All Trekking Packages', 'tznew'); ?>
-					<svg class="w-5 h-5 ml-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-						<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-					</svg>
-				</a>
-			</div>
-		</div>
-	</section>
-	<?php endif; ?>
-
-	<?php
-	// Modern Destinations Section
-	$destinations_title = get_theme_mod('tznew_destinations_title', 'Explore Amazing Destinations');
-	$destinations_subtitle = get_theme_mod('tznew_destinations_subtitle', 'Discover breathtaking landscapes and immerse yourself in diverse cultures across our carefully curated destinations.');
-	$destinations_count = get_theme_mod('tznew_destinations_count', 6);
-	
-	if (get_theme_mod('tznew_destinations_show', true)) :
-		?>
-		<section class="destinations py-24 bg-gradient-to-br from-gray-50 via-slate-50 to-gray-100 relative overflow-hidden">
-			<!-- Background Pattern -->
-			<div class="absolute inset-0 opacity-5">
-				<div class="absolute top-20 right-20 w-80 h-80 bg-green-500 rounded-full mix-blend-multiply filter blur-xl animate-blob"></div>
-				<div class="absolute bottom-20 left-20 w-80 h-80 bg-teal-500 rounded-full mix-blend-multiply filter blur-xl animate-blob animation-delay-4000"></div>
-			</div>
-			
-			<div class="container mx-auto px-4 relative z-10">
-				<div class="text-center mb-16">
-					<div class="inline-flex items-center px-4 py-2 bg-green-100 text-green-800 rounded-full text-sm font-medium mb-6">
-						<svg class="w-4 h-4 mr-2" fill="currentColor" viewBox="0 0 20 20">
-							<path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"></path>
-						</svg>
-						Top Destinations
-					</div>
-					<h2 class="text-4xl md:text-5xl lg:text-6xl font-bold text-gray-900 mb-6">
-					<?php echo esc_html($destinations_title); ?>
-				</h2>
-				<p class="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"><?php echo esc_html($destinations_subtitle); ?></p>
-					<div class="w-24 h-1 bg-gradient-to-r from-green-600 to-teal-600 mx-auto mt-6 rounded-full"></div>
-				</div>
-				
-				<?php
-				// Get regions with image and count
-				$regions = get_terms(array(
-					'taxonomy' => 'region',
-					'hide_empty' => true,
-				));
-				
-				if (!empty($regions) && !is_wp_error($regions)) :
-					?>
-					<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-						<?php foreach ($regions as $region) : 
-							$region_image = tznew_get_field_safe('region_image', 'region_' . $region->term_id);
-							$region_image_url = isset($region_image['url']) ? $region_image['url'] : '';
-							
-							if (empty($region_image_url)) {
-								$region_image_url = get_template_directory_uri() . '/assets/images/default-region.jpg';
-							}
-							
-							// Count posts in this region
-							$count_args = array(
-								'post_type' => array('trekking', 'tours'),
-								'tax_query' => array(
-									array(
-										'taxonomy' => 'region',
-										'field' => 'term_id',
-										'terms' => $region->term_id,
-									),
-								),
-								'posts_per_page' => -1,
-							);
-							
-							$count_query = new WP_Query($count_args);
-							$count = $count_query->found_posts;
-							?>
-							<div class="destination-card relative rounded-3xl overflow-hidden shadow-xl group transition-all duration-500 hover:-translate-y-3 hover:shadow-2xl">
-								<a href="<?php echo esc_url(get_term_link($region)); ?>" class="block">
-									<div class="relative h-80">
-										<img src="<?php echo esc_url($region_image_url); ?>" alt="<?php echo esc_attr($region->name); ?>" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" />
-										
-										<!-- Gradient Overlays -->
-											<div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/10"></div>
-											<div class="absolute inset-0 bg-gradient-to-br from-green-600/30 to-teal-600/30 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-										
-										<!-- Adventure Count Badge -->
-										<div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-gray-900 px-3 py-2 rounded-full text-sm font-semibold shadow-lg">
-											<svg class="w-4 h-4 inline mr-1 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-												<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
-											</svg>
-											<?php echo number_format_i18n($count); ?>
-										</div>
-										
-										<!-- Content -->
-											<div class="absolute bottom-0 left-0 right-0 p-6 text-white">
-												<h3 class="text-2xl lg:text-3xl font-bold mb-2 group-hover:text-green-200 transition-colors duration-300 text-shadow-lg drop-shadow-lg">
-													<?php echo esc_html($region->name); ?>
-												</h3>
-												<p class="text-white text-base mb-4 font-medium drop-shadow-md">
-													<?php printf(_n('%s Adventure Available', '%s Adventures Available', $count, 'tznew'), number_format_i18n($count)); ?>
-												</p>
-											
-											<!-- CTA Button -->
-															<div class="inline-flex items-center bg-green-600/80 backdrop-blur-md hover:bg-green-500/90 text-white px-5 py-3 rounded-full text-sm font-semibold transition-all duration-300 group-hover:scale-105 border border-green-500/30 shadow-lg">
-														<span class="drop-shadow-sm">Explore Now</span>
-														<svg class="w-4 h-4 ml-2 transform group-hover:translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-															<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path>
-														</svg>
-													</div>
-										</div>
-									</div>
-								</a>
-							</div>
-						<?php endforeach; ?>
-					</div>
-					<?php
-				else :
-					?>
-					<p class="text-center"><?php esc_html_e('No destinations found.', 'tznew'); ?></p>
-				<?php endif; ?>
-			</div>
-		</section>
 	<?php endif; ?>
 
 	<?php
 	// Modern Testimonials Section
-	if (function_exists('get_field')) :
+	if (function_exists('get_field') && get_theme_mod('tznew_testimonials_show', true)) :
 		$testimonials_title = tznew_get_field_safe('testimonials_title', 'option');
 		$testimonials_subtitle = tznew_get_field_safe('testimonials_subtitle', 'option');
 		$testimonials = tznew_get_field_safe('testimonials', 'option');
 		?>
-		<section class="testimonials py-24 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white relative overflow-hidden">
+		<section class="testimonials-section py-24 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white relative overflow-hidden">
 			<!-- Background Elements -->
 			<div class="absolute inset-0 opacity-10">
 				<div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-xl animate-blob"></div>
@@ -1932,10 +2190,13 @@ get_header();
 					<div class="w-24 h-1 bg-gradient-to-r from-yellow-400 to-orange-400 mx-auto mt-6 rounded-full"></div>
 				</div>
 				
-				<?php if ($testimonials) : ?>
+				<?php if ($testimonials) : 
+					$testimonials_count = get_theme_mod('tznew_testimonials_count', 6);
+					$limited_testimonials = array_slice($testimonials, 0, $testimonials_count);
+				?>
 					<div class="testimonial-slider max-w-6xl mx-auto">
 						<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-							<?php foreach ($testimonials as $testimonial) : ?>
+							<?php foreach ($limited_testimonials as $testimonial) : ?>
 								<div class="testimonial-card bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/20 hover:bg-white/15 transition-all duration-500 transform hover:-translate-y-2 hover:shadow-2xl group">
 									<!-- Quote Icon -->
 									<div class="mb-6">
@@ -1984,7 +2245,7 @@ get_header();
 								</div>
 							<?php endforeach; ?>
 						</div>
-					</div>
+				</div>
 				<?php else : ?>
 					<p class="text-center"><?php esc_html_e('No testimonials found.', 'tznew'); ?></p>
 				<?php endif; ?>
@@ -2082,8 +2343,8 @@ get_header();
 					</div>
 					<?php
 					wp_reset_postdata();
-				else :
-					?>
+				?>
+				<?php else : ?>
 					<p class="text-center"><?php esc_html_e('No blog posts found.', 'tznew'); ?></p>
 				<?php endif; ?>
 			</div>

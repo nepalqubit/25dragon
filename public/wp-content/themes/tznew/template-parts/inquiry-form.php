@@ -53,14 +53,16 @@ $tour_title = isset($_GET['tour_title']) ? sanitize_text_field(urldecode($_GET['
         <!-- Step 1: Personal Information -->
         <div class="form-step active" data-step="1">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold mr-3">1</span>
                         <?php esc_html_e('Personal Information', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 1 of 3', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Tell us about yourself so we can provide personalized information.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Tell us about yourself so we can provide personalized information.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 1 of 3', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -133,14 +135,16 @@ $tour_title = isset($_GET['tour_title']) ? sanitize_text_field(urldecode($_GET['
         <!-- Step 2: Travel Details -->
         <div class="form-step" data-step="2">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">2</span>
                         <?php esc_html_e('Travel Details', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 2 of 3', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Help us understand your travel preferences and requirements.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Help us understand your travel preferences and requirements.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 2 of 3', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -202,14 +206,16 @@ $tour_title = isset($_GET['tour_title']) ? sanitize_text_field(urldecode($_GET['
         <!-- Step 3: Your Message -->
         <div class="form-step" data-step="3">
             <div class="step-header mb-6">
-                <div class="flex items-center justify-between mb-4">
-                    <h3 class="text-2xl font-bold text-gray-800 flex items-center">
+                <div class="mb-4">
+                    <h3 class="text-2xl font-bold text-gray-800 flex items-center mb-3">
                         <span class="w-8 h-8 bg-gray-300 text-gray-600 rounded-full flex items-center justify-center text-sm font-bold mr-3">3</span>
                         <?php esc_html_e('Your Message', 'tznew'); ?>
                     </h3>
-                    <span class="text-sm text-gray-500"><?php esc_html_e('Step 3 of 3', 'tznew'); ?></span>
                 </div>
-                <p class="text-gray-600"><?php esc_html_e('Tell us about your interests, questions, or any specific requirements.', 'tznew'); ?></p>
+                <div class="flex items-center justify-between mb-4">
+                    <p class="text-gray-600"><?php esc_html_e('Tell us about your interests, questions, or any specific requirements.', 'tznew'); ?></p>
+                    <span class="text-sm text-gray-500 ml-4"><?php esc_html_e('Step 3 of 3', 'tznew'); ?></span>
+                </div>
             </div>
             
             <div class="form-group">
@@ -264,6 +270,108 @@ $tour_title = isset($_GET['tour_title']) ? sanitize_text_field(urldecode($_GET['
                 </div>
             </div>
             
+            <!-- Travel Preferences (Optional) -->
+            <div class="form-section mt-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-map-marked-alt mr-2 text-purple-500"></i>
+                    <?php esc_html_e('Travel Preferences', 'tznew'); ?> 
+                    <span class="text-sm font-normal text-gray-500 ml-2">(<?php esc_html_e('Optional', 'tznew'); ?>)</span>
+                </h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="form-group">
+                        <label for="travel_dates" class="form-label block text-sm font-medium text-gray-700 mb-2">
+                            <?php esc_html_e('Preferred Travel Dates', 'tznew'); ?>
+                        </label>
+                        <input type="text" id="travel_dates" name="travel_dates" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300" placeholder="<?php esc_attr_e('e.g., March 2024 or Spring 2024', 'tznew'); ?>">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="group_size_inquiry" class="form-label block text-sm font-medium text-gray-700 mb-2">
+                            <?php esc_html_e('Group Size', 'tznew'); ?>
+                        </label>
+                        <select id="group_size_inquiry" name="group_size_inquiry" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
+                            <option value=""><?php esc_html_e('Select group size', 'tznew'); ?></option>
+                            <option value="1"><?php esc_html_e('Solo traveler', 'tznew'); ?></option>
+                            <option value="2"><?php esc_html_e('2 people', 'tznew'); ?></option>
+                            <option value="3-5"><?php esc_html_e('3-5 people', 'tznew'); ?></option>
+                            <option value="6-10"><?php esc_html_e('6-10 people', 'tznew'); ?></option>
+                            <option value="11-15"><?php esc_html_e('11-15 people', 'tznew'); ?></option>
+                            <option value="16+"><?php esc_html_e('16+ people', 'tznew'); ?></option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label for="budget_range_inquiry" class="form-label block text-sm font-medium text-gray-700 mb-2">
+                        <?php esc_html_e('Budget Range (per person)', 'tznew'); ?>
+                    </label>
+                    <select id="budget_range_inquiry" name="budget_range_inquiry" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
+                        <option value=""><?php esc_html_e('Select budget range', 'tznew'); ?></option>
+                        <option value="under-500"><?php esc_html_e('Under $500', 'tznew'); ?></option>
+                        <option value="500-1000"><?php esc_html_e('$500 - $1,000', 'tznew'); ?></option>
+                        <option value="1000-2000"><?php esc_html_e('$1,000 - $2,000', 'tznew'); ?></option>
+                        <option value="2000-3000"><?php esc_html_e('$2,000 - $3,000', 'tznew'); ?></option>
+                        <option value="3000-5000"><?php esc_html_e('$3,000 - $5,000', 'tznew'); ?></option>
+                        <option value="over-5000"><?php esc_html_e('Over $5,000', 'tznew'); ?></option>
+                        <option value="flexible"><?php esc_html_e('Flexible', 'tznew'); ?></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Contact Preferences -->
+            <div class="form-section mt-8">
+                <h4 class="text-lg font-semibold text-gray-800 mb-4 flex items-center">
+                    <i class="fas fa-phone mr-2 text-indigo-500"></i>
+                    <?php esc_html_e('Contact Preferences', 'tznew'); ?>
+                </h4>
+                
+                <div class="form-group">
+                    <label class="form-label block text-sm font-medium text-gray-700 mb-3">
+                        <?php esc_html_e('How would you prefer to be contacted?', 'tznew'); ?>
+                    </label>
+                    <div class="space-y-2">
+                        <label class="flex items-center space-x-3">
+                            <input type="radio" name="contact_preference" value="email" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" checked>
+                            <span class="text-sm text-gray-700"><?php esc_html_e('Email (Recommended)', 'tznew'); ?></span>
+                        </label>
+                        <label class="flex items-center space-x-3">
+                            <input type="radio" name="contact_preference" value="phone" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
+                            <span class="text-sm text-gray-700"><?php esc_html_e('Phone Call', 'tznew'); ?></span>
+                        </label>
+                        <label class="flex items-center space-x-3">
+                            <input type="radio" name="contact_preference" value="whatsapp" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
+                            <span class="text-sm text-gray-700"><?php esc_html_e('WhatsApp', 'tznew'); ?></span>
+                        </label>
+                        <label class="flex items-center space-x-3">
+                            <input type="radio" name="contact_preference" value="any" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
+                            <span class="text-sm text-gray-700"><?php esc_html_e('Any method is fine', 'tznew'); ?></span>
+                        </label>
+                    </div>
+                </div>
+                
+                <div class="form-group mt-4">
+                    <label for="response_urgency" class="form-label block text-sm font-medium text-gray-700 mb-2">
+                        <?php esc_html_e('Response Urgency', 'tznew'); ?>
+                    </label>
+                    <select id="response_urgency" name="response_urgency" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
+                        <option value="normal"><?php esc_html_e('Normal (within 24 hours)', 'tznew'); ?></option>
+                        <option value="urgent"><?php esc_html_e('Urgent (within 4 hours)', 'tznew'); ?></option>
+                        <option value="flexible"><?php esc_html_e('Flexible (within 48 hours)', 'tznew'); ?></option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Newsletter Subscription -->
+            <div class="form-section mt-6">
+                <div class="flex items-start space-x-3">
+                    <input type="checkbox" id="newsletter_subscription" name="newsletter_subscription" class="mt-1 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500" value="1">
+                    <label for="newsletter_subscription" class="text-sm text-gray-700">
+                        <?php esc_html_e('Subscribe to our newsletter for travel tips, special offers, and updates on new destinations', 'tznew'); ?>
+                    </label>
+                </div>
+            </div>
+            
             <div class="step-navigation mt-8 flex justify-between">
                 <button type="button" class="prev-step bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-8 rounded-xl transition-all duration-300 flex items-center">
                     <i class="fas fa-arrow-left mr-2"></i>
@@ -273,108 +381,6 @@ $tour_title = isset($_GET['tour_title']) ? sanitize_text_field(urldecode($_GET['
                     <i class="fas fa-paper-plane mr-2"></i>
                     <?php esc_html_e('Send Inquiry', 'tznew'); ?>
                 </button>
-            </div>
-        </div>
-
-        <!-- Travel Preferences (Optional) -->
-        <div class="form-section">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-map-marked-alt mr-2 text-purple-500"></i>
-                <?php esc_html_e('Travel Preferences', 'tznew'); ?> 
-                <span class="text-sm font-normal text-gray-500 ml-2">(<?php esc_html_e('Optional', 'tznew'); ?>)</span>
-            </h3>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div class="form-group">
-                    <label for="travel_dates" class="form-label block text-sm font-medium text-gray-700 mb-2">
-                        <?php esc_html_e('Preferred Travel Dates', 'tznew'); ?>
-                    </label>
-                    <input type="text" id="travel_dates" name="travel_dates" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300" placeholder="<?php esc_attr_e('e.g., March 2024 or Spring 2024', 'tznew'); ?>">
-                </div>
-                
-                <div class="form-group">
-                    <label for="group_size_inquiry" class="form-label block text-sm font-medium text-gray-700 mb-2">
-                        <?php esc_html_e('Group Size', 'tznew'); ?>
-                    </label>
-                    <select id="group_size_inquiry" name="group_size_inquiry" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
-                        <option value=""><?php esc_html_e('Select group size', 'tznew'); ?></option>
-                        <option value="1"><?php esc_html_e('Solo traveler', 'tznew'); ?></option>
-                        <option value="2"><?php esc_html_e('2 people', 'tznew'); ?></option>
-                        <option value="3-5"><?php esc_html_e('3-5 people', 'tznew'); ?></option>
-                        <option value="6-10"><?php esc_html_e('6-10 people', 'tznew'); ?></option>
-                        <option value="11-15"><?php esc_html_e('11-15 people', 'tznew'); ?></option>
-                        <option value="16+"><?php esc_html_e('16+ people', 'tznew'); ?></option>
-                    </select>
-                </div>
-            </div>
-            
-            <div class="form-group mt-4">
-                <label for="budget_range" class="form-label block text-sm font-medium text-gray-700 mb-2">
-                    <?php esc_html_e('Budget Range (per person)', 'tznew'); ?>
-                </label>
-                <select id="budget_range" name="budget_range" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
-                    <option value=""><?php esc_html_e('Select budget range', 'tznew'); ?></option>
-                    <option value="under-500"><?php esc_html_e('Under $500', 'tznew'); ?></option>
-                    <option value="500-1000"><?php esc_html_e('$500 - $1,000', 'tznew'); ?></option>
-                    <option value="1000-2000"><?php esc_html_e('$1,000 - $2,000', 'tznew'); ?></option>
-                    <option value="2000-3000"><?php esc_html_e('$2,000 - $3,000', 'tznew'); ?></option>
-                    <option value="3000-5000"><?php esc_html_e('$3,000 - $5,000', 'tznew'); ?></option>
-                    <option value="over-5000"><?php esc_html_e('Over $5,000', 'tznew'); ?></option>
-                    <option value="flexible"><?php esc_html_e('Flexible', 'tznew'); ?></option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Contact Preferences -->
-        <div class="form-section">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-                <i class="fas fa-phone mr-2 text-indigo-500"></i>
-                <?php esc_html_e('Contact Preferences', 'tznew'); ?>
-            </h3>
-            
-            <div class="form-group">
-                <label class="form-label block text-sm font-medium text-gray-700 mb-3">
-                    <?php esc_html_e('How would you prefer to be contacted?', 'tznew'); ?>
-                </label>
-                <div class="space-y-2">
-                    <label class="flex items-center space-x-3">
-                        <input type="radio" name="contact_preference" value="email" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500" checked>
-                        <span class="text-sm text-gray-700"><?php esc_html_e('Email (Recommended)', 'tznew'); ?></span>
-                    </label>
-                    <label class="flex items-center space-x-3">
-                        <input type="radio" name="contact_preference" value="phone" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
-                        <span class="text-sm text-gray-700"><?php esc_html_e('Phone Call', 'tznew'); ?></span>
-                    </label>
-                    <label class="flex items-center space-x-3">
-                        <input type="radio" name="contact_preference" value="whatsapp" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
-                        <span class="text-sm text-gray-700"><?php esc_html_e('WhatsApp', 'tznew'); ?></span>
-                    </label>
-                    <label class="flex items-center space-x-3">
-                        <input type="radio" name="contact_preference" value="any" class="w-4 h-4 text-green-600 border-gray-300 focus:ring-green-500">
-                        <span class="text-sm text-gray-700"><?php esc_html_e('Any method is fine', 'tznew'); ?></span>
-                    </label>
-                </div>
-            </div>
-            
-            <div class="form-group mt-4">
-                <label for="response_urgency" class="form-label block text-sm font-medium text-gray-700 mb-2">
-                    <?php esc_html_e('Response Urgency', 'tznew'); ?>
-                </label>
-                <select id="response_urgency" name="response_urgency" class="form-input w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent transition-all duration-300">
-                    <option value="normal"><?php esc_html_e('Normal (within 24 hours)', 'tznew'); ?></option>
-                    <option value="urgent"><?php esc_html_e('Urgent (within 4 hours)', 'tznew'); ?></option>
-                    <option value="flexible"><?php esc_html_e('Flexible (within 48 hours)', 'tznew'); ?></option>
-                </select>
-            </div>
-        </div>
-
-        <!-- Newsletter Subscription -->
-        <div class="form-section">
-            <div class="flex items-start space-x-3">
-                <input type="checkbox" id="newsletter_subscription" name="newsletter_subscription" class="mt-1 w-5 h-5 text-green-600 border-gray-300 rounded focus:ring-green-500" value="1">
-                <label for="newsletter_subscription" class="text-sm text-gray-700">
-                    <?php esc_html_e('Subscribe to our newsletter for travel tips, special offers, and updates on new destinations', 'tznew'); ?>
-                </label>
             </div>
         </div>
 

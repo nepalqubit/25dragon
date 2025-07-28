@@ -26,6 +26,10 @@ require_once TZNEW_INC_DIR . '/floating-contact-buttons.php';
 // Include booking system
 require_once TZNEW_INC_DIR . '/booking-system.php';
 
+// Include testimonial system
+require_once TZNEW_INC_DIR . '/testimonial-system.php';
+require_once TZNEW_INC_DIR . '/testimonial-frontend.php';
+
 // Include main customizer first (contains shared functions)
 require_once TZNEW_INC_DIR . '/customizer.php';
 

@@ -141,7 +141,7 @@ export default function InteractiveMap({ trips }: InteractiveMapProps) {
   return (
     <div className="h-full w-full relative">
       <MapContainer
-        center={[28.3949, 84.1240]} // Center of Nepal
+        center={[27.7172, 85.3240]} // Center of Kathmandu
         zoom={7}
         style={{ height: '100%', width: '100%' }}
         ref={mapRef}

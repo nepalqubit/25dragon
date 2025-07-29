@@ -120,99 +120,11 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 	<section class="py-12 bg-gray-50">
 		<div class="container mx-auto px-4">
 			<?php if (have_posts()) : ?>
-				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="tours-grid">
+				<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="tours-grid">
 					<?php
 					while (have_posts()) :
 						the_post();
-						?>
-						<article id="post-<?php the_ID(); ?>" <?php post_class('bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-2'); ?>>
-							<!-- Tour Image -->
-							<div class="relative h-64 overflow-hidden">
-								<?php if (has_post_thumbnail()) : ?>
-									<a href="<?php the_permalink(); ?>">
-										<?php the_post_thumbnail('medium_large', array('class' => 'w-full h-full object-cover transition-transform duration-300 hover:scale-110')); ?>
-									</a>
-								<?php else : ?>
-									<div class="w-full h-full bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
-										<i class="fas fa-camera text-white text-4xl opacity-50"></i>
-									</div>
-								<?php endif; ?>
-								
-								<!-- Tour Type Badge -->
-								<?php if (function_exists('tznew_get_field_safe')) : ?>
-									<?php $tour_type = tznew_get_field_safe('tour_type', get_the_ID()); ?>
-									<?php if (!empty($tour_type)) : ?>
-										<div class="absolute top-4 left-4">
-											<span class="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-semibold">
-												<?php echo esc_html(ucfirst($tour_type)); ?>
-											</span>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-								
-								<!-- Price Badge -->
-								<?php if (function_exists('tznew_get_field_safe')) : ?>
-									<?php $price = tznew_get_field_safe('price', get_the_ID()); ?>
-									<?php if (!empty($price)) : ?>
-										<div class="absolute top-4 right-4">
-											<span class="bg-white text-green-600 px-3 py-1 rounded-full text-sm font-bold shadow-lg">
-												$<?php echo esc_html($price); ?>
-											</span>
-										</div>
-									<?php endif; ?>
-								<?php endif; ?>
-							</div>
-							
-							<!-- Tour Content -->
-							<div class="p-6">
-								<h2 class="text-xl font-bold mb-3 text-gray-800 hover:text-green-600 transition-colors duration-300">
-									<a href="<?php the_permalink(); ?>" class="block">
-										<?php the_title(); ?>
-									</a>
-								</h2>
-								
-								<?php if (function_exists('tznew_get_field_safe')) : ?>
-									<?php $overview = tznew_get_field_safe('overview', get_the_ID()); ?>
-									<?php if (!empty($overview)) : ?>
-										<p class="text-gray-600 mb-4 leading-relaxed">
-											<?php echo esc_html(wp_trim_words($overview, 20)); ?>
-										</p>
-									<?php endif; ?>
-								<?php endif; ?>
-								
-								<!-- Tour Meta -->
-								<div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-									<?php if (function_exists('tznew_get_field_safe')) : ?>
-										<?php $duration = tznew_get_field_safe('duration', get_the_ID()); ?>
-										<?php if (!empty($duration)) : ?>
-											<span class="flex items-center">
-												<i class="fas fa-clock mr-1 text-green-600"></i>
-												<?php echo esc_html($duration); ?> <?php echo _n('Day', 'Days', $duration, 'tznew'); ?>
-											</span>
-										<?php endif; ?>
-										
-										<?php $region = tznew_get_field_safe('region', get_the_ID()); ?>
-										<?php if (!empty($region)) : ?>
-											<span class="flex items-center">
-												<i class="fas fa-location-dot mr-1 text-green-600"></i>
-												<?php echo esc_html($region); ?>
-											</span>
-										<?php endif; ?>
-									<?php endif; ?>
-								</div>
-								
-								<!-- Action Buttons -->
-								<div class="flex space-x-2">
-									<a href="<?php the_permalink(); ?>" class="flex-1 bg-green-600 hover:bg-green-700 text-white text-center py-2 px-4 rounded-lg transition-colors duration-300 text-sm font-semibold">
-										<?php esc_html_e('View Details', 'tznew'); ?>
-									</a>
-									<a href="<?php echo esc_url(site_url('/booking')); ?>?tour_id=<?php echo get_the_ID(); ?>" class="flex-1 bg-gray-100 hover:bg-gray-200 text-gray-800 text-center py-2 px-4 rounded-lg transition-colors duration-300 text-sm font-semibold border border-gray-300">
-										<?php esc_html_e('Book Now', 'tznew'); ?>
-									</a>
-								</div>
-							</div>
-						</article>
-						<?php
+						get_template_part('template-parts/content', 'grid');
 					endwhile;
 					?>
 				</div>

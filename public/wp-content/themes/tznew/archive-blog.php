@@ -68,72 +68,11 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 	<section class="py-12 bg-gray-50">
 		<div class="container mx-auto px-4">
 			<?php if (have_posts()) : ?>
-				<div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+				<div id="blog-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
 					<?php
 					while (have_posts()) :
 						the_post();
-						?>
-						<article class="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1" data-title="<?php echo esc_attr(strtolower(get_the_title())); ?>" data-date="<?php echo get_the_date('Y-m-d'); ?>">
-							<!-- Featured Image -->
-							<div class="h-48 overflow-hidden">
-								<?php if (has_post_thumbnail()) : ?>
-									<a href="<?php the_permalink(); ?>">
-										<?php the_post_thumbnail('medium_large', array('class' => 'w-full h-full object-cover hover:scale-110 transition-transform duration-300')); ?>
-									</a>
-								<?php else : ?>
-									<div class="w-full h-full bg-gradient-to-br from-purple-400 to-purple-600 flex items-center justify-center">
-										<i class="fas fa-image text-white text-4xl opacity-50"></i>
-									</div>
-								<?php endif; ?>
-							</div>
-							
-							<!-- Content -->
-							<div class="p-6">
-								<!-- Meta Info -->
-								<div class="flex items-center justify-between mb-3">
-									<span class="bg-purple-100 text-purple-800 px-2 py-1 rounded-full text-xs font-semibold">
-										<?php esc_html_e('Blog', 'tznew'); ?>
-									</span>
-									<span class="text-gray-500 text-xs">
-										<i class="fas fa-calendar-days mr-1"></i>
-										<?php echo get_the_date(); ?>
-									</span>
-								</div>
-								
-								<!-- Title -->
-								<h2 class="text-xl font-bold text-gray-800 mb-3 hover:text-purple-600 transition-colors duration-300">
-									<a href="<?php the_permalink(); ?>" class="block">
-										<?php the_title(); ?>
-									</a>
-								</h2>
-								
-								<!-- Excerpt -->
-								<p class="text-gray-600 mb-4 leading-relaxed">
-									<?php echo wp_trim_words(get_the_excerpt(), 20); ?>
-								</p>
-								
-								<!-- Author and Reading Time -->
-								<div class="flex items-center justify-between text-sm text-gray-500">
-									<div class="flex items-center">
-										<i class="fas fa-user mr-1"></i>
-										<?php echo get_the_author(); ?>
-									</div>
-									<div class="flex items-center">
-										<i class="fas fa-clock mr-1"></i>
-										<?php echo tznew_get_reading_time(get_the_content()); ?> <?php esc_html_e('min read', 'tznew'); ?>
-									</div>
-								</div>
-								
-								<!-- Read More Button -->
-								<div class="mt-4">
-									<a href="<?php the_permalink(); ?>" class="inline-flex items-center text-purple-600 hover:text-purple-800 font-semibold transition-colors duration-300">
-										<?php esc_html_e('Read More', 'tznew'); ?>
-										<i class="fas fa-arrow-right ml-2"></i>
-									</a>
-								</div>
-							</div>
-						</article>
-						<?php
+						get_template_part( 'template-parts/content', 'grid' );
 					endwhile;
 					?>
 				</div>

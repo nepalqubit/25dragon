@@ -505,7 +505,7 @@ wp_reset_postdata();
 			</div>
 		</div>
 		
-		<!-- Interactive Map JavaScript -->
+		<!-- Region Manager Map JavaScript -->
 		<script>
 		document.addEventListener('DOMContentLoaded', function() {
 			// Check if Leaflet is loaded
@@ -525,8 +525,15 @@ wp_reset_postdata();
 			try {
 				// Initialize the map with attribution control disabled
 				const map = L.map('trek-map', {
-					attributionControl: false
-				}).setView([27.7172, 85.3240], 7); // Center on Kathmandu
+					attributionControl: false,
+					zoomControl: true,
+					scrollWheelZoom: true,
+					doubleClickZoom: true,
+					boxZoom: false,
+					keyboard: true,
+					dragging: true,
+					touchZoom: true
+				}).setView([28.3949, 84.1240], 6); // Center on Nepal
 				
 				// Add tile layer
 				L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -534,103 +541,56 @@ wp_reset_postdata();
 					maxZoom: 18
 				}).addTo(map);
 			
-			// Custom marker icons for different elements
-			const regionIcon = L.divIcon({
-				html: '<i class="fas fa-map-marker-alt text-blue-600 text-2xl"></i>',
-				iconSize: [40, 40],
-				className: 'custom-div-icon region-icon'
-			});
-			
-			const trekIcon = L.divIcon({
-				html: '<i class="fas fa-mountain text-green-600 text-xl"></i>',
-				iconSize: [30, 30],
-				className: 'custom-div-icon trek-icon'
-			});
-			
-			const tourIcon = L.divIcon({
-				html: '<i class="fas fa-route text-purple-600 text-xl"></i>',
-				iconSize: [30, 30],
-				className: 'custom-div-icon tour-icon'
-			});
-			
-			// Color scheme for regions
+			// Define missing variables and functions
 			const regionColors = {
-				'everest': '#ef4444',
-				'annapurna': '#10b981',
-				'langtang': '#3b82f6',
-				'manaslu': '#f59e0b',
-				'mustang': '#8b5cf6',
-				'dolpo': '#06b6d4',
-				'rara': '#84cc16',
-				'makalu': '#f97316',
-				'kanchenjunga': '#ec4899'
+				'everest': '#e74c3c',
+				'annapurna': '#3498db', 
+				'langtang': '#2ecc71',
+				'manaslu': '#f39c12',
+				'dolpo': '#9b59b6',
+				'mustang': '#e67e22',
+				'kanchenjunga': '#1abc9c',
+				'makalu': '#34495e'
 			};
 			
-			// Define regional boundaries with accurate polygon coordinates for Nepal's trekking regions
-		const regionBoundaries = {
-			'everest': [
-				[27.65, 86.4], [28.05, 86.4], [28.05, 87.1], [27.65, 87.1], [27.65, 86.4]
-			],
-			'annapurna': [
-				[28.1, 83.6], [28.7, 83.6], [28.7, 84.0], [28.1, 84.0], [28.1, 83.6]
-			],
-			'langtang': [
-				[27.9, 85.2], [28.4, 85.2], [28.4, 85.7], [27.9, 85.7], [27.9, 85.2]
-			],
-			'manaslu': [
-				[28.3, 84.3], [28.7, 84.3], [28.7, 84.8], [28.3, 84.8], [28.3, 84.3]
-			],
-			'mustang': [
-				[28.8, 83.5], [29.2, 83.5], [29.2, 84.1], [28.8, 84.1], [28.8, 83.5]
-			],
-			'dolpo': [
-				[28.7, 82.8], [29.3, 82.8], [29.3, 83.4], [28.7, 83.4], [28.7, 82.8]
-			],
-			'rara': [
-				[29.4, 82.0], [29.6, 82.0], [29.6, 82.3], [29.4, 82.3], [29.4, 82.0]
-			],
-			'makalu': [
-				[27.4, 86.8], [28.0, 86.8], [28.0, 87.4], [27.4, 87.4], [27.4, 86.8]
-			],
-			'kanchenjunga': [
-				[27.3, 87.8], [27.9, 87.8], [27.9, 88.3], [27.3, 88.3], [27.3, 87.8]
-			]
-		};
-
-		// Trek route coordinates for popular routes in each region
-		const trekRoutes = {
-			'everest': [
-				[27.6875, 86.7317], // Lukla Airport
-				[27.8028, 86.7158], // Namche Bazaar
-				[27.8369, 86.7647], // Tengboche
-				[27.8758, 86.8289], // Dingboche
-				[27.8881, 86.8531], // Lobuche
-				[27.9861, 86.9211]  // Everest Base Camp
-			],
-			'annapurna': [
-				[28.2096, 83.9856], // Besisahar
-				[28.3500, 84.1200], // Manang
-				[28.4500, 84.0800], // Thorong Phedi
-				[28.4800, 84.0200], // Muktinath
-				[28.3700, 83.9400]  // Jomsom
-			],
-			'langtang': [
-				[28.1000, 85.3200], // Syabrubesi
-				[28.2000, 85.4500], // Langtang Village
-				[28.2096, 85.5200], // Kyanjin Gompa
-				[28.2500, 85.5500]  // Kyanjin Ri
-			],
-			'manaslu': [
-				[28.2300, 84.6700], // Soti Khola
-				[28.3500, 84.8000], // Samagaon
-				[28.4200, 84.5800], // Dharamsala
-				[28.4500, 84.5500]  // Larkya La Pass
-			]
-		};
+			// Define map icons
+			const trekIcon = L.divIcon({
+				html: '<i class="fas fa-mountain" style="color: #e67e22; font-size: 16px;"></i>',
+				iconSize: [20, 20],
+				className: 'custom-div-icon'
+			});
 			
-				// Fetch regional destinations
-			console.log('Loading regional destinations...');
-			fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=get_all_locations')
+			
+			const tourIcon = L.divIcon({
+				html: '<i class="fas fa-car" style="color: #3498db; font-size: 16px;"></i>',
+				iconSize: [20, 20],
+				className: 'custom-div-icon'
+			});
+			
+			const regionIcon = L.divIcon({
+				html: '<i class="fas fa-map-marker-alt" style="color: #e74c3c; font-size: 20px;"></i>',
+				iconSize: [25, 25],
+				className: 'custom-div-icon'
+			});
+			
+			// Define helper functions
+			function getRegionColor(regionSlug) {
+				return regionColors[regionSlug] || '#3b82f6';
+			}
+			
+			const trekRoutes = {}; // Initialize empty trek routes
+			
+			// Store for region polygons
+			const regionPolygons = [];
+			let regionCount = 0;
+			let assignedTripsCount = 0;
+			
+			// Fetch region manager data from admin
+			console.log('Loading region manager data...');
+			document.getElementById('trek-count').textContent = 'Loading regions...';
+			
+				// Fetch region manager data
+			fetch('<?php echo admin_url('admin-ajax.php'); ?>?action=tznew_get_regions_for_map')
 				.then(response => {
 					if (!response.ok) {
 						throw new Error(`HTTP error! status: ${response.status}`);
@@ -638,146 +598,147 @@ wp_reset_postdata();
 					return response.json();
 				})
 				.then(data => {
-				console.log('Regions loaded:', data);
-				if (data.success && data.data.length > 0) {
+				console.log('Region manager data loaded:', data);
+				if (data.success && data.data && data.data.length > 0) {
 						const bounds = L.latLngBounds();
-						let totalTreks = 0;
-						let totalTours = 0;
+						regionCount = data.data.length;
+					assignedTripsCount = 0;
+					
+					data.data.forEach(region => {
+
+					
+					// Count assigned trips
+					if (region.assigned_trekking) {
+						assignedTripsCount += region.assigned_trekking.length;
+					}
+					if (region.assigned_tours) {
+						assignedTripsCount += region.assigned_tours.length;
+					}
+					
+					// Convert polygon data to Leaflet format
+					let boundary = null;
+					if (region.polygon_coordinates && region.polygon_coordinates.length > 0) {
 						
-						data.data.forEach(region => {
-							if (region.latitude && region.longitude) {
-								totalTreks += region.trekking_count;
-								totalTours += region.tours_count;
-								
-								// Get region boundary coordinates with flexible matching
-								const regionSlug = region.region_slug.toLowerCase();
-								let boundary = null;
-								
-								// First try exact match
-								boundary = regionBoundaries[regionSlug];
-								
-								// If no exact match, try partial matching
-								if (!boundary) {
-									for (const [key, coords] of Object.entries(regionBoundaries)) {
-										if (regionSlug.includes(key) || key.includes(regionSlug)) {
-											boundary = coords;
-											break;
-										}
+						try {
+							const polygonCoords = region.polygon_coordinates.map(coord => {
+								// Handle different coordinate formats
+								if (coord && typeof coord === 'object') {
+									// Try different property names
+									const lat = coord.lat || coord.latitude || coord[0];
+									const lng = coord.lng || coord.longitude || coord[1];
+									if (lat !== undefined && lng !== undefined) {
+										return [parseFloat(lat), parseFloat(lng)];
 									}
 								}
+								return null;
+							}).filter(coord => coord !== null);
+							
+							if (polygonCoords.length > 0) {
+								boundary = polygonCoords;
+							}
+						} catch (error) {
+							console.error('Error processing polygon coordinates for region', region.name, ':', error);
+						}
+					}
 					
+					// Create popup content for region
+						const trekCount = region.assigned_trekking ? region.assigned_trekking.length : 0;
+						const tourCount = region.assigned_tours ? region.assigned_tours.length : 0;
 						
-						// Build enhanced regional popup content with trek visualization
 						let popupContent = `
-							<div class="p-4 min-w-96 max-w-lg">
+							<div class="p-4 min-w-80 max-w-lg">
 								<div class="mb-4 border-b pb-3">
-									<h3 class="text-2xl font-bold text-gray-900 mb-2">
-										<i class="fas fa-mountain text-blue-600 mr-2"></i>
-										${region.region_name}
+									<h3 class="text-xl font-bold text-gray-900 mb-2">
+										<i class="fas fa-map-marked-alt text-blue-600 mr-2"></i>
+										${region.name}
 									</h3>
-									<div class="flex gap-4 text-sm">
+									<div class="flex gap-3 text-sm">
 										<span class="flex items-center bg-green-100 text-green-800 px-2 py-1 rounded-full">
-											<i class="fas fa-hiking mr-1"></i>${region.trekking_count} Treks
+											<i class="fas fa-hiking mr-1"></i>${trekCount} Treks
 										</span>
 										<span class="flex items-center bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-											<i class="fas fa-car mr-1"></i>${region.tours_count} Tours
-										</span>
-										<span class="flex items-center bg-purple-100 text-purple-800 px-2 py-1 rounded-full">
-											<i class="fas fa-route mr-1"></i>${region.routes_count} Total Routes
+											<i class="fas fa-car mr-1"></i>${tourCount} Tours
 										</span>
 									</div>
 								</div>
 								
-								<div class="max-h-80 overflow-y-auto space-y-4">
-									<div class="text-sm font-semibold text-gray-700 mb-2">Available Treks & Tours:</div>
+								<div class="max-h-60 overflow-y-auto space-y-3">
 							`;
 							
-							// Group routes by type
-							const treks = region.routes.filter(route => route.type === 'trekking');
-							const tours = region.routes.filter(route => route.type === 'tours');
-							
-							if (treks.length > 0) {
-								popupContent += `
-									<div class="border-l-4 border-green-500 pl-3">
-										<div class="font-semibold text-green-700 mb-2">Trekking Routes:</div>
-								`;
-							}
-								
-								// Add routes to popup
-								region.routes.forEach(route => {
-									const typeColor = route.type === 'trekking' ? 'green' : 'blue';
-									const typeLabel = route.type === 'trekking' ? 'Trek' : 'Tour';
-									const typeIcon = route.type === 'trekking' ? 'fa-mountain' : 'fa-map-marked-alt';
-									
-									popupContent += `
-										<div class="border border-gray-200 rounded-lg p-3 hover:bg-gray-50 transition-colors">
-											<div class="flex items-start gap-3">
-												${route.thumbnail ? `<img src="${route.thumbnail}" alt="${route.title}" class="w-12 h-12 object-cover rounded-lg flex-shrink-0">` : ''}
-												<div class="flex-1 min-w-0">
-													<div class="flex items-center gap-2 mb-1">
-														<span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-${typeColor}-600 rounded-full">
-															<i class="fas ${typeIcon} mr-1"></i>${typeLabel}
-														</span>
-													</div>
-													<h4 class="font-semibold text-sm leading-tight mb-1 truncate">${route.title}</h4>
-													${route.overview ? `<p class="text-xs text-gray-600 mb-2 line-clamp-2">${route.overview}</p>` : ''}
-													
-													<div class="flex flex-wrap gap-2 text-xs text-gray-500 mb-2">
-														${route.duration ? `<span><i class="fas fa-clock mr-1"></i>${route.duration}</span>` : ''}
-														${route.difficulty ? `<span><i class="fas fa-chart-line mr-1"></i>${route.difficulty}</span>` : ''}
-														${route.tour_type ? `<span><i class="fas fa-tag mr-1"></i>${route.tour_type}</span>` : ''}
-														${route.rating ? `<span><i class="fas fa-star text-yellow-500 mr-1"></i>${route.rating}/5</span>` : ''}
-													</div>
-													
-													<div class="flex gap-1">
-														<a href="${route.url}" class="flex-1 text-center bg-${typeColor}-600 text-white px-2 py-1 rounded text-xs hover:bg-${typeColor}-700 transition-colors">
-															View Details
-														</a>
-														<a href="<?php echo site_url('/booking'); ?>?${route.type === 'trekking' ? 'trekking' : 'tour'}_id=${route.id}" class="flex-1 text-center bg-orange-600 text-white px-2 py-1 rounded text-xs hover:bg-orange-700 transition-colors">
-															Book Now
-														</a>
-													</div>
-												</div>
-											</div>
-										</div>
-									`;
-								});
-								
-								popupContent += `
-										</div>
-										
-										<div class="mt-4 pt-3 border-t border-gray-200">
-											<div class="flex gap-2">
-												<a href="<?php echo site_url('/trekking'); ?>?region=${region.region_slug}" class="flex-1 text-center bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-teal-700 transition-all text-sm font-medium">
-													<i class="fas fa-hiking mr-2"></i>View All Treks
-												</a>
-												<a href="<?php echo site_url('/tours'); ?>?region=${region.region_slug}" class="flex-1 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all text-sm font-medium">
-													<i class="fas fa-car mr-2"></i>View All Tours
-												</a>
-											</div>
-										</div>
-									</div>
-								`;
-								
-								// Create region polygon if boundary exists
-						if (boundary) {
-							const regionColor = regionColors[region.region_slug] || '#3b82f6';
-							
-							const polygon = L.polygon(boundary, {
-								color: regionColor,
-								fillColor: regionColor,
-								fillOpacity: 0.2,
-								weight: 2,
-								opacity: 0.8,
-								className: 'region-polygon'
-							}).addTo(map);
-							
-							// Store trek data with polygon for easy access
-							polygon.regionData = region;
-							
-							// Add trek and tour markers within the region
-								const trekMarkers = [];
-								const tourMarkers = [];
+							// Add assigned trekking routes
+			if (region.assigned_trekking && region.assigned_trekking.length > 0) {
+				popupContent += `<div class="mb-3"><h4 class="font-semibold text-green-700 mb-2">Assigned Treks:</h4>`;
+				region.assigned_trekking.forEach(trek => {
+					popupContent += `
+						<div class="border border-gray-200 rounded-lg p-2 mb-2">
+							<div class="flex items-center gap-2">
+								<span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
+									<i class="fas fa-mountain mr-1"></i>Trek
+								</span>
+								<h5 class="font-medium text-sm">${trek.title}</h5>
+							</div>
+							<a href="${trek.url}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
+						</div>
+					`;
+				});
+				popupContent += `</div>`;
+			}
+			
+			// Add assigned tours
+			if (region.assigned_tours && region.assigned_tours.length > 0) {
+				popupContent += `<div class="mb-3"><h4 class="font-semibold text-blue-700 mb-2">Assigned Tours:</h4>`;
+				region.assigned_tours.forEach(tour => {
+					popupContent += `
+						<div class="border border-gray-200 rounded-lg p-2 mb-2">
+							<div class="flex items-center gap-2">
+								<span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">
+									<i class="fas fa-car mr-1"></i>Tour
+								</span>
+								<h5 class="font-medium text-sm">${tour.title}</h5>
+							</div>
+							<a href="${tour.url}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
+						</div>
+					`;
+				});
+				popupContent += `</div>`;
+			}
+			
+			
+			popupContent += `
+					</div>
+					
+					<div class="mt-4 pt-3 border-t border-gray-200">
+						<div class="flex gap-2">
+							<a href="<?php echo site_url('/trekking'); ?>?region=${region.slug}" class="flex-1 text-center bg-gradient-to-r from-green-600 to-teal-600 text-white px-4 py-2 rounded-lg hover:from-green-700 hover:to-teal-700 transition-all text-sm font-medium">
+						<i class="fas fa-hiking mr-2"></i>View All Treks
+					</a>
+					<a href="<?php echo site_url('/tours'); ?>?region=${region.slug}" class="flex-1 text-center bg-gradient-to-r from-blue-600 to-purple-600 text-white px-4 py-2 rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all text-sm font-medium">
+						<i class="fas fa-car mr-2"></i>View All Tours
+					</a>
+						</div>
+					</div>
+				</div>
+			`;
+				
+				// Create region polygon if boundary exists
+				if (boundary) {
+					const regionColor = regionColors[region.slug] || '#3b82f6';
+					
+					const polygon = L.polygon(boundary, {
+						color: regionColor,
+						fillColor: regionColor,
+						fillOpacity: 0.2,
+						weight: 2,
+						opacity: 0.8,
+						className: 'region-polygon'
+					}).addTo(map);
+					
+					// Store trek data with polygon for easy access
+					polygon.regionData = region;
+					
+					// Add trek and tour markers within the region
+					const trekMarkers = [];
+					const tourMarkers = [];
 								
 								// Create trek markers
 								const trekCount = Math.min(region.trekking_count, 2);
@@ -792,11 +753,11 @@ wp_reset_postdata();
 									
 									const trekMarker = L.marker([markerLat, markerLng], {icon: trekIcon})
 										.addTo(map)
-										.bindTooltip(`Trek in ${region.region_name}`, {
-												permanent: false,
-												direction: 'top',
-												className: 'custom-tooltip'
-											});
+										.bindTooltip(`Trek in ${region.name}`, {
+											permanent: false,
+											direction: 'top',
+											className: 'custom-tooltip'
+										});
 									
 									trekMarkers.push(trekMarker);
 								}
@@ -814,11 +775,11 @@ wp_reset_postdata();
 									
 									const tourMarker = L.marker([markerLat, markerLng], {icon: tourIcon})
 										.addTo(map)
-										.bindTooltip(`Tour in ${region.region_name}`, {
-												permanent: false,
-												direction: 'top',
-												className: 'custom-tooltip'
-											});
+										.bindTooltip(`Tour in ${region.name}`, {
+											permanent: false,
+											direction: 'top',
+											className: 'custom-tooltip'
+										});
 									
 									tourMarkers.push(tourMarker);
 								}
@@ -832,25 +793,27 @@ wp_reset_postdata();
 									});
 									
 									// Create enhanced hover popup content
+									const assignedTreks = region.assigned_trekking ? region.assigned_trekking.length : 0;
+									const assignedTours = region.assigned_tours ? region.assigned_tours.length : 0;
 									const hoverContent = `
 										<div class="bg-white rounded-lg p-3 shadow-lg" style="min-width: 200px;">
 											<div class="flex items-center mb-2">
 												<div class="w-3 h-3 rounded-full mr-2" style="background-color: ${regionColor}"></div>
-												<h4 class="font-bold text-gray-900">${region.region_name}</h4>
+												<h4 class="font-bold text-gray-900">${region.name}</h4>
 											</div>
 											<div class="text-sm text-gray-600 mb-2">
 												${region.description || 'Explore amazing treks and tours in this region.'}
 											</div>
 											<div class="flex items-center gap-3 text-xs">
 												<span class="bg-green-100 text-green-800 px-2 py-1 rounded-full">
-													<i class="fas fa-mountain mr-1"></i>${region.trekking_count} Treks
+													<i class="fas fa-mountain mr-1"></i>${assignedTreks} Treks
 												</span>
 												<span class="bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-													<i class="fas fa-map-marked-alt mr-1"></i>${region.tours_count} Tours
+													<i class="fas fa-map-marked-alt mr-1"></i>${assignedTours} Tours
 												</span>
 											</div>
 											<div class="mt-2 text-xs text-gray-500">
-												<em>Click to see all routes</em>
+												<em>Click to see assigned routes</em>
 											</div>
 										</div>
 									`;
@@ -890,8 +853,8 @@ wp_reset_postdata();
 							// Add click event for detailed popup with trek routes
 							polygon.on('click', function(e) {
 								// Add trek route polyline if available
-								if (trekRoutes[region.region_slug]) {
-									const routeLine = L.polyline(trekRoutes[region.region_slug], {
+			if (trekRoutes && trekRoutes[region.slug]) {
+								const routeLine = L.polyline(trekRoutes[region.slug], {
 										color: regionColor,
 										weight: 4,
 										opacity: 0.8,
@@ -915,81 +878,80 @@ wp_reset_postdata();
 								.openOn(map);
 							});
 							
-							bounds.extend(boundary);
-						} else {
-							// Fallback to marker if no boundary defined
-							const marker = L.marker([region.latitude, region.longitude], {icon: regionIcon})
-								.addTo(map)
-								.bindPopup(popupContent, {
-									maxWidth: 450,
-									className: 'custom-popup regional-popup'
-								});
-							
-							bounds.extend([region.latitude, region.longitude]);
-						}
-							}
-						});
-						
-						// Fit map to show all markers
-					if (bounds.isValid()) {
-						map.fitBounds(bounds, {padding: [30, 30]});
-					}
-					
-					// Add map legend
-					const legend = L.control({position: 'bottomright'});
-					
-					legend.onAdd = function(map) {
-						const div = L.DomUtil.create('div', 'map-legend');
-						div.innerHTML = `
-							<div style="background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; min-width: 180px; border: 1px solid #e5e7eb;">
-								<h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #111827;">Map Legend</h4>
-								<div style="margin-bottom: 6px;">
-									<span style="display: inline-block; width: 20px; height: 3px; background: #3b82f6; margin-right: 8px; border-radius: 2px;"></span>
-									Trekking Region
-								</div>
-								<div style="margin-bottom: 6px;">
-									<span style="display: inline-block; width: 20px; height: 3px; background: #10b981; margin-right: 8px; border-radius: 2px; border-style: dashed;"></span>
-									Trek Route
-								</div>
-								<div style="margin-bottom: 6px;">
-									<span style="display: inline-block; width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; margin-right: 8px; border: 1px solid #d97706;"></span>
-									Trekking Point
-								</div>
-								<div style="margin-bottom: 6px;">
-									<span style="display: inline-block; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; margin-right: 8px; border: 1px solid #2563eb;"></span>
-									Tour Point
-								</div>
-								<div style="font-size: 10px; color: #6b7280; margin-top: 8px;">
-									<small><i class="fas fa-info-circle mr-1"></i>Click regions to explore<br/>Hover for details</small>
-								</div>
-							</div>
-						`;
-						return div;
-					};
-					
-					legend.addTo(map);
-					
-					// Update counter
-					const totalRegions = data.data.length;
-					document.getElementById('trek-count').textContent = `${totalRegions} regions (${totalTreks} treks, ${totalTours} tours)`;
-					} else {
-						document.getElementById('trek-count').textContent = 'No regions found';
-					}
-				})
-					.catch(error => {
-						console.error('Error loading regions:', error);
-						document.getElementById('trek-count').textContent = 'Error loading regions: ' + error.message;
-						// Add test regions for debugging
-						addTestRegions();
+							if (boundary) {
+					bounds.extend(boundary);
+				}
+						} else if (region.coordinates && region.coordinates.latitude && region.coordinates.longitude) {
+				// Fallback to marker if no boundary defined
+				const marker = L.marker([region.coordinates.latitude, region.coordinates.longitude], {icon: regionIcon})
+					.addTo(map)
+					.bindPopup(popupContent, {
+						maxWidth: 450,
+						className: 'custom-popup regional-popup'
 					});
 				
-				// Map toggle functionality
-				const mapToggleBtn = document.getElementById('map-toggle-btn');
-				const mapToggleIcon = document.getElementById('map-toggle-icon');
-				const mapToggleText = document.getElementById('map-toggle-text');
-				const mapContainer = document.getElementById('trek-map');
-				let mapVisible = true;
+				bounds.extend([region.coordinates.latitude, region.coordinates.longitude]);
+			}
+		}); // Close the forEach loop
+		
+		// Fit map to show all markers
+				if (bounds.isValid()) {
+					map.fitBounds(bounds, {padding: [30, 30]});
+				}
 				
+				// Add map legend
+				const legend = L.control({position: 'bottomright'});
+				
+				legend.onAdd = function(map) {
+					const div = L.DomUtil.create('div', 'map-legend');
+					div.innerHTML = `
+						<div style="background: white; padding: 12px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.2); font-size: 12px; min-width: 180px; border: 1px solid #e5e7eb;">
+							<h4 style="margin: 0 0 8px 0; font-size: 14px; font-weight: bold; color: #111827;">Map Legend</h4>
+							<div style="margin-bottom: 6px;">
+								<span style="display: inline-block; width: 20px; height: 3px; background: #3b82f6; margin-right: 8px; border-radius: 2px;"></span>
+								Trekking Region
+							</div>
+							<div style="margin-bottom: 6px;">
+								<span style="display: inline-block; width: 20px; height: 3px; background: #10b981; margin-right: 8px; border-radius: 2px; border-style: dashed;"></span>
+								Trek Route
+							</div>
+							<div style="margin-bottom: 6px;">
+								<span style="display: inline-block; width: 12px; height: 12px; background: #f59e0b; border-radius: 50%; margin-right: 8px; border: 1px solid #d97706;"></span>
+								Trekking Point
+							</div>
+							<div style="margin-bottom: 6px;">
+								<span style="display: inline-block; width: 12px; height: 12px; background: #3b82f6; border-radius: 50%; margin-right: 8px; border: 1px solid #2563eb;"></span>
+								Tour Point
+							</div>
+							<div style="font-size: 10px; color: #6b7280; margin-top: 8px;">
+								<small><i class="fas fa-info-circle mr-1"></i>Click regions to explore<br/>Hover for details</small>
+							</div>
+						</div>
+					`;
+					return div;
+				};
+				
+				legend.addTo(map);
+				
+				// Update counter
+				document.getElementById('trek-count').textContent = `${regionCount} regions (${assignedTripsCount} trips)`;
+			} else {
+				document.getElementById('trek-count').textContent = 'No regions found';
+			}
+			})
+			.catch(error => {
+				console.error('Error loading regions:', error);
+				document.getElementById('trek-count').textContent = 'Error loading regions: ' + error.message;
+			});
+			
+			// Map toggle functionality
+			const mapToggleBtn = document.getElementById('map-toggle-btn');
+			const mapToggleIcon = document.getElementById('map-toggle-icon');
+			const mapToggleText = document.getElementById('map-toggle-text');
+			const mapContainer = document.getElementById('trek-map');
+			let mapVisible = true;
+			
+			if (mapToggleBtn) {
 				mapToggleBtn.addEventListener('click', function() {
 					if (mapVisible) {
 						// Hide map
@@ -1010,11 +972,12 @@ wp_reset_postdata();
 						}, 100);
 					}
 				});
-			} catch (error) {
-				console.error('Error initializing map:', error);
-				document.getElementById('trek-count').textContent = 'Error initializing map';
 			}
-		});
+		} catch (error) {
+			console.error('Error initializing map:', error);
+			document.getElementById('trek-count').textContent = 'Error initializing map';
+		}
+	});
 		
 		// Function to add test regions when AJAX fails
 		function addTestRegions() {

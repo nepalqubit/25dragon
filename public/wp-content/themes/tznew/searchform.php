@@ -9,7 +9,7 @@
 $tznew_unique_id = wp_unique_id( 'search-form-' );
 ?>
 
-<form role="search" method="get" class="search-form relative w-full max-w-2xl mx-auto" action="<?php echo esc_url( home_url( '/' ) ); ?>">
+<form role="search" method="get" class="search-form relative w-full max-w-4xl mx-auto" action="<?php echo esc_url( home_url( '/' ) ); ?>">
 	<label for="<?php echo esc_attr( $tznew_unique_id ); ?>" class="sr-only">
 		<?php echo esc_html_x( 'Search for:', 'label', 'tznew' ); ?>
 	</label>
@@ -53,15 +53,15 @@ $tznew_unique_id = wp_unique_id( 'search-form-' );
 	</div>
 	
 	<!-- Search Suggestions -->
-	<div class="search-suggestions mt-4 text-center">
-		<div class="text-sm text-white/80 mb-2"><?php esc_html_e( 'Popular searches:', 'tznew' ); ?></div>
-		<div class="flex flex-wrap justify-center gap-2">
+	<div class="search-suggestions mt-6 text-center">
+		<div class="text-sm text-white/80 mb-3"><?php esc_html_e( 'Popular searches:', 'tznew' ); ?></div>
+		<div class="flex flex-wrap justify-center gap-2 lg:gap-3">
 			<?php
-			$quick_searches = ['Everest Base Camp', 'Annapurna Circuit', 'Chitwan Safari', 'Kathmandu Tour'];
+			$quick_searches = ['Everest Base Camp', 'Annapurna Circuit', 'Chitwan Safari', 'Kathmandu Tour', 'Langtang Valley', 'Manaslu Trek'];
 			foreach ( $quick_searches as $search ) :
 			?>
 				<a href="<?php echo esc_url( home_url( '/?s=' . urlencode( $search ) ) ); ?>" 
-				   class="inline-block bg-white/20 hover:bg-white/30 text-white text-xs px-3 py-1 rounded-full transition duration-300 backdrop-blur-sm">
+				   class="inline-block bg-white/20 hover:bg-white/30 text-white text-xs lg:text-sm px-3 py-1 lg:px-4 lg:py-2 rounded-full transition duration-300 backdrop-blur-sm">
 					<?php echo esc_html( $search ); ?>
 				</a>
 			<?php endforeach; ?>

@@ -25,86 +25,55 @@ interface Trip {
   reviews: number
   highlights: string[]
   bestSeason: string[]
+  permalink: string
+  post_type: string
+}
+
+interface Region {
+  id: number
+  name: string
+  slug: string
+  description: string
+  coordinates?: {
+    latitude: number
+    longitude: number
+  }
+  polygon_coordinates?: [number, number][]
+  polygon_color: string
+  show_on_map: boolean
+  assigned_trekking: Trip[]
+  assigned_tours: Trip[]
 }
 
 interface InteractiveMapProps {
   trips: Trip[]
 }
 
-// Nepal regions with approximate coordinates
-const nepalRegions = {
-  everest: {
+// Default fallback regions (will be replaced by dynamic data)
+const defaultRegions: Region[] = [
+  {
+    id: 1,
     name: 'Everest Region',
-    center: [27.9881, 86.9250] as [number, number],
-    bounds: [
+    slug: 'everest',
+    description: 'Home to the world\'s highest peak',
+    coordinates: { latitude: 27.9881, longitude: 86.9250 },
+    polygon_coordinates: [
       [27.7, 86.5],
       [28.3, 87.3],
       [28.1, 87.1],
       [27.9, 86.7]
-    ] as [number, number][],
-    color: '#ef4444',
-    trips: ['1'] as string[]
-  },
-  annapurna: {
-    name: 'Annapurna Region',
-    center: [28.5967, 83.8200] as [number, number],
-    bounds: [
-      [28.2, 83.5],
-      [28.9, 84.1],
-      [28.7, 84.3],
-      [28.4, 83.7]
-    ] as [number, number][],
-    color: '#10b981',
-    trips: ['2'] as string[]
-  },
-  langtang: {
-    name: 'Langtang Region',
-    center: [28.2096, 85.5200] as [number, number],
-    bounds: [
-      [28.0, 85.2],
-      [28.4, 85.8],
-      [28.3, 85.6],
-      [28.1, 85.4]
-    ] as [number, number][],
-    color: '#3b82f6',
-    trips: ['3'] as string[]
-  },
-  manaslu: {
-    name: 'Manaslu Region',
-    center: [28.5500, 84.5600] as [number, number],
-    bounds: [
-      [28.3, 84.3],
-      [28.7, 84.8],
-      [28.6, 84.6],
-      [28.4, 84.4]
-    ] as [number, number][],
-    color: '#f59e0b',
-    trips: [] as string[]
+    ],
+    polygon_color: '#ef4444',
+    show_on_map: true,
+    assigned_trekking: [],
+    assigned_tours: []
   }
-}
+]
 
-// Sample trekking routes
-const sampleRoutes = {
-  '1': [ // Everest Base Camp
-    [27.7172, 86.7138], // Lukla
-    [27.8056, 86.7139], // Namche Bazaar
-    [27.8369, 86.7647], // Tengboche
-    [27.8758, 86.8289], // Dingboche
-    [27.8881, 86.8531], // Lobuche
-    [27.9006, 86.8528]  // EBC
-  ] as [number, number][],
-  '2': [ // Annapurna Circuit
-    [28.2096, 83.9856], // Besisahar
-    [28.3500, 84.1200], // Manang
-    [28.4500, 84.0800], // Thorong Phedi
-    [28.4800, 84.0200], // Muktinath
-    [28.3700, 83.9400]  // Pokhara
-  ] as [number, number][],
-  '3': [ // Langtang Valley
-    [28.1000, 85.3200], // Syabrubesi
-    [28.2000, 85.4500], // Langtang Village
-    [28.2096, 85.5200], // Kyanjin Gompa
-  ] as [number, number][]
+// Trip icon colors
+const TRIP_COLORS = {
+  trekking: '#059669',
+  tours: '#3b82f6'
 }
 
 // Custom icons
@@ -118,25 +87,54 @@ const createCustomIcon = (color: string) => {
 }
 
 export default function InteractiveMap({ trips }: InteractiveMapProps) {
-  const [selectedRegion, setSelectedRegion] = useState<string | null>(null)
+  const [selectedRegion, setSelectedRegion] = useState<number | null>(null)
   const [mapReady, setMapReady] = useState(false)
+  const [regions, setRegions] = useState<Region[]>(defaultRegions)
+  const [loading, setLoading] = useState(true)
   const mapRef = useRef<L.Map | null>(null)
 
   useEffect(() => {
-    setMapReady(true)
+    loadRegions()
   }, [])
 
-  const handleRegionClick = (regionKey: string) => {
-    setSelectedRegion(regionKey === selectedRegion ? null : regionKey)
+  const loadRegions = async () => {
+    try {
+      const response = await fetch('/wp-admin/admin-ajax.php', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: new URLSearchParams({
+          action: 'tznew_get_regions_for_map',
+          nonce: (window as any).tznew_ajax?.nonce || ''
+        })
+      })
+      
+      const data = await response.json()
+      if (data.success && data.data) {
+        setRegions(data.data)
+      }
+    } catch (error) {
+      console.error('Failed to load regions:', error)
+    } finally {
+      setLoading(false)
+      setMapReady(true)
+    }
   }
 
-  if (!mapReady) {
+  const handleRegionClick = (regionId: number) => {
+    setSelectedRegion(regionId === selectedRegion ? null : regionId)
+  }
+
+  if (!mapReady || loading) {
     return (
       <div className="h-full w-full bg-gray-200 animate-pulse flex items-center justify-center">
         <div className="text-gray-500">Loading map...</div>
       </div>
     )
   }
+
+  const selectedRegionData = regions.find(r => r.id === selectedRegion)
 
   return (
     <div className="h-full w-full relative">
@@ -152,113 +150,126 @@ export default function InteractiveMap({ trips }: InteractiveMapProps) {
         />
          
         {/* Region Polygons */}
-        {Object.entries(nepalRegions).map(([key, region]) => (
+        {regions.filter(region => region.show_on_map && region.polygon_coordinates).map((region) => (
           <Polygon
-            key={key}
-            positions={region.bounds}
+            key={region.id}
+            positions={region.polygon_coordinates!}
             pathOptions={{
-              color: region.color,
-              fillColor: region.color,
-              fillOpacity: selectedRegion === key ? 0.4 : 0.2,
-              weight: selectedRegion === key ? 3 : 2,
+              color: region.polygon_color,
+              fillColor: region.polygon_color,
+              fillOpacity: selectedRegion === region.id ? 0.4 : 0.2,
+              weight: selectedRegion === region.id ? 3 : 2,
               opacity: 0.8
             }}
             eventHandlers={{
-              click: () => handleRegionClick(key)
+              click: () => handleRegionClick(region.id)
             }}
           >
             <Popup>
               <div className="p-2">
                 <h3 className="font-bold text-lg mb-2">{region.name}</h3>
                 <p className="text-sm text-gray-600 mb-2">
-                  {region.trips.length} trek(s) available
+                  {region.description}
+                </p>
+                <p className="text-sm text-gray-600 mb-2">
+                  {region.assigned_trekking.length + region.assigned_tours.length} trip(s) available
                 </p>
                 <button className="bg-primary-600 text-white px-3 py-1 rounded text-sm hover:bg-primary-700 transition-colors">
-                  View Treks
+                  View Trips
                 </button>
               </div>
             </Popup>
           </Polygon>
         ))}
-         
-        {/* Trekking Routes */}
-        {selectedRegion && selectedRegion in sampleRoutes && (
-          <Polyline
-            positions={sampleRoutes[selectedRegion as keyof typeof sampleRoutes]}
-            pathOptions={{
-              color: '#dc2626',
-              weight: 4,
-              opacity: 0.8,
-              dashArray: '10, 5'
-            }}
-          />
-        )}
+        {/* Trip Markers for Selected Region */}
+        {selectedRegionData && (
+          [...selectedRegionData.assigned_trekking, ...selectedRegionData.assigned_tours].map((trip) => {
+            const center = selectedRegionData.coordinates
+            if (!center) return null
 
-        {/* Route Markers */}
-        {selectedRegion && selectedRegion in sampleRoutes && (
-          sampleRoutes[selectedRegion as keyof typeof sampleRoutes].map((position, index) => (
-            <Marker
-              key={`${selectedRegion}-${index}`}
-              position={position}
-              icon={createCustomIcon(nepalRegions[selectedRegion as keyof typeof nepalRegions].color)}
-            >
-              <Popup>
-                <div className="p-2">
-                  <p className="text-sm font-medium">Route Point {index + 1}</p>
-                  <p className="text-xs text-gray-600">
-                    Lat: {position[0].toFixed(4)}, Lng: {position[1].toFixed(4)}
-                  </p>
-                </div>
-              </Popup>
-            </Marker>
-          ))
-        )}
-
-        {/* Trip Markers */}
-        {trips.map((trip) => {
-          const region = Object.values(nepalRegions).find(r => 
-            r.trips.includes(trip.id)
-          )
-          if (!region) return null
-
-          return (
-            <Marker
-              key={trip.id}
-              position={region.center}
-              icon={createCustomIcon('#059669')}
-            >
-              <Popup>
-                <div className="p-3 max-w-xs">
-                  <h4 className="font-bold text-base mb-2">{trip.title}</h4>
-                  <div className="space-y-1 text-sm">
-                    <p><span className="font-medium">Duration:</span> {trip.duration} days</p>
-                    <p><span className="font-medium">Difficulty:</span> {trip.difficulty}</p>
-                    <p><span className="font-medium">Price:</span> ${trip.price}</p>
-                    <p><span className="font-medium">Rating:</span> {trip.rating}/5 ({trip.reviews} reviews)</p>
+            return (
+               <Marker
+                 key={`${trip.post_type}-${trip.id}`}
+                 position={[center.latitude, center.longitude]}
+                 icon={createCustomIcon(TRIP_COLORS[trip.post_type as keyof typeof TRIP_COLORS] || '#059669')}
+               >
+                <Popup>
+                  <div className="p-3 max-w-xs">
+                    <h4 className="font-bold text-base mb-2">{trip.title}</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><span className="font-medium">Type:</span> {trip.post_type === 'trekking' ? 'Trekking' : 'Tour'}</p>
+                      <p><span className="font-medium">Duration:</span> {trip.duration} days</p>
+                      <p><span className="font-medium">Difficulty:</span> {trip.difficulty}</p>
+                      <p><span className="font-medium">Price:</span> ${trip.price}</p>
+                      <p><span className="font-medium">Rating:</span> {trip.rating}/5 ({trip.reviews} reviews)</p>
+                    </div>
+                    <a 
+                      href={trip.permalink}
+                      className="mt-3 w-full bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors inline-block text-center"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Details
+                    </a>
                   </div>
-                  <button className="mt-3 w-full bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors">
-                    View Details
-                  </button>
-                </div>
-              </Popup>
-            </Marker>
-          )
-        })}
+                </Popup>
+              </Marker>
+            )
+          })
+        )}
+
+        {/* All Trip Markers when no region is selected */}
+        {!selectedRegion && regions.map(region => 
+          [...region.assigned_trekking, ...region.assigned_tours].map((trip) => {
+            const center = region.coordinates
+            if (!center || !region.show_on_map) return null
+
+            return (
+               <Marker
+                 key={`${trip.post_type}-${trip.id}`}
+                 position={[center.latitude, center.longitude]}
+                 icon={createCustomIcon(TRIP_COLORS[trip.post_type as keyof typeof TRIP_COLORS] || '#059669')}
+               >
+                <Popup>
+                  <div className="p-3 max-w-xs">
+                    <h4 className="font-bold text-base mb-2">{trip.title}</h4>
+                    <div className="space-y-1 text-sm">
+                      <p><span className="font-medium">Region:</span> {region.name}</p>
+                      <p><span className="font-medium">Type:</span> {trip.post_type === 'trekking' ? 'Trekking' : 'Tour'}</p>
+                      <p><span className="font-medium">Duration:</span> {trip.duration} days</p>
+                      <p><span className="font-medium">Difficulty:</span> {trip.difficulty}</p>
+                      <p><span className="font-medium">Price:</span> ${trip.price}</p>
+                      <p><span className="font-medium">Rating:</span> {trip.rating}/5 ({trip.reviews} reviews)</p>
+                    </div>
+                    <a 
+                      href={trip.permalink}
+                      className="mt-3 w-full bg-green-600 text-white px-3 py-2 rounded text-sm hover:bg-green-700 transition-colors inline-block text-center"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      View Details
+                    </a>
+                  </div>
+                </Popup>
+              </Marker>
+            )
+          })
+        ).flat()}
       </MapContainer>
 
       {/* Legend */}
       <div className="absolute top-4 right-4 bg-white p-4 rounded-lg shadow-lg z-[1000]">
         <h4 className="font-bold text-sm mb-3">Regions</h4>
         <div className="space-y-2">
-          {Object.entries(nepalRegions).map(([key, region]) => (
+          {regions.filter(region => region.show_on_map).map((region) => (
             <div
-              key={key}
+              key={region.id}
               className="flex items-center space-x-2 cursor-pointer hover:bg-gray-50 p-1 rounded"
-              onClick={() => handleRegionClick(key)}
+              onClick={() => handleRegionClick(region.id)}
             >
               <div
                 className="w-4 h-4 rounded"
-                style={{ backgroundColor: region.color }}
+                style={{ backgroundColor: region.polygon_color }}
               ></div>
               <span className="text-xs">{region.name}</span>
             </div>
@@ -266,7 +277,7 @@ export default function InteractiveMap({ trips }: InteractiveMapProps) {
         </div>
         {selectedRegion && (
           <div className="mt-3 pt-3 border-t">
-            <p className="text-xs text-gray-600">Click region to toggle route</p>
+            <p className="text-xs text-gray-600">Click region to view trips</p>
           </div>
         )}
       </div>

@@ -566,20 +566,39 @@ function tznew_scripts() {
     add_action('wp_ajax_nopriv_get_all_locations', 'get_all_locations_ajax');
 
     function get_all_locations_ajax() {
-        $regional_destinations = array();
-        
-        // Get all regions with their center coordinates
-        $regions = get_terms(array(
-            'taxonomy' => 'region',
-            'hide_empty' => false
-        ));
+        // Add error handling and debugging
+        try {
+            $regional_destinations = array();
+            
+            // Check if ACF is available
+            if (!function_exists('get_field')) {
+                wp_send_json_error('ACF plugin is not available');
+                return;
+            }
+            
+            // Get all regions with their center coordinates
+            $regions = get_terms(array(
+                'taxonomy' => 'region',
+                'hide_empty' => false
+            ));
+            
+            // Check if regions exist
+            if (is_wp_error($regions)) {
+                wp_send_json_error('Error fetching regions: ' . $regions->get_error_message());
+                return;
+            }
+            
+            if (empty($regions)) {
+                wp_send_json_success(array());
+                return;
+            }
         
         foreach ($regions as $region) {
             $region_slug = $region->slug;
             $region_name = $region->name;
             
             // Check if this region should be shown on the map
-            $show_on_map = get_field('show_on_regional_adventure_map', 'region_' . $region->term_id);
+            $show_on_map = get_field('show_on_map', 'region_' . $region->term_id);
             if (!$show_on_map) {
                 continue;
             }
@@ -673,6 +692,10 @@ function tznew_scripts() {
         }
         
         wp_send_json_success($regional_destinations);
+        
+        } catch (Exception $e) {
+            wp_send_json_error('Server error: ' . $e->getMessage());
+        }
     }
 
     if (is_singular() && comments_open() && get_option('thread_comments')) {
@@ -700,6 +723,7 @@ add_action('admin_init', 'tznew_check_acf_dependency');
  */
 require_once TZNEW_INC_DIR . '/post-types.php';
 require_once TZNEW_INC_DIR . '/acf-integration.php';
+require_once TZNEW_INC_DIR . '/admin-region-manager.php';
 require_once TZNEW_INC_DIR . '/theme-settings.php';
 require_once TZNEW_INC_DIR . '/theme-functions.php';
 require_once TZNEW_INC_DIR . '/rest-api.php';

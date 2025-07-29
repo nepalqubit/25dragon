@@ -67,7 +67,7 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                 <div class="search-filters mb-8">
                     <div class="bg-white rounded-lg shadow-md p-6">
                         <h3 class="text-lg font-semibold mb-4"><?php esc_html_e( 'Filter Results', 'tznew' ); ?></h3>
-                        <div class="flex flex-wrap gap-4">
+                        <div class="flex flex-wrap gap-2 lg:gap-4 justify-center lg:justify-start">
                             <button class="filter-btn active" data-filter="all">
                                 <?php esc_html_e( 'All Results', 'tznew' ); ?>
                                 <span class="count"><?php echo esc_html( $wp_query->found_posts ); ?></span>
@@ -98,15 +98,17 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                     </div>
                 </div>
 
-                <!-- Search Results -->
+                <!-- Search Results Grid -->
                 <div class="search-results-grid">
-                    <?php
-                    /* Start the Loop */
-                    while ( have_posts() ) :
-                        the_post();
-                        get_template_part( 'template-parts/content', 'search' );
-                    endwhile;
-                    ?>
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <?php
+                        /* Start the Loop */
+                        while ( have_posts() ) :
+                            the_post();
+                            get_template_part( 'template-parts/content', 'grid' );
+                        endwhile;
+                        ?>
+                    </div>
                 </div>
 
                 <?php

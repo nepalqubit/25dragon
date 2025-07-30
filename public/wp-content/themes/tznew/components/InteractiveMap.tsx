@@ -99,7 +99,8 @@ export default function InteractiveMap({ trips }: InteractiveMapProps) {
 
   const loadRegions = async () => {
     try {
-      const response = await fetch('/wp-admin/admin-ajax.php', {
+      const ajaxUrl = (window as any).tznew_ajax?.ajax_url || '/wp-admin/admin-ajax.php'
+      const response = await fetch(ajaxUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded',

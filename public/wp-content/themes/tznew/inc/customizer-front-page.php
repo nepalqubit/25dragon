@@ -1591,7 +1591,8 @@ function tznew_front_page_customizer_css() {
     if ($hero_bg) {
         $css .= ".hero-section { background-image: linear-gradient(rgba(0,0,0,{$hero_overlay_opacity}), rgba(0,0,0,{$hero_overlay_opacity})), url('{$hero_bg}') !important; }";
     } else {
-        $css .= ".hero-section { background-image: linear-gradient(rgba(0,0,0,{$hero_overlay_opacity}), rgba(0,0,0,{$hero_overlay_opacity})), url('https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80') !important; }";
+        $default_hero_bg = get_template_directory_uri() . '/assets/images/placeholder.svg';
+        $css .= ".hero-section { background-image: linear-gradient(rgba(0,0,0,{$hero_overlay_opacity}), rgba(0,0,0,{$hero_overlay_opacity})), url('{$default_hero_bg}') !important; }";
     }
     
     $css .= ".hero-section h1, .hero-section p { color: {$hero_text_color} !important; }";

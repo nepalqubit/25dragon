@@ -115,19 +115,41 @@ $current_term = get_queried_object();
 
 <style>
 .filter-btn {
-    @apply inline-flex items-center gap-2 px-4 py-2 rounded-full border border-gray-300 bg-white text-gray-700 hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600 transition-all duration-300;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: 1px solid #D1D5DB;
+    background-color: #FFFFFF;
+    color: #374151;
+    transition-property: all;
+    transition-duration: 300ms;
+}
+
+.filter-btn:hover {
+    background-color: #EFF6FF;
+    border-color: #93C5FD;
+    color: #2563EB;
 }
 
 .filter-btn.active {
-    @apply bg-blue-600 text-white border-blue-600 hover:bg-blue-700;
+    background-color: #2563EB;
+    color: #FFFFFF;
+    border-color: #2563EB;
 }
 
 .filter-btn .count {
-    @apply bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded-full;
+    background-color: #E5E7EB;
+    color: #374151;
+    font-size: 0.75rem;
+    padding: 0.25rem 0.5rem;
+    border-radius: 9999px;
 }
 
 .filter-btn.active .count {
-    @apply bg-white/20 text-white;
+    background-color: rgba(255, 255, 255, 0.2);
+    color: white;
 }
 </style>
 

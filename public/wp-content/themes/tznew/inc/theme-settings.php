@@ -158,6 +158,10 @@ function tznew_get_footer_description() {
     return tznew_get_theme_setting('footer_description', 'Experience the adventure of a lifetime with our expertly crafted tours and trekking packages in Nepal.');
 }
 
+function tznew_get_footer_logo() {
+    return get_theme_mod('tznew_footer_logo', '');
+}
+
 /**
  * Display social media links
  *

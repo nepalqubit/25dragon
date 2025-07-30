@@ -2241,11 +2241,7 @@ wp_reset_postdata();
 		$testimonials = tznew_get_field_safe('testimonials', 'option');
 		?>
 		<section class="testimonials-section py-24 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white relative overflow-hidden">
-			<!-- Background Elements -->
-			<div class="absolute inset-0 opacity-10">
-				<div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-xl animate-blob"></div>
-				<div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-300 rounded-full mix-blend-overlay filter blur-xl animate-blob animation-delay-2000"></div>
-			</div>
+
 			
 			<div class="container mx-auto px-4 relative z-10">
 				<div class="text-center mb-16">
@@ -2427,41 +2423,7 @@ wp_reset_postdata();
 		</section>
 	<?php endif; ?>
 
-	<?php
-	// CTA Section
-	if (function_exists('get_field')) :
-		$cta_title = tznew_get_field_safe('cta_title', 'option');
-		$cta_content = tznew_get_field_safe('cta_content', 'option');
-		$cta_button_text = tznew_get_field_safe('cta_button_text', 'option');
-		$cta_button_link = tznew_get_field_safe('cta_button_link', 'option');
-		$cta_background = tznew_get_field_safe('cta_background', 'option');
-		
-		$cta_bg_url = isset($cta_background['url']) ? $cta_background['url'] : '';
-		if (empty($cta_bg_url)) {
-			$cta_bg_url = get_template_directory_uri() . '/assets/images/placeholder.svg';
-		}
-		?>
-		<section class="cta relative py-20" style="background-image: url('<?php echo esc_url($cta_bg_url); ?>'); background-size: cover; background-position: center;">
-			<div class="absolute inset-0 bg-blue-900 bg-opacity-80"></div>
-			<div class="container mx-auto px-4 relative z-10 text-center text-white">
-				<div class="max-w-3xl mx-auto">
-					<?php if ($cta_title) : ?>
-						<h2 class="text-3xl md:text-4xl font-bold mb-6"><?php echo esc_html($cta_title); ?></h2>
-					<?php endif; ?>
-					
-					<?php if ($cta_content) : ?>
-						<div class="text-xl mb-8"><?php echo wp_kses_post($cta_content); ?></div>
-					<?php endif; ?>
-					
-					<?php if ($cta_button_text && $cta_button_link) : ?>
-						<a href="<?php echo esc_url($cta_button_link); ?>" class="inline-block bg-white text-blue-900 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg text-lg transition duration-300">
-							<?php echo esc_html($cta_button_text); ?>
-						</a>
-					<?php endif; ?>
-				</div>
-			</div>
-		</section>
-	<?php endif; ?>
+
 
 </main><!-- #main -->
 

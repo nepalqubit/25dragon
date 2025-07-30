@@ -333,7 +333,7 @@ if (!defined('ABSPATH')) {
                                                 <?php if ($walking_time) : ?>
                                                     <div class="bg-blue-50 p-3 rounded-lg text-center border border-blue-100">
                                                         <i class="fas fa-clock text-blue-600 mb-2" aria-hidden="true"></i>
-                                                        <div class="text-sm font-semibold text-blue-700"><?php esc_html_e('Walking Time', 'tznew'); ?></div>
+                                                        <div class="text-sm font-semibold text-blue-700"><?php esc_html_e('Duration', 'tznew'); ?></div>
                                                         <div class="text-lg font-bold text-blue-800"><?php echo esc_html($walking_time); ?></div>
                                                     </div>
                                                 <?php endif; ?>

@@ -21,6 +21,156 @@ function tznew_homepage_sections_customizer($wp_customize) {
         'description' => __('Customize homepage sections content and settings', 'tznew'),
         'priority'    => 30,
     ));
+
+    // === OFFERS SECTION SETTINGS ===
+    
+    // Show/Hide Offers Section
+    $wp_customize->add_setting('tznew_offers_show', array(
+        'default'           => true,
+        'sanitize_callback' => 'wp_validate_boolean',
+    ));
+    $wp_customize->add_control('tznew_offers_show', array(
+        'label'   => __('Show Offers Section', 'tznew'),
+        'section' => 'tznew_offers_section',
+        'type'    => 'checkbox',
+    ));
+
+    // Offers Section Title
+    $wp_customize->add_setting('tznew_offers_title', array(
+        'default'           => 'Our Best Offer',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('tznew_offers_title', array(
+        'label'   => __('Section Title', 'tznew'),
+        'section' => 'tznew_offers_section',
+        'type'    => 'text',
+    ));
+
+    // Offers Section Subtitle
+    $wp_customize->add_setting('tznew_offers_subtitle', array(
+        'default'           => 'Offers To Inspire You',
+        'sanitize_callback' => 'sanitize_text_field',
+    ));
+    $wp_customize->add_control('tznew_offers_subtitle', array(
+        'label'   => __('Section Subtitle', 'tznew'),
+        'section' => 'tznew_offers_section',
+        'type'    => 'text',
+    ));
+
+    // Offers Section Description
+    $wp_customize->add_setting('tznew_offers_description', array(
+        'default'           => 'Discover exclusive deals and special offers that will spark your wanderlust. From discounted rates to limited-time promotion.',
+        'sanitize_callback' => 'sanitize_textarea_field',
+    ));
+    $wp_customize->add_control('tznew_offers_description', array(
+        'label'   => __('Section Description', 'tznew'),
+        'section' => 'tznew_offers_section',
+        'type'    => 'textarea',
+    ));
+
+    // Animation Speed
+    $wp_customize->add_setting('tznew_offers_animation_speed', array(
+        'default'           => 5000,
+        'sanitize_callback' => 'absint',
+    ));
+    $wp_customize->add_control('tznew_offers_animation_speed', array(
+        'label'       => __('Animation Speed (milliseconds)', 'tznew'),
+        'description' => __('How long each offer is displayed before fading to the next', 'tznew'),
+        'section'     => 'tznew_offers_section',
+        'type'        => 'number',
+        'input_attrs' => array(
+            'min'  => 2000,
+            'max'  => 10000,
+            'step' => 500,
+        ),
+    ));
+
+    // Add multiple offers (up to 6 offers)
+    for ($i = 1; $i <= 6; $i++) {
+        // Offer Image
+        $default_image = '';
+        if ($i == 1) {
+            $default_image = get_template_directory_uri() . '/assets/images/placeholder.svg';
+        } elseif ($i == 2) {
+            $default_image = get_template_directory_uri() . '/assets/images/placeholder.svg';
+        }
+        
+        $wp_customize->add_setting("tznew_offer_{$i}_image", array(
+            'default'           => $default_image,
+            'sanitize_callback' => 'esc_url_raw',
+        ));
+        $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, "tznew_offer_{$i}_image", array(
+            'label'   => sprintf(__('Offer %d - Image', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+        )));
+
+        // Offer Title
+        $default_title = '';
+        if ($i == 1) {
+            $default_title = 'Best deals Staycation';
+        } elseif ($i == 2) {
+            $default_title = 'Tours and Trip Packages, Globally';
+        }
+        
+        $wp_customize->add_setting("tznew_offer_{$i}_title", array(
+            'default'           => $default_title,
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+        $wp_customize->add_control("tznew_offer_{$i}_title", array(
+            'label'   => sprintf(__('Offer %d - Title', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+            'type'    => 'text',
+        ));
+
+        // Offer Subtitle
+        $wp_customize->add_setting("tznew_offer_{$i}_subtitle", array(
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+        $wp_customize->add_control("tznew_offer_{$i}_subtitle", array(
+            'label'   => sprintf(__('Offer %d - Subtitle', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+            'type'    => 'text',
+        ));
+
+        // Offer Discount Text
+        $default_discount = '';
+        if ($i == 1) {
+            $default_discount = 'Discount 30% off';
+        } elseif ($i == 2) {
+            $default_discount = 'Discount 30% off';
+        }
+        
+        $wp_customize->add_setting("tznew_offer_{$i}_discount", array(
+            'default'           => $default_discount,
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+        $wp_customize->add_control("tznew_offer_{$i}_discount", array(
+            'label'   => sprintf(__('Offer %d - Discount Text', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+            'type'    => 'text',
+        ));
+
+        // Offer Button Text
+        $wp_customize->add_setting("tznew_offer_{$i}_button_text", array(
+            'default'           => 'Book Now',
+            'sanitize_callback' => 'sanitize_text_field',
+        ));
+        $wp_customize->add_control("tznew_offer_{$i}_button_text", array(
+            'label'   => sprintf(__('Offer %d - Button Text', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+            'type'    => 'text',
+        ));
+
+        // Offer Button Link
+        $wp_customize->add_setting("tznew_offer_{$i}_button_link", array(
+            'sanitize_callback' => 'esc_url_raw',
+        ));
+        $wp_customize->add_control("tznew_offer_{$i}_button_link", array(
+            'label'   => sprintf(__('Offer %d - Button Link', 'tznew'), $i),
+            'section' => 'tznew_offers_section',
+            'type'    => 'url',
+        ));
+    }
     
     // Statistics Section
     $wp_customize->add_section('tznew_statistics_section', array(
@@ -88,11 +238,18 @@ function tznew_homepage_sections_customizer($wp_customize) {
         ));
     }
     
+    // Offers Section
+    $wp_customize->add_section('tznew_offers_section', array(
+        'title'    => __('Offers Section', 'tznew'),
+        'panel'    => 'tznew_homepage_sections',
+        'priority' => 20,
+    ));
+
     // Contact Form Section
     $wp_customize->add_section('tznew_contact_form_section', array(
         'title'    => __('Contact Form Section', 'tznew'),
         'panel'    => 'tznew_homepage_sections',
-        'priority' => 20,
+        'priority' => 30,
     ));
     
     // Show Contact Form Section
@@ -264,3 +421,13 @@ function tznew_contact_form_scripts() {
     }
 }
 add_action('wp_enqueue_scripts', 'tznew_contact_form_scripts');
+
+/**
+ * Enqueue offers animation scripts
+ */
+function tznew_offers_animation_scripts() {
+    if (is_front_page() && get_theme_mod('tznew_offers_show', true)) {
+        wp_enqueue_script('tznew-offers-animation', get_template_directory_uri() . '/assets/js/offers-animation.js', array('jquery'), '1.0.0', true);
+    }
+}
+add_action('wp_enqueue_scripts', 'tznew_offers_animation_scripts');

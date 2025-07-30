@@ -450,7 +450,7 @@ function tznew_scripts() {
                         <h3>Day <?php echo esc_html($day_count); ?>: <?php echo esc_html($day_title); ?></h3>
                         <?php if ($place_name) : ?><p><strong>Location:</strong> <?php echo esc_html($place_name); ?></p><?php endif; ?>
                         <?php if ($altitude) : ?><p><strong>Altitude:</strong> <?php echo esc_html(number_format($altitude)); ?>m</p><?php endif; ?>
-                        <?php if ($walking_time) : ?><p><strong>Walking Time:</strong> <?php echo esc_html($walking_time); ?></p><?php endif; ?>
+                        <?php if ($walking_time) : ?><p><strong>Duration:</strong> <?php echo esc_html($walking_time); ?></p><?php endif; ?>
                         <?php if ($distance) : ?><p><strong>Distance:</strong> <?php echo esc_html($distance); ?></p><?php endif; ?>
                         <?php if ($accommodation) : ?><p><strong>Accommodation:</strong> <?php echo esc_html($accommodation); ?></p><?php endif; ?>
                         <?php if ($meals) : ?><p><strong>Meals:</strong> <?php echo esc_html($meals); ?></p><?php endif; ?>
@@ -2017,6 +2017,30 @@ function tznew_fix_acf_textarea_array_values($value, $post_id, $field) {
 }
 add_filter('acf/load_value', 'tznew_fix_acf_textarea_array_values', 5, 3);
 add_filter('acf/format_value', 'tznew_fix_acf_textarea_array_values', 5, 3);
+
+/**
+ * Fix ACF textdomain loading issues
+ */
+function tznew_fix_acf_textdomain_loading() {
+    if (function_exists('acf_load_textdomain')) {
+        acf_load_textdomain('acf');
+    }
+}
+add_action('plugins_loaded', 'tznew_fix_acf_textdomain_loading', 1);
+
+/**
+ * Prevent ACF textdomain loading notices
+ */
+function tznew_suppress_acf_textdomain_notices() {
+    // Suppress the specific ACF textdomain notice
+    add_filter('doing_it_wrong_trigger_error', function($trigger, $function_name) {
+        if ($function_name === '_load_textdomain_just_in_time' && strpos(wp_debug_backtrace_summary(), 'acf') !== false) {
+            return false;
+        }
+        return $trigger;
+    }, 10, 2);
+}
+add_action('plugins_loaded', 'tznew_suppress_acf_textdomain_notices', 0);
 
 /**
  * Ensure ACF textarea fields always receive string values during rendering

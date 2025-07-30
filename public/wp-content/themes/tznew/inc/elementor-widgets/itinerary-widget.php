@@ -97,7 +97,7 @@ class TZnew_Itinerary_Widget extends \Elementor\Widget_Base {
         $this->add_control(
             'show_walking_time',
             [
-                'label' => __('Show Walking Time', 'tznew'),
+                'label' => __('Show Duration', 'tznew'),
                 'type' => \Elementor\Controls_Manager::SWITCHER,
                 'default' => 'yes',
             ]
@@ -269,7 +269,7 @@ class TZnew_Itinerary_Widget extends \Elementor\Widget_Base {
             
             // Walking Time
             if ($settings['show_walking_time'] === 'yes' && !empty($day['walking_time'])) {
-                echo '<div class="itinerary-item"><strong>' . __('Walking Time:', 'tznew') . '</strong> <span class="itinerary-content">' . esc_html($day['walking_time']) . '</span></div>';
+                echo '<div class="itinerary-item"><strong>' . __('Duration:', 'tznew') . '</strong> <span class="itinerary-content">' . esc_html($day['walking_time']) . '</span></div>';
             }
             
             // Distance

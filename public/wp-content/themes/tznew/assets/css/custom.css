@@ -200,6 +200,137 @@
   animation: float 3s ease-in-out infinite;
 }
 
+/* Header Layout - Logo with minimum 200px width and Menu 85% on larger screens */
+@media (min-width: 1024px) {
+  header .flex.items-center.justify-between {
+    justify-content: flex-start !important;
+  }
+  
+  header .flex.items-center.justify-between > div:first-child {
+    flex: 0 0 auto !important;
+    min-width: 200px !important;
+    max-width: 300px !important;
+    padding-right: 20px !important;
+  }
+  
+  /* Logo image styling to maintain aspect ratio and natural size */
+  header .flex.items-center.justify-between > div:first-child .custom-logo {
+    min-width: 200px !important;
+    height: auto !important;
+    max-height: none !important;
+    object-fit: contain !important;
+    display: block !important;
+    background: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 12px !important;
+    transition: all 0.3s ease !important;
+  }
+  
+  /* Site title styling if no logo */
+  header .flex.items-center.justify-between > div:first-child h1 {
+    min-width: 200px !important;
+    white-space: nowrap !important;
+  }
+  
+  header .flex.items-center.justify-between > nav.mega-menu-nav {
+    flex: 1 !important;
+    max-width: calc(100% - 220px) !important;
+    display: block !important;
+  }
+  
+  /* Ensure mega menu takes full width of its container */
+  #mega-menu-wrap-primary {
+    width: 100% !important;
+    position: relative !important;
+  }
+  
+  #mega-menu-wrap-primary #mega-menu-primary {
+    width: 100% !important;
+    justify-content: flex-start !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+  
+  /* Header container with fixed height - only logo expands */
+  header .container {
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    min-height: auto !important;
+    height: auto !important;
+  }
+  
+  /* Header flex container - fixed height, logo can overflow */
+  header .flex.items-center.justify-between {
+    align-items: center !important;
+    min-height: 60px !important;
+    height: 60px !important;
+    overflow: visible !important;
+  }
+  
+  /* Logo container allows overflow */
+  header .flex.items-center.justify-between > div:first-child {
+    overflow: visible !important;
+    z-index: 10 !important;
+  }
+}
+
+/* Fix header positioning to ensure menu stays fixed */
+header {
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1000 !important;
+  width: 100% !important;
+  transition: all 0.3s ease !important;
+}
+
+/* Header transparency on scroll */
+header.scrolled {
+  background: rgba(22, 163, 74, 0.1) !important;
+  backdrop-filter: blur(20px) !important;
+  -webkit-backdrop-filter: blur(20px) !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Default header with slight transparency */
+header {
+  background: rgba(22, 163, 74, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+}
+
+/* Ensure mega menu wrapper inherits proper positioning */
+#mega-menu-wrap-primary {
+  position: relative !important;
+  z-index: 999 !important;
+}
+
+/* Fix mega menu items alignment and ensure proper text display */
+#mega-menu-wrap-primary #mega-menu-primary > li.mega-menu-item {
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+/* Ensure menu links have proper height and line-height */
+#mega-menu-wrap-primary #mega-menu-primary > li.mega-menu-item > a.mega-menu-link {
+  min-height: 44px !important;
+  line-height: 1.4 !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 20px !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+/* Fixed header height - logo can extend beyond */
+header {
+  min-height: 60px !important;
+  height: 60px !important;
+  overflow: visible !important;
+}
+
 /* ==========================================================================
    MEGA MENU STYLES
    ========================================================================== */
@@ -847,14 +978,26 @@
 
 /* Custom Logo Styling - Fix white logo visibility */
 .custom-logo {
-  max-height: 60px;
-  width: auto;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
   padding: 8px 12px;
-  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  background: white;
   border: 2px solid #cbd5e1;
-  border-radius: 12px;
+  border-radius: 25px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  display: block;
+  margin: 0 auto;
+}
+
+/* Large screen sizing */
+@media (min-width: 768px) {
+  .custom-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+  }
 }
 
 .custom-logo:hover {
@@ -865,10 +1008,25 @@
 
 /* Alternative styling for dark logos */
 .custom-logo.dark-logo {
-  background: transparent;
-  border: none;
-  box-shadow: none;
-  padding: 8px 0;
+  background: white;
+  border: 2px solid #cbd5e1;
+  border-radius: 25px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 8px 12px;
+  width: 150px;
+  height: 150px;
+  object-fit: contain;
+  display: block;
+  margin: 0 auto;
+  transition: all 0.3s ease;
+}
+
+@media (min-width: 768px) {
+  .custom-logo.dark-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+  }
 }
 
 .custom-logo.dark-logo:hover {

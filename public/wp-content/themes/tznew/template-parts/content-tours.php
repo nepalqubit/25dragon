@@ -491,8 +491,8 @@ if (!defined('ABSPATH')) {
             
             <?php
             // Includes/Excludes section
-            $includes = tznew_get_field_safe('includes');
-            $excludes = tznew_get_field_safe('excludes');
+            $includes = tznew_get_field_safe('inclusion');
+            $excludes = tznew_get_field_safe('exclusion');
             if ($includes || $excludes) :
             ?>
                 <div class="tour-includes-excludes mb-8 grid grid-cols-1 lg:grid-cols-2 gap-8">

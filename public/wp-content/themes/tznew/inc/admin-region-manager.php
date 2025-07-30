@@ -37,6 +37,9 @@ function tznew_region_manager_admin_scripts($hook) {
         return;
     }
     
+    // Enqueue WordPress media library for ACF image fields
+    wp_enqueue_media();
+    
     // Leaflet CSS and JS
     wp_enqueue_style('leaflet-css', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css');
     wp_enqueue_script('leaflet-js', 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js', array(), '1.9.4', true);
@@ -60,6 +63,19 @@ function tznew_region_manager_admin_scripts($hook) {
     ));
 }
 add_action('admin_enqueue_scripts', 'tznew_region_manager_admin_scripts');
+
+/**
+ * Fix ACF textarea field array issue
+ * Prevents arrays from being passed to textarea fields
+ */
+function tznew_fix_acf_textarea_array_issue($value, $post_id, $field) {
+    // Only apply to polygon_coordinates field
+    if ($field['name'] === 'polygon_coordinates' && is_array($value)) {
+        return json_encode($value);
+    }
+    return $value;
+}
+add_filter('acf/load_value/name=polygon_coordinates', 'tznew_fix_acf_textarea_array_issue', 10, 3);
 
 /**
  * Region Manager admin page content
@@ -214,10 +230,71 @@ function tznew_get_all_regions_with_polygons() {
     if (!is_wp_error($regions) && !empty($regions)) {
         foreach ($regions as $region) {
             $coordinates = get_field('region_coordinates', 'region_' . $region->term_id);
-            $polygon_data = get_field('polygon_coordinates', 'region_' . $region->term_id);
+            $polygon_data_raw = get_field('polygon_coordinates', 'region_' . $region->term_id);
+            // Handle both JSON string and array formats for polygon coordinates
+    if (is_string($polygon_data_raw)) {
+        $polygon_data = json_decode($polygon_data_raw, true);
+    } elseif (is_array($polygon_data_raw)) {
+        $polygon_data = $polygon_data_raw;
+    } else {
+        $polygon_data = array();
+    }
             $show_on_map = get_field('show_on_map', 'region_' . $region->term_id);
             $description = get_field('region_description', 'region_' . $region->term_id);
             $color = get_field('polygon_color', 'region_' . $region->term_id);
+            $region_image = get_field('region_image', 'region_' . $region->term_id);
+            
+            // Get assigned trekking with full data
+            $assigned_trekking_ids = get_field('assigned_trekking', 'region_' . $region->term_id) ?: array();
+            $assigned_trekking = array();
+            if (!empty($assigned_trekking_ids)) {
+                foreach ($assigned_trekking_ids as $trek_id) {
+                    $trek_post = get_post($trek_id);
+                    if ($trek_post && $trek_post->post_status === 'publish') {
+                        $assigned_trekking[] = array(
+                            'id' => $trek_post->ID,
+                            'title' => $trek_post->post_title,
+                            'region' => $region->name,
+                            'duration' => get_field('duration', $trek_post->ID) ?: 0,
+                            'difficulty' => get_field('difficulty', $trek_post->ID) ?: 'Moderate',
+                            'price' => get_field('price', $trek_post->ID) ?: 0,
+                            'image' => get_the_post_thumbnail_url($trek_post->ID, 'medium') ?: '',
+                            'rating' => get_field('rating', $trek_post->ID) ?: 5,
+                            'reviews' => get_field('reviews_count', $trek_post->ID) ?: 0,
+                            'highlights' => get_field('highlights', $trek_post->ID) ?: array(),
+                            'bestSeason' => get_field('best_season', $trek_post->ID) ?: array(),
+                            'permalink' => get_permalink($trek_post->ID),
+                            'post_type' => 'trekking'
+                        );
+                    }
+                }
+            }
+            
+            // Get assigned tours with full data
+            $assigned_tours_ids = get_field('assigned_tours', 'region_' . $region->term_id) ?: array();
+            $assigned_tours = array();
+            if (!empty($assigned_tours_ids)) {
+                foreach ($assigned_tours_ids as $tour_id) {
+                    $tour_post = get_post($tour_id);
+                    if ($tour_post && $tour_post->post_status === 'publish') {
+                        $assigned_tours[] = array(
+                            'id' => $tour_post->ID,
+                            'title' => $tour_post->post_title,
+                            'region' => $region->name,
+                            'duration' => get_field('duration', $tour_post->ID) ?: 0,
+                            'difficulty' => get_field('difficulty', $tour_post->ID) ?: 'Easy',
+                            'price' => get_field('price', $tour_post->ID) ?: 0,
+                            'image' => get_the_post_thumbnail_url($tour_post->ID, 'medium') ?: '',
+                            'rating' => get_field('rating', $tour_post->ID) ?: 5,
+                            'reviews' => get_field('reviews_count', $tour_post->ID) ?: 0,
+                            'highlights' => get_field('highlights', $tour_post->ID) ?: array(),
+                            'bestSeason' => get_field('best_season', $tour_post->ID) ?: array(),
+                            'permalink' => get_permalink($tour_post->ID),
+                            'post_type' => 'tours'
+                        );
+                    }
+                }
+            }
             
             $regions_data[] = array(
                 'id' => $region->term_id,
@@ -226,10 +303,11 @@ function tznew_get_all_regions_with_polygons() {
                 'description' => $description ?: '',
                 'coordinates' => $coordinates ?: array('latitude' => '', 'longitude' => ''),
                 'polygon_coordinates' => $polygon_data ?: array(),
+                'polygon_color' => $color ?: '#3388ff',
                 'show_on_map' => $show_on_map !== false,
-                'color' => $color ?: '#3388ff',
-                'assigned_trekking' => get_field('assigned_trekking', 'region_' . $region->term_id) ?: array(),
-                'assigned_tours' => get_field('assigned_tours', 'region_' . $region->term_id) ?: array()
+                'region_image' => $region_image ?: null,
+                'assigned_trekking' => $assigned_trekking,
+                'assigned_tours' => $assigned_tours
             );
         }
     }
@@ -326,7 +404,10 @@ function tznew_save_region_ajax() {
     update_field('region_description', $region_description, 'region_' . $region_id);
     update_field('polygon_color', $region_color, 'region_' . $region_id);
     update_field('show_on_map', $show_on_map, 'region_' . $region_id);
-    update_field('polygon_coordinates', $polygon_coordinates, 'region_' . $region_id);
+    // Convert polygon coordinates array to JSON string for textarea field
+    // Ensure we always save as a JSON string, even if empty
+    $polygon_json = is_array($polygon_coordinates) ? json_encode($polygon_coordinates) : '[]';
+    update_field('polygon_coordinates', $polygon_json, 'region_' . $region_id);
     update_field('assigned_trekking', $assigned_trekking, 'region_' . $region_id);
     update_field('assigned_tours', $assigned_tours, 'region_' . $region_id);
     
@@ -376,3 +457,48 @@ function tznew_get_regions_for_map_ajax() {
 }
 add_action('wp_ajax_tznew_get_regions_for_map', 'tznew_get_regions_for_map_ajax');
 add_action('wp_ajax_nopriv_tznew_get_regions_for_map', 'tznew_get_regions_for_map_ajax');
+
+/**
+ * Fix ACF textarea field array issue for polygon_coordinates
+ * This prevents the "htmlspecialchars(): Argument #1 ($string) must be of type string, array given" error
+ */
+function tznew_fix_acf_polygon_coordinates_field($value, $post_id, $field) {
+    // Only apply to polygon_coordinates field
+    if (isset($field['name']) && $field['name'] === 'polygon_coordinates') {
+        // If value is an array, convert to JSON string
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+        // If value is empty or null, return empty JSON array
+        if (empty($value)) {
+            return '[]';
+        }
+        // If it's already a string, return as is
+        return $value;
+    }
+    return $value;
+}
+
+// Apply the filter to multiple ACF hooks to ensure it catches all cases
+add_filter('acf/load_value/name=polygon_coordinates', 'tznew_fix_acf_polygon_coordinates_field', 5, 3);
+add_filter('acf/format_value/name=polygon_coordinates', 'tznew_fix_acf_polygon_coordinates_field', 5, 3);
+add_filter('acf/update_value/name=polygon_coordinates', 'tznew_fix_acf_polygon_coordinates_field', 5, 3);
+
+// Additional filter to handle field preparation
+add_filter('acf/prepare_field/name=polygon_coordinates', function($field) {
+    // Ensure the field value is always a string for textarea rendering
+    if (isset($field['value']) && is_array($field['value'])) {
+        $field['value'] = json_encode($field['value']);
+    } elseif (empty($field['value'])) {
+        $field['value'] = '[]';
+    }
+    return $field;
+}, 5);
+
+// Early filter to catch any remaining array values before they reach htmlspecialchars
+add_filter('acf/render_field/type=textarea', function($field) {
+    if (isset($field['name']) && $field['name'] === 'polygon_coordinates' && is_array($field['value'])) {
+        $field['value'] = json_encode($field['value']);
+    }
+    return $field;
+}, 1);

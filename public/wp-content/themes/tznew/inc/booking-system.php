@@ -1060,6 +1060,9 @@ class TZnew_Booking_System {
         if (strpos($hook, 'booking') !== false || strpos($hook, 'inquiry') !== false || 
             get_current_screen()->post_type === 'booking' || get_current_screen()->post_type === 'inquiry') {
             
+            // Enqueue WordPress media library for ACF image fields
+            wp_enqueue_media();
+            
             // Enqueue admin styles
             wp_enqueue_style(
                 'booking-admin-styles', 

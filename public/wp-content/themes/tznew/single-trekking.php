@@ -239,6 +239,40 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 		tznew_display_faqs();
 		?>
 
+		<!-- Testimonials Section -->
+		<section class="py-16 bg-gradient-to-br from-blue-50 via-white to-indigo-50">
+			<div class="container mx-auto px-4">
+				<div class="text-center mb-12">
+					<h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
+						<i class="fas fa-quote-left text-blue-600 mr-3"></i>
+						What Our Trekkers Say
+					</h2>
+					<p class="text-lg text-gray-600 max-w-2xl mx-auto">
+						Read authentic reviews from adventurers who have experienced this trek.
+					</p>
+				</div>
+				
+				<?php
+				// Display testimonials for this specific trekking
+				if (function_exists('display_trekking_testimonials')) {
+					display_trekking_testimonials();
+				} else {
+					// Fallback to shortcode
+					echo '<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">';
+					echo do_shortcode('[testimonials limit="6" layout="grid" columns="3" show_rating="true" show_date="true" trekking_id="' . get_the_ID() . '"]');
+					echo '</div>';
+				}
+				?>
+				
+				<div class="text-center mt-12">
+					<a href="<?php echo esc_url(home_url('/testimonials')); ?>" class="inline-flex items-center bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-semibold transition-colors duration-300">
+						<i class="fas fa-comments mr-2"></i>
+						Read All Reviews
+					</a>
+				</div>
+			</div>
+		</section>
+
 		<?php
 		// Previous/next post navigation.
 		the_post_navigation(

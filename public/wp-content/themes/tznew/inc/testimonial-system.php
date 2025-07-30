@@ -431,6 +431,9 @@ class TZnew_Testimonial_System {
      */
     public function enqueue_admin_scripts($hook) {
         if (strpos($hook, 'testimonial') !== false) {
+            // Enqueue WordPress media library for ACF image fields
+            wp_enqueue_media();
+            
             wp_enqueue_script('testimonial-admin', get_template_directory_uri() . '/inc/admin-assets/testimonial-admin.js', array('jquery'), '1.0.0', true);
             wp_enqueue_style('testimonial-admin', get_template_directory_uri() . '/inc/admin-assets/testimonial-admin.css', array(), '1.0.0');
             

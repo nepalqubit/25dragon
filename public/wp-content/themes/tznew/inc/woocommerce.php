@@ -458,8 +458,8 @@ function tznew_itinerary_tab_content($tab) {
 function tznew_includes_excludes_tab_content($tab) {
     $post_id = $tab['post_id'];
     
-    $includes = tznew_get_field_safe('includes', $post_id);
-		$excludes = tznew_get_field_safe('excludes', $post_id);
+    $includes = tznew_get_field_safe('inclusion', $post_id);
+            $excludes = tznew_get_field_safe('exclusion', $post_id);
     
     echo '<div class="includes-excludes-wrapper">';
     

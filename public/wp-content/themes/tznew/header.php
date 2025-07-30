@@ -63,7 +63,7 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 } else {
     // Fallback to default header
     ?>
-    <header class="bg-white shadow-lg sticky top-0 z-40">
+    <header class="sticky top-0 z-40" style="background: linear-gradient(135deg, rgba(22, 163, 74, 0.95) 0%, rgba(37, 99, 235, 0.95) 100%); backdrop-filter: blur(10px); box-shadow: 0 4px 20px rgba(22, 163, 74, 0.15);">
         <div class="container mx-auto px-4">
             <div class="flex items-center justify-between py-4">
                 <!-- Site Branding -->
@@ -71,8 +71,8 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                     <?php if ( has_custom_logo() ) : ?>
                         <?php the_custom_logo(); ?>
                     <?php else : ?>
-                        <h1 class="text-2xl font-bold text-gray-800">
-                            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-blue-600 transition-colors">
+                        <h1 class="text-2xl font-bold text-white">
+                            <a href="<?php echo esc_url( home_url( '/' ) ); ?>" class="hover:text-yellow-200 transition-colors">
                                 <?php bloginfo( 'name' ); ?>
                             </a>
                         </h1>
@@ -80,27 +80,28 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                 </div>
 
                 <!-- Main Navigation -->
-                <nav class="hidden lg:block">
+                <nav class="hidden lg:block mega-menu-nav">
                     <?php
                     wp_nav_menu( array(
                         'theme_location' => 'primary',
-                        'menu_class'     => 'flex space-x-8',
+                        'menu_class'     => 'flex space-x-8 mega-menu',
                         'container'      => false,
-                        'fallback_cb'    => false,
+                        'fallback_cb'    => 'tznew_primary_menu_fallback',
+                        'walker'         => new TZnew_Mega_Menu_Walker(),
                     ) );
                     ?>
                 </nav>
 
                 <!-- Mobile Menu Toggle -->
-                <button id="mobile-menu-toggle" class="lg:hidden p-2 rounded-md hover:bg-gray-100">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-                    </svg>
+                <button id="mobile-menu-toggle" class="lg:hidden p-2 rounded-md hover:bg-white hover:bg-opacity-20" aria-label="Toggle mobile menu" aria-expanded="false" style="color: white;">
+                    <span></span>
+                    <span></span>
+                    <span></span>
                 </button>
             </div>
 
             <!-- Mobile Navigation -->
-            <nav id="mobile-menu" class="lg:hidden hidden pb-4">
+            <nav id="mobile-menu" class="lg:hidden pb-4">
                 <?php
                 wp_nav_menu( array(
                     'theme_location' => 'primary',

@@ -247,24 +247,28 @@
      */
     function loadRegionsOnMap() {
         regions.forEach(function(region) {
-            if (region.polygon_coordinates && region.polygon_coordinates.length > 0) {
-                const polygon = L.polygon(region.polygon_coordinates, {
-                    color: region.color || '#3388ff',
-                    fillOpacity: 0.2,
-                    weight: 2
-                });
+            try {
+                if (region.polygon_coordinates && region.polygon_coordinates.length > 0) {
+                    const polygon = L.polygon(region.polygon_coordinates, {
+                        color: region.color || '#3388ff',
+                        fillOpacity: 0.2,
+                        weight: 2
+                    });
                 
-                // Store region data with the polygon
-                polygon.regionData = region;
-                
-                // Add popup with region info
-                polygon.bindPopup(`
-                    <strong>${region.name}</strong><br>
-                    ${region.description || ''}<br>
-                    <button onclick="editRegion(${region.id})" class="button button-small">Edit</button>
-                `);
-                
-                drawnItems.addLayer(polygon);
+                    // Store region data with the polygon
+                    polygon.regionData = region;
+                    
+                    // Add popup with region info
+                    polygon.bindPopup(`
+                        <strong>${region.name}</strong><br>
+                        ${region.description || ''}<br>
+                        <button onclick="editRegion(${region.id})" class="button button-small">Edit</button>
+                    `);
+                    
+                    drawnItems.addLayer(polygon);
+                }
+            } catch (error) {
+                console.warn('Error loading region on map:', error, region);
             }
         });
     }
@@ -506,12 +510,20 @@
             formData.append('show_on_map', '1');
         }
         
-        // Get polygon coordinates
+        // Get polygon coordinates with error handling
         let polygonCoordinates = [];
-        if (currentRegion && currentRegion.polygon) {
-            polygonCoordinates = currentRegion.polygon.getLatLngs()[0].map(function(latlng) {
-                return [latlng.lat, latlng.lng];
-            });
+        try {
+            if (currentRegion && currentRegion.polygon) {
+                const latLngs = currentRegion.polygon.getLatLngs();
+                if (latLngs && latLngs[0] && Array.isArray(latLngs[0])) {
+                    polygonCoordinates = latLngs[0].map(function(latlng) {
+                        return [latlng.lat, latlng.lng];
+                    });
+                }
+            }
+        } catch (error) {
+            console.warn('Error getting polygon coordinates:', error);
+            polygonCoordinates = [];
         }
         formData.append('polygon_coordinates', JSON.stringify(polygonCoordinates));
         

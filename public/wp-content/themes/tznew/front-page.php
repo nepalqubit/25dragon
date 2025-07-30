@@ -675,9 +675,9 @@ wp_reset_postdata();
 								<span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-green-600 rounded-full">
 									<i class="fas fa-mountain mr-1"></i>Trek
 								</span>
-								<h5 class="font-medium text-sm">${trek.title}</h5>
+								<h5 class="font-medium text-sm">${trek.title || 'Untitled Trek'}</h5>
 							</div>
-							<a href="${trek.url}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
+							<a href="${trek.permalink || '#'}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
 						</div>
 					`;
 				});
@@ -694,9 +694,9 @@ wp_reset_postdata();
 								<span class="inline-block px-2 py-1 text-xs font-semibold text-white bg-blue-600 rounded-full">
 									<i class="fas fa-car mr-1"></i>Tour
 								</span>
-								<h5 class="font-medium text-sm">${tour.title}</h5>
+								<h5 class="font-medium text-sm">${tour.title || 'Untitled Tour'}</h5>
 							</div>
-							<a href="${tour.url}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
+							<a href="${tour.permalink || '#'}" class="text-xs text-blue-600 hover:text-blue-800">View Details</a>
 						</div>
 					`;
 				});

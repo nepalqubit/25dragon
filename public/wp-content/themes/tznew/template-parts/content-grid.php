@@ -71,10 +71,14 @@ $post_id = get_the_ID();
     <div class="p-6">
         <!-- Post Meta -->
         <div class="post-meta mb-3 flex items-center justify-between text-sm text-gray-500">
-            <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>">
-                <i class="fas fa-calendar-alt mr-1"></i>
-                <?php echo esc_html( get_the_date() ); ?>
-            </time>
+            <?php if ($post_type === 'post') : ?>
+                <time datetime="<?php echo esc_attr( get_the_date( 'c' ) ); ?>">
+                    <i class="fas fa-calendar-alt mr-1"></i>
+                    <?php echo esc_html( get_the_date() ); ?>
+                </time>
+            <?php else : ?>
+                <div></div> <!-- Empty div to maintain layout -->
+            <?php endif; ?>
             
             <?php if (in_array($post_type, ['trekking', 'tours'])) : ?>
                 <?php

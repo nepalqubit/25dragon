@@ -16,6 +16,7 @@
         
         // Initialize all functions
         initMobileMenu();
+        initMegaMenu();
         initSmoothScrolling();
         initBackToTop();
         initScrollReveal();
@@ -33,15 +34,15 @@
     });
     
     /**
-     * Initialize mobile menu functionality
+     * Initialize modern mobile menu functionality
      */
     function initMobileMenu() {
-        const $mobileMenuToggle = $('#mobile-menu-toggle');
+        const $mobileMenuToggle = $('#mobile-menu-toggle, .menu-toggle');
         const $mobileMenu = $('#mobile-menu');
         const $body = $('body');
         
         if ($mobileMenuToggle.length && $mobileMenu.length) {
-            // Toggle mobile menu
+            // Toggle mobile menu with enhanced animations
             $mobileMenuToggle.on('click', function(e) {
                 e.preventDefault();
                 e.stopPropagation();
@@ -55,31 +56,95 @@
                  }
             });
             
-            // Close menu when clicking outside
+            // Enhanced mobile sub-menu accordion with smooth animations
+            $mobileMenu.find('.menu-item-has-children > a').on('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                const $menuItem = $(this).parent();
+                const $subMenu = $menuItem.find('.sub-menu');
+                const isOpen = $menuItem.hasClass('open');
+                
+                if ($subMenu.length) {
+                    // Close other open sub-menus at the same level
+                    const $siblingItems = $menuItem.siblings('.menu-item-has-children.open');
+                    $siblingItems.removeClass('open');
+                    $siblingItems.find('> a').attr('aria-expanded', 'false');
+                    
+                    // Toggle current sub-menu
+                    if (isOpen) {
+                        $menuItem.removeClass('open');
+                        $(this).attr('aria-expanded', 'false');
+                    } else {
+                        $menuItem.addClass('open');
+                        $(this).attr('aria-expanded', 'true');
+                        
+                        // Smooth scroll to show opened menu if needed
+                        setTimeout(() => {
+                            const menuItemTop = $menuItem.offset().top;
+                            const menuTop = $mobileMenu.offset().top;
+                            const scrollTop = $mobileMenu.scrollTop();
+                            const targetScroll = menuItemTop - menuTop + scrollTop - 20;
+                            
+                            $mobileMenu.animate({
+                                scrollTop: targetScroll
+                            }, 300);
+                        }, 100);
+                    }
+                }
+            });
+            
+            // Close menu when clicking outside with improved detection
             $(document).on('click', function(e) {
-                if (!$(e.target).closest('#mobile-menu, #mobile-menu-toggle').length) {
+                if ($mobileMenu.hasClass('active') && 
+                    !$(e.target).closest('#mobile-menu, .menu-toggle, #mobile-menu-toggle').length) {
                     closeMobileMenu();
                 }
             });
             
-            // Close menu on escape key
+            // Enhanced escape key handling
             $(document).on('keydown', function(e) {
-                if (e.key === 'Escape') {
+                if (e.key === 'Escape' && $mobileMenu.hasClass('active')) {
                     closeMobileMenu();
+                    $mobileMenuToggle.focus();
                 }
             });
             
-            // Close menu when clicking on menu links
-            $mobileMenu.find('a').on('click', function() {
-                closeMobileMenu();
+            // Close menu when clicking on sub-menu links (not parent links)
+            $mobileMenu.find('.sub-menu a').on('click', function() {
+                // Add a small delay to allow for navigation
+                setTimeout(() => {
+                    closeMobileMenu();
+                }, 100);
             });
             
-            // Handle window resize
+            // Handle window resize with debouncing
             $(window).on('resize', debounce(function() {
-                if ($(window).width() >= 1024) { // lg breakpoint
+                if ($(window).width() >= 1024) {
                     closeMobileMenu();
                 }
             }, 250));
+            
+            // Handle touch events for better mobile experience
+            let touchStartY = 0;
+            $mobileMenu.on('touchstart', function(e) {
+                touchStartY = e.originalEvent.touches[0].clientY;
+            });
+            
+            $mobileMenu.on('touchmove', function(e) {
+                const touchY = e.originalEvent.touches[0].clientY;
+                const touchDiff = touchStartY - touchY;
+                
+                // Prevent overscroll at top and bottom
+                const scrollTop = $mobileMenu.scrollTop();
+                const scrollHeight = $mobileMenu[0].scrollHeight;
+                const clientHeight = $mobileMenu[0].clientHeight;
+                
+                if ((scrollTop === 0 && touchDiff < 0) || 
+                    (scrollTop >= scrollHeight - clientHeight && touchDiff > 0)) {
+                    e.preventDefault();
+                }
+            });
         }
         
         function openMobileMenu() {
@@ -91,8 +156,21 @@
             $mobileMenuToggle.attr('aria-expanded', 'true');
             $mobileMenu.attr('aria-hidden', 'false');
             
-            // Focus management
-            $mobileMenu.find('a:first').focus();
+            // Enhanced focus management
+            setTimeout(() => {
+                const $firstLink = $mobileMenu.find('a:first');
+                if ($firstLink.length) {
+                    $firstLink.focus();
+                }
+            }, 100);
+            
+            // Add body scroll lock
+            const scrollTop = $(window).scrollTop();
+            $body.css({
+                'position': 'fixed',
+                'top': -scrollTop + 'px',
+                'width': '100%'
+            }).data('scroll-position', scrollTop);
         }
         
         function closeMobileMenu() {
@@ -100,10 +178,170 @@
             $mobileMenuToggle.removeClass('active');
             $body.removeClass('mobile-menu-open');
             
+            // Close all open sub-menus with animation
+            const $openItems = $mobileMenu.find('.menu-item-has-children.open');
+            $openItems.removeClass('open');
+            $openItems.find('> a').attr('aria-expanded', 'false');
+            
             // Update aria attributes
             $mobileMenuToggle.attr('aria-expanded', 'false');
             $mobileMenu.attr('aria-hidden', 'true');
+            
+            // Restore body scroll
+            const scrollPosition = $body.data('scroll-position') || 0;
+            $body.css({
+                'position': '',
+                'top': '',
+                'width': ''
+            }).removeData('scroll-position');
+            $(window).scrollTop(scrollPosition);
         }
+    }
+    
+    /**
+     * Initialize mega menu functionality
+     */
+    function initMegaMenu() {
+        const $megaMenuItems = $('.has-mega-menu');
+        const $megaMenuNav = $('.mega-menu-nav');
+        let hoverTimeout;
+        let isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+        
+        if (!$megaMenuItems.length) return;
+        
+        // Handle hover events for mega menu (desktop only)
+        if (!isTouchDevice) {
+            $megaMenuItems.each(function() {
+                const $menuItem = $(this);
+                const $dropdown = $menuItem.find('.mega-menu-dropdown');
+                
+                // Mouse enter
+                $menuItem.on('mouseenter', function() {
+                    if ($(window).width() > 1024) {
+                        clearTimeout(hoverTimeout);
+                        
+                        // Hide other dropdowns
+                        $('.mega-menu-dropdown').removeClass('show');
+                        $('.has-mega-menu').removeClass('active');
+                        
+                        // Show current dropdown
+                        $dropdown.addClass('show');
+                        $menuItem.addClass('active');
+                        
+                        // Adjust dropdown position if it goes off-screen
+                        adjustDropdownPosition($dropdown);
+                    }
+                });
+                
+                // Mouse leave
+                $menuItem.on('mouseleave', function() {
+                    hoverTimeout = setTimeout(function() {
+                        $dropdown.removeClass('show');
+                        $menuItem.removeClass('active');
+                    }, 150);
+                });
+                
+                // Keep dropdown open when hovering over it
+                $dropdown.on('mouseenter', function() {
+                    clearTimeout(hoverTimeout);
+                });
+                
+                $dropdown.on('mouseleave', function() {
+                    hoverTimeout = setTimeout(function() {
+                        $dropdown.removeClass('show');
+                        $menuItem.removeClass('active');
+                    }, 150);
+                });
+            });
+        }
+        
+        // Handle touch/click events for touch devices
+        $megaMenuItems.each(function() {
+            const $menuItem = $(this);
+            const $dropdown = $menuItem.find('.mega-menu-dropdown');
+            const $mainLink = $menuItem.children('a');
+            
+            $mainLink.on('click', function(e) {
+                if (isTouchDevice || $(window).width() <= 1024) {
+                    e.preventDefault();
+                    
+                    const isOpen = $dropdown.hasClass('show');
+                    
+                    // Close all other dropdowns
+                    $('.mega-menu-dropdown').removeClass('show');
+                    $('.has-mega-menu').removeClass('active');
+                    
+                    // Toggle current dropdown
+                    if (!isOpen) {
+                        $dropdown.addClass('show');
+                        $menuItem.addClass('active');
+                        adjustDropdownPosition($dropdown);
+                    }
+                }
+            });
+        });
+        
+        // Function to adjust dropdown position
+        function adjustDropdownPosition($dropdown) {
+            if ($(window).width() > 1024) {
+                const dropdownWidth = $dropdown.outerWidth();
+                const windowWidth = $(window).width();
+                const dropdownOffset = $dropdown.offset();
+                
+                if (dropdownOffset && dropdownOffset.left + dropdownWidth > windowWidth) {
+                    $dropdown.css({
+                        'left': 'auto',
+                        'right': '0',
+                        'transform': 'translateX(0) translateY(0)'
+                    });
+                } else {
+                    $dropdown.css({
+                        'left': '',
+                        'right': '',
+                        'transform': ''
+                    });
+                }
+            }
+        }
+        
+        // Close mega menu on escape key
+        $(document).on('keydown', function(e) {
+            if (e.key === 'Escape') {
+                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu').removeClass('active');
+            }
+        });
+        
+        // Close mega menu when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.mega-menu-nav').length) {
+                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu').removeClass('active');
+            }
+        });
+        
+        // Handle keyboard navigation
+        $megaMenuItems.find('a').on('focus', function() {
+            const $menuItem = $(this).closest('.has-mega-menu');
+            const $dropdown = $menuItem.find('.mega-menu-dropdown');
+            
+            // Show dropdown when main link gets focus
+            if ($(this).parent().hasClass('has-mega-menu') && $(window).width() > 1024) {
+                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu').removeClass('active');
+                $dropdown.addClass('show');
+                $menuItem.addClass('active');
+                adjustDropdownPosition($dropdown);
+            }
+        });
+        
+        // Handle responsive behavior
+        $(window).on('resize', debounce(function() {
+            if ($(window).width() <= 1024) {
+                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu').removeClass('active');
+            }
+        }, 250));
     }
     
     /**
@@ -395,7 +633,92 @@
             $(this).toggleClass('active');
             $mobileMenu.toggleClass('active');
             $('body').toggleClass('menu-open');
+        /**
+     * Initialize mega menu functionality with enhanced animations and interactions
+     */
+    function initMegaMenu() {
+        // Desktop hover effects
+        $('.has-mega-menu').on('mouseenter', function() {
+            const $this = $(this);
+            
+            // Add active class
+            $this.addClass('active');
+            
+            // Smooth dropdown animation
+            const $dropdown = $this.find('.mega-menu-dropdown');
+            $dropdown.css('display', 'block').removeClass('show');
+            setTimeout(() => $dropdown.addClass('show'), 50);
+        }).on('mouseleave', function() {
+            const $this = $(this);
+            const $dropdown = $this.find('.mega-menu-dropdown');
+            
+            // Smooth hide animation
+            $dropdown.removeClass('show');
+            setTimeout(() => {
+                $this.removeClass('active');
+                $dropdown.css('display', '');
+            }, 300);
         });
+
+        // Mobile click handler
+        $('.has-mega-menu').on('click', function(e) {
+            e.preventDefault();
+            
+            // Toggle active state
+            const $this = $(this);
+            if ($this.hasClass('active')) {
+                $this.removeClass('active');
+                $this.find('.mega-menu-dropdown').removeClass('show');
+            } else {
+                // Close other open menus
+                $('.has-mega-menu').removeClass('active');
+                $('.mega-menu-dropdown').removeClass('show');
+                
+                // Open this menu
+                $this.addClass('active');
+                const $dropdown = $this.find('.mega-menu-dropdown');
+                $dropdown.css('display', 'block').addClass('show');
+            }
+        });
+
+        // Close menu when clicking outside
+        $(document).on('click', function(e) {
+            if (!$(e.target).closest('.has-mega-menu').length) {
+                $('.has-mega-menu').removeClass('active');
+                $('.mega-menu-dropdown').removeClass('show');
+            }
+        });
+
+        // Add touch support
+        $('.has-mega-menu').on('touchstart', function(e) {
+            e.preventDefault();
+            $(this).click();
+        });
+
+        // Add keyboard navigation
+        $('.mega-menu > li > a').on('focus', function() {
+            $(this).parent().addClass('active');
+            $(this).parent().find('.mega-menu-dropdown').css('display', 'block').addClass('show');
+        }).on('blur', function() {
+            $(this).parent().removeClass('active');
+            $(this).parent().find('.mega-menu-dropdown').removeClass('show');
+        });
+
+        // Prevent dropdown from closing when clicking inside
+        $('.mega-menu-dropdown').on('click', function(e) {
+            e.stopPropagation();
+        });
+
+        // Handle window resize
+        $(window).on('resize', debounce(function() {
+            // Close all mobile menus on desktop view
+            if ($(window).width() >= 1024) {
+                $('.has-mega-menu').removeClass('active');
+                $('.mega-menu-dropdown').removeClass('show');
+            }
+        }, 250));
+    }
+}());
 
         // Close mobile menu on link click
         $('.primary-menu a').on('click', function() {

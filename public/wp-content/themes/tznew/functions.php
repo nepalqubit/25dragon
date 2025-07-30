@@ -461,8 +461,8 @@ function tznew_scripts() {
             
             <?php
             // Includes/Excludes
-            $includes = tznew_get_field_safe('includes');
-            $excludes = tznew_get_field_safe('excludes');
+            $includes = tznew_get_field_safe('inclusion');
+            $excludes = tznew_get_field_safe('exclusion');
             ?>
             
             <?php if ($includes) : ?>
@@ -1349,6 +1349,47 @@ function tznew_footer_menu_fallback() {
 }
 
 /**
+ * Fallback menu for primary navigation with mega menu demo
+ */
+function tznew_primary_menu_fallback() {
+    echo '<ul class="flex space-x-8 mega-menu">';
+    echo '<li><a href="' . esc_url(home_url('/')) . '">' . esc_html__('Home', 'tznew') . '</a></li>';
+    
+    // Demo mega menu item with sub-items
+    echo '<li class="has-mega-menu">';
+    echo '<a href="#">' . esc_html__('Destinations', 'tznew') . ' <i class="fas fa-chevron-down mega-menu-arrow"></i></a>';
+    echo '<div class="mega-menu-dropdown">';
+    echo '<div class="mega-menu-content">';
+    echo '<ul class="sub-menu">';
+    echo '<li><a href="#">' . esc_html__('Nepal Treks', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Everest Region', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Annapurna Region', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Langtang Region', 'tznew') . '</a></li>';
+    echo '</ul>';
+    echo '</div>';
+    echo '</div>';
+    echo '</li>';
+    
+    echo '<li class="has-mega-menu">';
+    echo '<a href="#">' . esc_html__('Activities', 'tznew') . ' <i class="fas fa-chevron-down mega-menu-arrow"></i></a>';
+    echo '<div class="mega-menu-dropdown">';
+    echo '<div class="mega-menu-content">';
+    echo '<ul class="sub-menu">';
+    echo '<li><a href="#">' . esc_html__('Trekking', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Peak Climbing', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Expedition', 'tznew') . '</a></li>';
+    echo '<li><a href="#">' . esc_html__('Cultural Tours', 'tznew') . '</a></li>';
+    echo '</ul>';
+    echo '</div>';
+    echo '</div>';
+    echo '</li>';
+    
+    echo '<li><a href="' . esc_url(home_url('/about/')) . '">' . esc_html__('About', 'tznew') . '</a></li>';
+    echo '<li><a href="' . esc_url(home_url('/contact/')) . '">' . esc_html__('Contact', 'tznew') . '</a></li>';
+    echo '</ul>';
+}
+
+/**
  * Register widget areas
  */
 function tznew_widgets_init() {
@@ -1675,6 +1716,137 @@ function tznew_create_required_pages() {
 }
 
 /**
+ * Modern Custom Walker for Mega Menu
+ */
+class TZnew_Mega_Menu_Walker extends Walker_Nav_Menu {
+    
+    private $current_column = 0;
+    private $max_columns = 4;
+    
+    // Start Level - wrap sub-menu in div
+    function start_lvl(&$output, $depth = 0, $args = null) {
+        $indent = str_repeat("\t", $depth);
+        if ($depth === 0) {
+            $output .= "\n$indent<div class='mega-menu-dropdown'>\n";
+            $output .= "$indent\t<div class='mega-menu-content'>\n";
+            $this->current_column = 0;
+        } else {
+            $output .= "\n$indent<ul class='sub-menu'>\n";
+        }
+    }
+    
+    // End Level
+    function end_lvl(&$output, $depth = 0, $args = null) {
+        $indent = str_repeat("\t", $depth);
+        if ($depth === 0) {
+            $output .= "$indent\t</div>\n";
+            $output .= "$indent</div>\n";
+        } else {
+            $output .= "$indent</ul>\n";
+        }
+    }
+    
+    // Start Element
+    function start_el(&$output, $item, $depth = 0, $args = null, $id = 0) {
+        $indent = ($depth) ? str_repeat("\t", $depth) : '';
+        
+        $classes = empty($item->classes) ? array() : (array) $item->classes;
+        $classes[] = 'menu-item-' . $item->ID;
+        
+        // Add mega menu classes
+        if ($depth === 0 && in_array('menu-item-has-children', $classes)) {
+            $classes[] = 'has-mega-menu';
+        }
+        
+        // Add featured item class if specified in menu item CSS classes
+        if (in_array('featured', $classes) || in_array('featured-item', $classes)) {
+            $classes[] = 'featured-item';
+        }
+        
+        $class_names = join(' ', apply_filters('nav_menu_css_class', array_filter($classes), $item, $args));
+        $class_names = $class_names ? ' class="' . esc_attr($class_names) . '"' : '';
+        
+        $id = apply_filters('nav_menu_item_id', 'menu-item-'. $item->ID, $item, $args);
+        $id = $id ? ' id="' . esc_attr($id) . '"' : '';
+        
+        // Create mega menu columns for first level sub-items
+        if ($depth === 1) {
+            if ($this->current_column === 0) {
+                $output .= $indent . '<div class="mega-menu-column">';
+            }
+            $this->current_column++;
+        }
+        
+        $output .= $indent . '<li' . $id . $class_names .'>';
+        
+        $attributes = ! empty($item->attr_title) ? ' title="'  . esc_attr($item->attr_title) .'"' : '';
+        $attributes .= ! empty($item->target)     ? ' target="' . esc_attr($item->target     ) .'"' : '';
+        $attributes .= ! empty($item->xfn)        ? ' rel="'    . esc_attr($item->xfn        ) .'"' : '';
+        $attributes .= ! empty($item->url)        ? ' href="'   . esc_attr($item->url        ) .'"' : '';
+        
+        $item_output = isset($args->before) ? $args->before : '';
+        
+        // Add icon support for menu items
+        $icon_class = get_post_meta($item->ID, '_menu_item_icon', true);
+        if (empty($icon_class)) {
+            // Default icons based on menu item title
+            $title_lower = strtolower($item->title);
+            if (strpos($title_lower, 'trek') !== false || strpos($title_lower, 'hiking') !== false) {
+                $icon_class = 'fas fa-mountain';
+            } elseif (strpos($title_lower, 'tour') !== false || strpos($title_lower, 'travel') !== false) {
+                $icon_class = 'fas fa-map-marked-alt';
+            } elseif (strpos($title_lower, 'expedition') !== false) {
+                $icon_class = 'fas fa-flag';
+            } elseif (strpos($title_lower, 'culture') !== false) {
+                $icon_class = 'fas fa-temple';
+            } elseif (strpos($title_lower, 'adventure') !== false) {
+                $icon_class = 'fas fa-compass';
+            } elseif (strpos($title_lower, 'package') !== false) {
+                $icon_class = 'fas fa-box';
+            } else {
+                $icon_class = 'fas fa-chevron-right';
+            }
+        }
+        
+        $item_output .= '<a' . $attributes . '>';
+        
+        // Add icon for sub-menu items
+        if ($depth > 0 && $icon_class) {
+            $item_output .= '<i class="' . esc_attr($icon_class) . '"></i>';
+        }
+        
+        $item_output .= (isset($args->link_before) ? $args->link_before : '') . apply_filters('the_title', $item->title, $item->ID) . (isset($args->link_after) ? $args->link_after : '');
+        
+        // Add dropdown arrow for parent items
+        if ($depth === 0 && in_array('menu-item-has-children', $classes)) {
+            $item_output .= ' <i class="fas fa-chevron-down mega-menu-arrow"></i>';
+        }
+        
+        $item_output .= '</a>';
+        $item_output .= isset($args->after) ? $args->after : '';
+        
+        $output .= apply_filters('walker_nav_menu_start_el', $item_output, $item, $depth, $args);
+    }
+    
+    // End Element
+    function end_el(&$output, $item, $depth = 0, $args = null) {
+        $output .= "</li>\n";
+        
+        // Close mega menu column if needed
+        if ($depth === 1 && ($this->current_column >= $this->max_columns || $this->is_last_item_in_level())) {
+            $output .= "</div>\n"; // Close mega-menu-column
+            $this->current_column = 0;
+        }
+    }
+    
+    // Helper function to check if this is the last item in the current level
+    private function is_last_item_in_level() {
+        // This is a simplified check - in a real implementation, you might want to track this more precisely
+        return false;
+    }
+}
+
+/**
  * Theme activation hook
  */
 function tznew_theme_activation() {
@@ -1807,3 +1979,51 @@ function tznew_get_whatsapp_number() {
 function tznew_get_contact_email() {
     return get_theme_mod('tznew_email', 'web@techzeninc.com');
 }
+
+/**
+ * Global admin scripts enqueue for ACF compatibility
+ */
+function tznew_admin_enqueue_scripts($hook) {
+    // Enqueue WordPress media library on all admin pages where ACF fields might be present
+    // This prevents the "Cannot read properties of undefined (reading 'query')" error
+    if (is_admin()) {
+        wp_enqueue_media();
+    }
+}
+add_action('admin_enqueue_scripts', 'tznew_admin_enqueue_scripts');
+
+/**
+ * Fix ACF textarea fields that receive array data instead of strings
+ * This prevents "htmlspecialchars(): Argument #1 ($string) must be of type string, array given" errors
+ */
+function tznew_fix_acf_textarea_array_values($value, $post_id, $field) {
+    // Only apply to textarea fields
+    if (isset($field['type']) && $field['type'] === 'textarea') {
+        // If value is an array, convert to JSON string
+        if (is_array($value)) {
+            return json_encode($value);
+        }
+        // If value is empty or null, return empty string
+        if (empty($value) && $value !== '0') {
+            return '';
+        }
+    }
+    return $value;
+}
+add_filter('acf/load_value', 'tznew_fix_acf_textarea_array_values', 5, 3);
+add_filter('acf/format_value', 'tznew_fix_acf_textarea_array_values', 5, 3);
+
+/**
+ * Ensure ACF textarea fields always receive string values during rendering
+ */
+function tznew_prepare_acf_textarea_field($field) {
+    if (isset($field['type']) && $field['type'] === 'textarea') {
+        if (isset($field['value']) && is_array($field['value'])) {
+            $field['value'] = json_encode($field['value']);
+        } elseif (empty($field['value']) && $field['value'] !== '0') {
+            $field['value'] = '';
+        }
+    }
+    return $field;
+}
+add_filter('acf/prepare_field', 'tznew_prepare_acf_textarea_field', 5);

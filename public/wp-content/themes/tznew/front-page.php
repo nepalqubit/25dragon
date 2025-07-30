@@ -16,7 +16,7 @@ get_header();
 	// Hero Section with Search
 	$hero_title = get_theme_mod('tznew_hero_title', 'Explore Nepal');
 	$hero_subtitle = get_theme_mod('tznew_hero_subtitle', 'Essential information about your upcoming adventure');
-	$hero_image_url = get_theme_mod('tznew_hero_bg_image', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+	$hero_image_url = get_theme_mod('tznew_hero_bg_image', get_template_directory_uri() . '/assets/images/placeholder.svg');
 	
 	if (get_theme_mod('tznew_hero_show', true)) :
 		?>
@@ -1642,6 +1642,111 @@ wp_reset_postdata();
 	</section>
 	<?php endif; ?>
 
+	<?php if (get_theme_mod('tznew_offers_show', true)) : ?>
+	<!-- Offers Section -->
+	<section id="offers-section" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50" data-animation-speed="<?php echo esc_attr(get_theme_mod('tznew_offers_animation_speed', 5000)); ?>">
+		<div class="container mx-auto px-4">
+			<!-- Section Header -->
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
+					<i class="fas fa-plane text-blue-600 text-2xl"></i>
+				</div>
+				<p class="text-blue-600 font-semibold text-lg mb-2"><?php echo esc_html(get_theme_mod('tznew_offers_title', 'Our Best Offer')); ?></p>
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6"><?php echo esc_html(get_theme_mod('tznew_offers_subtitle', 'Offers To Inspire You')); ?></h2>
+				<p class="text-lg text-gray-600 max-w-2xl mx-auto"><?php echo esc_html(get_theme_mod('tznew_offers_description', 'Discover exclusive deals and special offers that will spark your wanderlust. From discounted rates to limited-time promotion.')); ?></p>
+			</div>
+
+			<!-- Offers Cards -->
+			<div class="relative max-w-6xl mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					<?php
+					// Get all offers and display only those with content
+					for ($i = 1; $i <= 6; $i++) {
+						// Set default values
+						$default_image = get_template_directory_uri() . '/assets/images/placeholder.svg';
+						$default_titles = [
+							1 => 'Best deals Staycation',
+							2 => 'Tours and Trip Packages, Globally',
+							3 => 'Adventure Trekking Packages',
+							4 => 'Cultural Heritage Tours'
+						];
+						$default_discounts = [
+							1 => 'Discount 30% off',
+							2 => 'Discount 30% off',
+							3 => 'Discount 25% off',
+							4 => 'Discount 20% off'
+						];
+						
+						$offer_image = get_theme_mod("tznew_offer_{$i}_image", ($i <= 4) ? $default_image : '');
+						$offer_title = get_theme_mod("tznew_offer_{$i}_title", isset($default_titles[$i]) ? $default_titles[$i] : '');
+						$offer_subtitle = get_theme_mod("tznew_offer_{$i}_subtitle");
+						$offer_discount = get_theme_mod("tznew_offer_{$i}_discount", isset($default_discounts[$i]) ? $default_discounts[$i] : '');
+						$offer_button_text = get_theme_mod("tznew_offer_{$i}_button_text", 'Book Now');
+						$offer_button_link = get_theme_mod("tznew_offer_{$i}_button_link");
+
+						// Only display offers that have at least an image and title
+						if ($offer_image && $offer_title) :
+							// Cycle through different gradient colors for variety
+							$gradients = [
+								1 => 'offer-card bg-gradient-to-br from-blue-500 to-blue-600',
+								2 => 'offer-card bg-gradient-to-br from-orange-500 to-red-500',
+								3 => 'offer-card bg-gradient-to-br from-green-500 to-teal-600',
+								4 => 'offer-card bg-gradient-to-br from-purple-500 to-indigo-600'
+							];
+							$card_class = isset($gradients[$i]) ? $gradients[$i] : 'offer-card bg-gradient-to-br from-gray-500 to-gray-600';
+							$text_color = 'text-white';
+						?>
+							<div class="<?php echo esc_attr($card_class); ?> rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 offer-card">
+								<div class="relative h-96 lg:h-full flex items-center">
+									<!-- Background Image -->
+									<div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20" style="background-image: url('<?php echo esc_url($offer_image); ?>');">
+									</div>
+									
+									<!-- Content -->
+									<div class="relative z-10 p-8 lg:p-12 w-full">
+										<?php if ($offer_discount) : ?>
+											<p class="<?php echo esc_attr($text_color); ?> text-lg font-semibold mb-4 opacity-90"><?php echo esc_html($offer_discount); ?></p>
+										<?php endif; ?>
+										
+										<h3 class="<?php echo esc_attr($text_color); ?> text-3xl lg:text-4xl font-bold mb-4 leading-tight"><?php echo esc_html($offer_title); ?></h3>
+										
+										<?php if ($offer_subtitle) : ?>
+											<p class="<?php echo esc_attr($text_color); ?> text-lg mb-8 opacity-90"><?php echo esc_html($offer_subtitle); ?></p>
+										<?php endif; ?>
+										
+										<?php if ($offer_button_link) : ?>
+											<a href="<?php echo esc_url($offer_button_link); ?>" class="inline-flex items-center bg-white bg-opacity-20 backdrop-blur-sm <?php echo esc_attr($text_color); ?> font-semibold py-3 px-8 rounded-full hover:bg-opacity-30 transition-all duration-300 transform hover:scale-105">
+												<?php echo esc_html($offer_button_text); ?>
+												<i class="fas fa-arrow-right ml-2"></i>
+											</a>
+										<?php endif; ?>
+									</div>
+									
+									<!-- Decorative Elements -->
+									<div class="absolute top-8 right-8 opacity-10">
+										<?php 
+										$icons = [
+											1 => 'fas fa-mountain',
+											2 => 'fas fa-globe-asia', 
+											3 => 'fas fa-hiking',
+											4 => 'fas fa-landmark'
+										];
+										$icon_class = isset($icons[$i]) ? $icons[$i] : 'fas fa-star';
+										?>
+										<i class="<?php echo esc_attr($icon_class); ?> text-6xl <?php echo esc_attr($text_color); ?>"></i>
+									</div>
+								</div>
+							</div>
+						<?php
+						endif;
+					}
+					?>
+				</div>
+			</div>
+		</div>
+	</section>
+	<?php endif; ?>
+
 	<!-- What Our Trekkers Say Section -->
 	<section class="py-20 bg-gray-50">
 		<div class="container mx-auto px-4">
@@ -2333,7 +2438,7 @@ wp_reset_postdata();
 		
 		$cta_bg_url = isset($cta_background['url']) ? $cta_background['url'] : '';
 		if (empty($cta_bg_url)) {
-			$cta_bg_url = get_template_directory_uri() . '/assets/images/default-cta-bg.jpg';
+			$cta_bg_url = get_template_directory_uri() . '/assets/images/placeholder.svg';
 		}
 		?>
 		<section class="cta relative py-20" style="background-image: url('<?php echo esc_url($cta_bg_url); ?>'); background-size: cover; background-position: center;">

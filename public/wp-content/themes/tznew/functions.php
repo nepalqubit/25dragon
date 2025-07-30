@@ -39,6 +39,11 @@ require_once TZNEW_INC_DIR . '/customizer-front-page.php';
 // Include group page customizer
 require_once TZNEW_INC_DIR . '/customizer-group-page.php';
 
+// Include Max Mega Menu integration
+require_once TZNEW_INC_DIR . '/max-mega-menu-integration.php';
+// Homepage Sections Customizer
+require_once TZNEW_INC_DIR . '/customizer-homepage-sections.php';
+
 /**
  * Sets up theme defaults and registers support for various WordPress features.
  *

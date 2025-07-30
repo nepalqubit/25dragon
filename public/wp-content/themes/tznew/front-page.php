@@ -1620,20 +1620,20 @@ wp_reset_postdata();
 			<div class="mt-20 statistics-section bg-gradient-to-r from-green-600 to-teal-600 rounded-3xl p-12 text-white">
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 					<div>
-						<div class="text-4xl font-bold mb-2">15+</div>
-						<div class="text-lg opacity-90">Years Experience</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_years_experience_value', '15+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_years_experience_label', 'Years Experience')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">10K+</div>
-						<div class="text-lg opacity-90">Happy Trekkers</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_happy_trekkers_value', '10K+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_happy_trekkers_label', 'Happy Trekkers')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">50+</div>
-						<div class="text-lg opacity-90">Trek Routes</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_trek_routes_value', '50+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_trek_routes_label', 'Trek Routes')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">100%</div>
-						<div class="text-lg opacity-90">Safety Record</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_safety_record_value', '100%')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_safety_record_label', 'Safety Record')); ?></div>
 					</div>
 				</div>
 			</div>
@@ -1885,36 +1885,38 @@ wp_reset_postdata();
 	</section>
 
 	<!-- Plan Your Adventure Section -->
-	<?php if (get_theme_mod('tznew_adventure_show', true)) : ?>
+	<?php if (get_theme_mod('tznew_contact_form_show', true)) : ?>
 	<section class="adventure-section py-20 bg-gradient-to-br from-green-600 to-blue-600 text-white">
 		<div class="container mx-auto px-4">
 			<div class="max-w-4xl mx-auto text-center">
 				<h2 class="text-4xl lg:text-5xl font-bold mb-6">
-					Plan Your <span class="text-yellow-300">Adventure</span>
+					<?php echo wp_kses_post(get_theme_mod('tznew_contact_form_title', 'Plan Your <span class="text-yellow-300">Adventure</span>')); ?>
 				</h2>
 				<p class="text-xl mb-12 opacity-90">
-					Ready to embark on the journey of a lifetime? Let us help you plan the perfect trekking adventure in Nepal.
+					<?php echo esc_html(get_theme_mod('tznew_contact_form_subtitle', 'Ready to embark on the journey of a lifetime? Let us help you plan the perfect trekking adventure in Nepal.')); ?>
 				</p>
 				
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
 					<!-- Contact Form -->
 					<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8">
-						<h3 class="text-2xl font-bold mb-6">Get a Custom Quote</h3>
-						<form class="space-y-4">
+						<h3 class="text-2xl font-bold mb-6"><?php echo esc_html(get_theme_mod('tznew_contact_form_form_title', 'Get a Custom Quote')); ?></h3>
+						<form id="tznew-contact-form" class="space-y-4">
+							<?php wp_nonce_field('tznew_contact_form', 'tznew_contact_nonce'); ?>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<input type="text" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-								<input type="email" placeholder="Your Email" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+								<input type="text" name="contact_name" placeholder="Your Name" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+								<input type="email" name="contact_email" placeholder="Your Email" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
 							</div>
-							<select class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300">
+							<select name="trek_type" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300">
 								<option value="">Select Trek Type</option>
 								<option value="everest">Everest Region</option>
 								<option value="annapurna">Annapurna Region</option>
 								<option value="langtang">Langtang Region</option>
 								<option value="manaslu">Manaslu Region</option>
+								<option value="other">Other</option>
 							</select>
-							<textarea placeholder="Tell us about your dream trek..." rows="4" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"></textarea>
+							<textarea name="contact_message" placeholder="Tell us about your dream trek..." rows="4" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"></textarea>
 							<button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors duration-300">
-								Get My Quote
+								<?php echo esc_html(get_theme_mod('tznew_contact_form_button_text', 'Send Email')); ?>
 							</button>
 						</form>
 					</div>
@@ -1931,7 +1933,8 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Speak with our trek experts</p>
 								</div>
 							</div>
-							<a href="tel:+977-1-4444444" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">+977-1-4444444</a>
+							<?php $phone = get_theme_mod('tznew_contact_phone', '+977-1-4444444'); ?>
+							<a href="tel:<?php echo esc_attr($phone); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($phone); ?></a>
 						</div>
 						
 						<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
@@ -1944,7 +1947,8 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Get detailed information</p>
 								</div>
 							</div>
-							<a href="mailto:info@dragonholidays.com" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">info@dragonholidays.com</a>
+							<?php $email = get_theme_mod('tznew_contact_email_display', 'info@dragonholidays.com'); ?>
+							<a href="mailto:<?php echo esc_attr($email); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($email); ?></a>
 						</div>
 						
 						<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
@@ -1957,7 +1961,11 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Quick chat support</p>
 								</div>
 							</div>
-							<a href="https://wa.me/9779841234567" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">+977-984-123-4567</a>
+							<?php 
+							$whatsapp = get_theme_mod('tznew_contact_whatsapp', '9779841234567');
+							$whatsapp_display = '+' . substr($whatsapp, 0, 3) . '-' . substr($whatsapp, 3, 3) . '-' . substr($whatsapp, 6, 3) . '-' . substr($whatsapp, 9);
+							?>
+							<a href="https://wa.me/<?php echo esc_attr($whatsapp); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($whatsapp_display); ?></a>
 						</div>
 					</div>
 				</div>

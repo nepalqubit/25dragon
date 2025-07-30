@@ -204,9 +204,9 @@ class TZnew_Permits_Widget extends \Elementor\Widget_Base {
             return;
         }
         
-        $permits_regulations = tznew_get_elementor_field('permits_regulations', $post_id);
+        $permits = tznew_get_elementor_field('permits', $post_id);
         
-        if (!$permits_regulations) {
+        if (!$permits) {
             echo '<p>' . __('No permits and regulations information found.', 'tznew') . '</p>';
             return;
         }
@@ -220,21 +220,31 @@ class TZnew_Permits_Widget extends \Elementor\Widget_Base {
         }
         
         // Permits
-        if ($settings['show_permits'] === 'yes' && !empty($permits_regulations['permits'])) {
+        if ($settings['show_permits'] === 'yes' && !empty($permits['permit_options'])) {
             $permits_class = $settings['layout_style'] === 'cards' ? 'permits-container permits-card' : 'permits-container';
             echo '<div class="' . esc_attr($permits_class) . '">';
             echo '<h4 class="permits-title">' . __('Required Permits', 'tznew') . '</h4>';
-            echo '<div class="permits-content">' . wp_kses_post($permits_regulations['permits']) . '</div>';
+            echo '<div class="permits-content">';
+            if (is_array($permits['permit_options'])) {
+                echo '<ul class="permits-list">';
+                foreach ($permits['permit_options'] as $permit) {
+                    echo '<li>' . esc_html($permit) . '</li>';
+                }
+                echo '</ul>';
+            } elseif (is_string($permits['permit_options'])) {
+                echo wp_kses_post($permits['permit_options']);
+            }
+            echo '</div>';
             echo '</div>';
         }
         
         // Guide Requirement
-        if ($settings['show_guide_requirement'] === 'yes' && !empty($permits_regulations['guide_requirement'])) {
+        if ($settings['show_guide_requirement'] === 'yes' && !empty($permits['guide_requirement'])) {
             $guide_class = $settings['layout_style'] === 'cards' ? 'permits-container permits-card' : 'permits-container';
             echo '<div class="' . esc_attr($guide_class) . '">';
             echo '<h4 class="permits-title">' . __('Guide Requirement', 'tznew') . '</h4>';
             
-            $guide_requirement = $permits_regulations['guide_requirement'];
+            $guide_requirement = $permits['guide_requirement'];
             $guide_status_class = 'guide-' . strtolower($guide_requirement);
             
             echo '<div class="permits-content ' . esc_attr($guide_status_class) . '">';
@@ -254,12 +264,12 @@ class TZnew_Permits_Widget extends \Elementor\Widget_Base {
         }
         
         // Restricted Area
-        if ($settings['show_restricted_area'] === 'yes' && !empty($permits_regulations['restricted_area'])) {
+        if ($settings['show_restricted_area'] === 'yes' && !empty($permits['restricted_area'])) {
             $restricted_class = $settings['layout_style'] === 'cards' ? 'permits-container permits-card' : 'permits-container';
             echo '<div class="' . esc_attr($restricted_class) . '">';
             echo '<h4 class="permits-title">' . __('Restricted Area', 'tznew') . '</h4>';
             
-            $restricted_area = $permits_regulations['restricted_area'];
+            $restricted_area = $permits['restricted_area'];
             $restricted_status_class = 'restricted-' . strtolower($restricted_area);
             
             echo '<div class="permits-content ' . esc_attr($restricted_status_class) . '">';
@@ -295,6 +305,14 @@ class TZnew_Permits_Widget extends \Elementor\Widget_Base {
             color: #2c3e50;
         }
         .tznew-permits .permits-content {
+            color: #495057;
+        }
+        .tznew-permits .permits-list {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .tznew-permits .permits-list li {
+            margin-bottom: 5px;
             color: #495057;
         }
         

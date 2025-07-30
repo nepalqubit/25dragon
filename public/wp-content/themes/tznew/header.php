@@ -82,13 +82,26 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                 <!-- Main Navigation -->
                 <nav class="hidden lg:block mega-menu-nav">
                     <?php
-                    wp_nav_menu( array(
-                        'theme_location' => 'primary',
-                        'menu_class'     => 'flex space-x-8 mega-menu',
-                        'container'      => false,
-                        'fallback_cb'    => 'tznew_primary_menu_fallback',
-                        'walker'         => new TZnew_Mega_Menu_Walker(),
-                    ) );
+                    // Check if Max Mega Menu is active and handling the primary menu
+                    if (class_exists('Mega_Menu') && function_exists('max_mega_menu_is_enabled') && max_mega_menu_is_enabled('primary')) {
+                        // Let Max Mega Menu handle the output with standard wp_nav_menu
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'menu_id'        => 'primary-menu',
+                            'container'      => false,
+                            'fallback_cb'    => 'tznew_fallback_menu',
+                        ));
+                    } else {
+                        // Use theme's custom mega menu walker
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'menu_id'        => 'primary-menu',
+                            'menu_class'     => 'mega-menu',
+                            'container'      => false,
+                            'walker'         => new TZnew_Mega_Menu_Walker(),
+                            'fallback_cb'    => 'tznew_fallback_menu',
+                        ));
+                    }
                     ?>
                 </nav>
 

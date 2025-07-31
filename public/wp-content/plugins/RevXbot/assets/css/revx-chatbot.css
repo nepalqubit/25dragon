@@ -1,0 +1,220 @@
+/**
+ * RevX Chatbot Frontend Styles
+ */
+
+/* Container */
+.revx-chatbot-container {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 9999;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Chatbot Icon */
+.revx-chatbot-icon {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #4a6cf7;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.revx-chatbot-icon:hover {
+    transform: scale(1.1);
+}
+
+/* Animated Avatar */
+.revx-chatbot-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulse 2s infinite;
+}
+
+.revx-chatbot-avatar-inner {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #4a6cf7;
+    position: relative;
+}
+
+.revx-chatbot-avatar-inner:before,
+.revx-chatbot-avatar-inner:after {
+    content: '';
+    position: absolute;
+    background-color: white;
+    border-radius: 50%;
+}
+
+.revx-chatbot-avatar-inner:before {
+    width: 8px;
+    height: 8px;
+    top: 6px;
+    left: 6px;
+}
+
+.revx-chatbot-avatar-inner:after {
+    width: 8px;
+    height: 8px;
+    top: 6px;
+    right: 6px;
+}
+
+/* Chatbot Box */
+.revx-chatbot-box {
+    position: absolute;
+    bottom: 80px;
+    right: 0;
+    width: 350px;
+    height: 450px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.2);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.revx-chatbot-box.active {
+    display: flex;
+}
+
+/* Chatbot Header */
+.revx-chatbot-header {
+    background-color: #4a6cf7;
+    color: white;
+    padding: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.revx-chatbot-header h3 {
+    margin: 0;
+    font-size: 16px;
+}
+
+.revx-chatbot-close {
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+}
+
+/* Messages Container */
+.revx-chatbot-messages {
+    flex: 1;
+    padding: 15px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Message Styles */
+.revx-chatbot-message {
+    margin-bottom: 15px;
+    max-width: 80%;
+    padding: 10px 15px;
+    border-radius: 18px;
+    line-height: 1.4;
+    position: relative;
+    word-wrap: break-word;
+}
+
+.revx-chatbot-message-bot {
+    align-self: flex-start;
+    background-color: #f1f1f1;
+    color: #333;
+    border-bottom-left-radius: 5px;
+}
+
+.revx-chatbot-message-user {
+    align-self: flex-end;
+    background-color: #4a6cf7;
+    color: white;
+    border-bottom-right-radius: 5px;
+}
+
+/* Input Container */
+.revx-chatbot-input-container {
+    display: flex;
+    padding: 10px;
+    border-top: 1px solid #eee;
+}
+
+.revx-chatbot-input {
+    flex: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 20px;
+    outline: none;
+    font-size: 14px;
+}
+
+.revx-chatbot-send {
+    background-color: #4a6cf7;
+    color: white;
+    border: none;
+    border-radius: 20px;
+    padding: 10px 15px;
+    margin-left: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.3s ease;
+}
+
+.revx-chatbot-send:hover {
+    background-color: #3a5bd7;
+}
+
+/* Powered By */
+.revx-chatbot-powered-by {
+    text-align: center;
+    padding: 5px;
+    font-size: 12px;
+    color: #999;
+    background-color: #f9f9f9;
+}
+
+/* Animations */
+@keyframes pulse {
+    0% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(74, 108, 247, 0.7);
+    }
+    70% {
+        transform: scale(1);
+        box-shadow: 0 0 0 10px rgba(74, 108, 247, 0);
+    }
+    100% {
+        transform: scale(0.95);
+        box-shadow: 0 0 0 0 rgba(74, 108, 247, 0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 480px) {
+    .revx-chatbot-box {
+        width: 300px;
+        height: 400px;
+        bottom: 70px;
+        right: 0;
+    }
+}
+
+@media (max-width: 350px) {
+    .revx-chatbot-box {
+        width: 280px;
+        right: -10px;
+    }
+}

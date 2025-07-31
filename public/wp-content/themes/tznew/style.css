@@ -1,0 +1,181 @@
+/*
+Theme Name: TZnew
+Theme URI: https://techzeninc.com/tznew
+Author: Santosh Baral
+Author URI: https://techzeninc.com
+Description: A full-featured, production-ready WordPress theme for Techzen Corporation.
+Version: 1.0.0
+License: GNU General Public License v2 or later
+License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Text Domain: tznew
+Tags: custom-post-types, acf-pro, elementor, woocommerce, tailwind
+Requires at least: 6.6
+Requires PHP: 8.2
+*/
+
+/* This file is intentionally left mostly empty.
+The actual styles are loaded via the functions.php file using Tailwind CSS */
+
+/* Basic styles for WordPress compatibility */
+.aligncenter {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.alignleft {
+    float: left;
+    margin-right: 1.5em;
+}
+
+.alignright {
+    float: right;
+    margin-left: 1.5em;
+}
+
+.wp-caption {
+    margin-bottom: 1.5em;
+    max-width: 100%;
+}
+
+.wp-caption img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.wp-caption-text {
+    text-align: center;
+    padding-top: 0.5em;
+}
+
+.screen-reader-text {
+    border: 0;
+    clip: rect(1px, 1px, 1px, 1px);
+    clip-path: inset(50%);
+    height: 1px;
+    margin: -1px;
+    overflow: hidden;
+    padding: 0;
+    position: absolute !important;
+    width: 1px;
+    word-wrap: normal !important;
+}
+
+.screen-reader-text:focus {
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    box-shadow: 0 0 2px 2px rgba(0, 0, 0, 0.6);
+    clip: auto !important;
+    clip-path: none;
+    color: #21759b;
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    height: auto;
+    left: 5px;
+    line-height: normal;
+    padding: 15px 23px 14px;
+    text-decoration: none;
+    top: 5px;
+    width: auto;
+    z-index: 100000;
+}
+
+/* Elevation Chart Styles */
+.elevation-chart-container {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+}
+
+.elevation-chart-container canvas {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100%;
+    display: block;
+}
+
+/* Responsive adjustments for elevation chart */
+@media (max-width: 768px) {
+    .elevation-chart-container {
+        min-height: 250px;
+    }
+    
+    .elevation-chart .text-2xl {
+        font-size: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .elevation-chart-container {
+        min-height: 200px;
+    }
+    
+    .elevation-chart .p-6 {
+        padding: 1rem;
+    }
+}
+
+/* Chart.js tooltip improvements */
+.chartjs-tooltip {
+    opacity: 1;
+    position: absolute;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    border-radius: 3px;
+    -webkit-transition: all .1s ease;
+    transition: all .1s ease;
+    pointer-events: none;
+    -webkit-transform: translate(-50%, 0);
+    transform: translate(-50%, 0);
+}
+
+/* Ensure proper spacing for chart elements */
+.elevation-chart .border-b {
+    margin-bottom: 1rem;
+}
+
+/* Fix for chart legend positioning */
+.elevation-chart canvas {
+    margin-top: 0.5rem;
+}
+
+/* Text shadow utilities for better readability */
+.text-shadow-lg {
+    text-shadow: 0 4px 8px rgba(0, 0, 0, 0.8), 0 2px 4px rgba(0, 0, 0, 0.6);
+}
+
+.drop-shadow-lg {
+    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.8)) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.6));
+}
+
+.drop-shadow-md {
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.7)) drop-shadow(0 1px 2px rgba(0, 0, 0, 0.5));
+}
+
+.drop-shadow-sm {
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.6));
+}
+
+/* Enhanced destination card readability */
+.destination-card .absolute.bottom-0 {
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.9) 0%, rgba(0, 0, 0, 0.6) 50%, transparent 100%);
+}
+
+/* Ensure text is always readable on destination cards */
+.destination-card h3,
+.destination-card p,
+.destination-card span {
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8), 0 1px 2px rgba(0, 0, 0, 0.6);
+    color: #ffffff !important;
+    font-weight: 600;
+}
+
+/* Adventure count badge improvements */
+.destination-card .absolute.top-4.right-4 {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}

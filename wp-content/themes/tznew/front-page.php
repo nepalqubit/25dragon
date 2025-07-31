@@ -16,7 +16,7 @@ get_header();
 	// Hero Section with Search
 	$hero_title = get_theme_mod('tznew_hero_title', 'Explore Nepal');
 	$hero_subtitle = get_theme_mod('tznew_hero_subtitle', 'Essential information about your upcoming adventure');
-	$hero_image_url = get_theme_mod('tznew_hero_bg_image', 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+	$hero_image_url = get_theme_mod('tznew_hero_bg_image', get_template_directory_uri() . '/assets/images/placeholder.svg');
 	
 	if (get_theme_mod('tznew_hero_show', true)) :
 		?>
@@ -1620,24 +1620,129 @@ wp_reset_postdata();
 			<div class="mt-20 statistics-section bg-gradient-to-r from-green-600 to-teal-600 rounded-3xl p-12 text-white">
 				<div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
 					<div>
-						<div class="text-4xl font-bold mb-2">15+</div>
-						<div class="text-lg opacity-90">Years Experience</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_years_experience_value', '15+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_years_experience_label', 'Years Experience')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">10K+</div>
-						<div class="text-lg opacity-90">Happy Trekkers</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_happy_trekkers_value', '10K+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_happy_trekkers_label', 'Happy Trekkers')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">50+</div>
-						<div class="text-lg opacity-90">Trek Routes</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_trek_routes_value', '50+')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_trek_routes_label', 'Trek Routes')); ?></div>
 					</div>
 					<div>
-						<div class="text-4xl font-bold mb-2">100%</div>
-						<div class="text-lg opacity-90">Safety Record</div>
+						<div class="text-4xl font-bold mb-2"><?php echo esc_html(get_theme_mod('tznew_stat_safety_record_value', '100%')); ?></div>
+						<div class="text-lg opacity-90"><?php echo esc_html(get_theme_mod('tznew_stat_safety_record_label', 'Safety Record')); ?></div>
 					</div>
 				</div>
 			</div>
 			<?php endif; ?>
+		</div>
+	</section>
+	<?php endif; ?>
+
+	<?php if (get_theme_mod('tznew_offers_show', true)) : ?>
+	<!-- Offers Section -->
+	<section id="offers-section" class="py-20 bg-gradient-to-br from-gray-50 to-blue-50" data-animation-speed="<?php echo esc_attr(get_theme_mod('tznew_offers_animation_speed', 5000)); ?>">
+		<div class="container mx-auto px-4">
+			<!-- Section Header -->
+			<div class="text-center mb-16">
+				<div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-6">
+					<i class="fas fa-plane text-blue-600 text-2xl"></i>
+				</div>
+				<p class="text-blue-600 font-semibold text-lg mb-2"><?php echo esc_html(get_theme_mod('tznew_offers_title', 'Our Best Offer')); ?></p>
+				<h2 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6"><?php echo esc_html(get_theme_mod('tznew_offers_subtitle', 'Offers To Inspire You')); ?></h2>
+				<p class="text-lg text-gray-600 max-w-2xl mx-auto"><?php echo esc_html(get_theme_mod('tznew_offers_description', 'Discover exclusive deals and special offers that will spark your wanderlust. From discounted rates to limited-time promotion.')); ?></p>
+			</div>
+
+			<!-- Offers Cards -->
+			<div class="relative max-w-6xl mx-auto">
+				<div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+					<?php
+					// Get all offers and display only those with content
+					for ($i = 1; $i <= 6; $i++) {
+						// Set default values
+						$default_image = get_template_directory_uri() . '/assets/images/placeholder.svg';
+						$default_titles = [
+							1 => 'Best deals Staycation',
+							2 => 'Tours and Trip Packages, Globally',
+							3 => 'Adventure Trekking Packages',
+							4 => 'Cultural Heritage Tours'
+						];
+						$default_discounts = [
+							1 => 'Discount 30% off',
+							2 => 'Discount 30% off',
+							3 => 'Discount 25% off',
+							4 => 'Discount 20% off'
+						];
+						
+						$offer_image = get_theme_mod("tznew_offer_{$i}_image", ($i <= 4) ? $default_image : '');
+						$offer_title = get_theme_mod("tznew_offer_{$i}_title", isset($default_titles[$i]) ? $default_titles[$i] : '');
+						$offer_subtitle = get_theme_mod("tznew_offer_{$i}_subtitle");
+						$offer_discount = get_theme_mod("tznew_offer_{$i}_discount", isset($default_discounts[$i]) ? $default_discounts[$i] : '');
+						$offer_button_text = get_theme_mod("tznew_offer_{$i}_button_text", 'Book Now');
+						$offer_button_link = get_theme_mod("tznew_offer_{$i}_button_link");
+
+						// Only display offers that have at least an image and title
+						if ($offer_image && $offer_title) :
+							// Cycle through different gradient colors for variety
+							$gradients = [
+								1 => 'offer-card bg-gradient-to-br from-blue-500 to-blue-600',
+								2 => 'offer-card bg-gradient-to-br from-orange-500 to-red-500',
+								3 => 'offer-card bg-gradient-to-br from-green-500 to-teal-600',
+								4 => 'offer-card bg-gradient-to-br from-purple-500 to-indigo-600'
+							];
+							$card_class = isset($gradients[$i]) ? $gradients[$i] : 'offer-card bg-gradient-to-br from-gray-500 to-gray-600';
+							$text_color = 'text-white';
+						?>
+							<div class="<?php echo esc_attr($card_class); ?> rounded-3xl overflow-hidden shadow-2xl hover:shadow-3xl transition-all duration-500 transform hover:scale-105 offer-card">
+								<div class="relative h-96 lg:h-full flex items-center">
+									<!-- Background Image -->
+									<div class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20" style="background-image: url('<?php echo esc_url($offer_image); ?>');">
+									</div>
+									
+									<!-- Content -->
+									<div class="relative z-10 p-8 lg:p-12 w-full">
+										<?php if ($offer_discount) : ?>
+											<p class="<?php echo esc_attr($text_color); ?> text-lg font-semibold mb-4 opacity-90"><?php echo esc_html($offer_discount); ?></p>
+										<?php endif; ?>
+										
+										<h3 class="<?php echo esc_attr($text_color); ?> text-3xl lg:text-4xl font-bold mb-4 leading-tight"><?php echo esc_html($offer_title); ?></h3>
+										
+										<?php if ($offer_subtitle) : ?>
+											<p class="<?php echo esc_attr($text_color); ?> text-lg mb-8 opacity-90"><?php echo esc_html($offer_subtitle); ?></p>
+										<?php endif; ?>
+										
+										<?php if ($offer_button_link) : ?>
+											<a href="<?php echo esc_url($offer_button_link); ?>" class="inline-flex items-center bg-white bg-opacity-20 backdrop-blur-sm <?php echo esc_attr($text_color); ?> font-semibold py-3 px-8 rounded-full hover:bg-opacity-30 transition-all duration-300 transform hover:scale-105">
+												<?php echo esc_html($offer_button_text); ?>
+												<i class="fas fa-arrow-right ml-2"></i>
+											</a>
+										<?php endif; ?>
+									</div>
+									
+									<!-- Decorative Elements -->
+									<div class="absolute top-8 right-8 opacity-10">
+										<?php 
+										$icons = [
+											1 => 'fas fa-mountain',
+											2 => 'fas fa-globe-asia', 
+											3 => 'fas fa-hiking',
+											4 => 'fas fa-landmark'
+										];
+										$icon_class = isset($icons[$i]) ? $icons[$i] : 'fas fa-star';
+										?>
+										<i class="<?php echo esc_attr($icon_class); ?> text-6xl <?php echo esc_attr($text_color); ?>"></i>
+									</div>
+								</div>
+							</div>
+						<?php
+						endif;
+					}
+					?>
+				</div>
+			</div>
 		</div>
 	</section>
 	<?php endif; ?>
@@ -1885,36 +1990,38 @@ wp_reset_postdata();
 	</section>
 
 	<!-- Plan Your Adventure Section -->
-	<?php if (get_theme_mod('tznew_adventure_show', true)) : ?>
+	<?php if (get_theme_mod('tznew_contact_form_show', true)) : ?>
 	<section class="adventure-section py-20 bg-gradient-to-br from-green-600 to-blue-600 text-white">
 		<div class="container mx-auto px-4">
 			<div class="max-w-4xl mx-auto text-center">
 				<h2 class="text-4xl lg:text-5xl font-bold mb-6">
-					Plan Your <span class="text-yellow-300">Adventure</span>
+					<?php echo wp_kses_post(get_theme_mod('tznew_contact_form_title', 'Plan Your <span class="text-yellow-300">Adventure</span>')); ?>
 				</h2>
 				<p class="text-xl mb-12 opacity-90">
-					Ready to embark on the journey of a lifetime? Let us help you plan the perfect trekking adventure in Nepal.
+					<?php echo esc_html(get_theme_mod('tznew_contact_form_subtitle', 'Ready to embark on the journey of a lifetime? Let us help you plan the perfect trekking adventure in Nepal.')); ?>
 				</p>
 				
 				<div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
 					<!-- Contact Form -->
 					<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-8">
-						<h3 class="text-2xl font-bold mb-6">Get a Custom Quote</h3>
-						<form class="space-y-4">
+						<h3 class="text-2xl font-bold mb-6"><?php echo esc_html(get_theme_mod('tznew_contact_form_form_title', 'Get a Custom Quote')); ?></h3>
+						<form id="tznew-contact-form" class="space-y-4">
+							<?php wp_nonce_field('tznew_contact_form', 'tznew_contact_nonce'); ?>
 							<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-								<input type="text" placeholder="Your Name" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
-								<input type="email" placeholder="Your Email" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+								<input type="text" name="contact_name" placeholder="Your Name" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
+								<input type="email" name="contact_email" placeholder="Your Email" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300">
 							</div>
-							<select class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300">
+							<select name="trek_type" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white focus:outline-none focus:ring-2 focus:ring-yellow-300">
 								<option value="">Select Trek Type</option>
 								<option value="everest">Everest Region</option>
 								<option value="annapurna">Annapurna Region</option>
 								<option value="langtang">Langtang Region</option>
 								<option value="manaslu">Manaslu Region</option>
+								<option value="other">Other</option>
 							</select>
-							<textarea placeholder="Tell us about your dream trek..." rows="4" class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"></textarea>
+							<textarea name="contact_message" placeholder="Tell us about your dream trek..." rows="4" required class="w-full px-4 py-3 rounded-lg bg-white bg-opacity-20 border border-white border-opacity-30 text-white placeholder-white placeholder-opacity-70 focus:outline-none focus:ring-2 focus:ring-yellow-300 resize-none"></textarea>
 							<button type="submit" class="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold py-3 px-6 rounded-lg transition-colors duration-300">
-								Get My Quote
+								<?php echo esc_html(get_theme_mod('tznew_contact_form_button_text', 'Send Email')); ?>
 							</button>
 						</form>
 					</div>
@@ -1931,7 +2038,8 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Speak with our trek experts</p>
 								</div>
 							</div>
-							<a href="tel:+977-1-4444444" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">+977-1-4444444</a>
+							<?php $phone = get_theme_mod('tznew_contact_phone', '+977-1-4444444'); ?>
+							<a href="tel:<?php echo esc_attr($phone); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($phone); ?></a>
 						</div>
 						
 						<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
@@ -1944,7 +2052,8 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Get detailed information</p>
 								</div>
 							</div>
-							<a href="mailto:info@dragonholidays.com" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">info@dragonholidays.com</a>
+							<?php $email = get_theme_mod('tznew_contact_email_display', 'info@dragonholidays.com'); ?>
+							<a href="mailto:<?php echo esc_attr($email); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($email); ?></a>
 						</div>
 						
 						<div class="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
@@ -1957,7 +2066,11 @@ wp_reset_postdata();
 									<p class="text-sm opacity-80">Quick chat support</p>
 								</div>
 							</div>
-							<a href="https://wa.me/9779841234567" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors">+977-984-123-4567</a>
+							<?php 
+							$whatsapp = get_theme_mod('tznew_contact_whatsapp', '9779841234567');
+							$whatsapp_display = '+' . substr($whatsapp, 0, 3) . '-' . substr($whatsapp, 3, 3) . '-' . substr($whatsapp, 6, 3) . '-' . substr($whatsapp, 9);
+							?>
+							<a href="https://wa.me/<?php echo esc_attr($whatsapp); ?>" class="text-yellow-300 font-semibold hover:text-yellow-200 transition-colors"><?php echo esc_html($whatsapp_display); ?></a>
 						</div>
 					</div>
 				</div>
@@ -2128,11 +2241,7 @@ wp_reset_postdata();
 		$testimonials = tznew_get_field_safe('testimonials', 'option');
 		?>
 		<section class="testimonials-section py-24 bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800 text-white relative overflow-hidden">
-			<!-- Background Elements -->
-			<div class="absolute inset-0 opacity-10">
-				<div class="absolute top-0 left-0 w-96 h-96 bg-white rounded-full mix-blend-overlay filter blur-xl animate-blob"></div>
-				<div class="absolute bottom-0 right-0 w-96 h-96 bg-pink-300 rounded-full mix-blend-overlay filter blur-xl animate-blob animation-delay-2000"></div>
-			</div>
+
 			
 			<div class="container mx-auto px-4 relative z-10">
 				<div class="text-center mb-16">
@@ -2314,41 +2423,7 @@ wp_reset_postdata();
 		</section>
 	<?php endif; ?>
 
-	<?php
-	// CTA Section
-	if (function_exists('get_field')) :
-		$cta_title = tznew_get_field_safe('cta_title', 'option');
-		$cta_content = tznew_get_field_safe('cta_content', 'option');
-		$cta_button_text = tznew_get_field_safe('cta_button_text', 'option');
-		$cta_button_link = tznew_get_field_safe('cta_button_link', 'option');
-		$cta_background = tznew_get_field_safe('cta_background', 'option');
-		
-		$cta_bg_url = isset($cta_background['url']) ? $cta_background['url'] : '';
-		if (empty($cta_bg_url)) {
-			$cta_bg_url = get_template_directory_uri() . '/assets/images/default-cta-bg.jpg';
-		}
-		?>
-		<section class="cta relative py-20" style="background-image: url('<?php echo esc_url($cta_bg_url); ?>'); background-size: cover; background-position: center;">
-			<div class="absolute inset-0 bg-blue-900 bg-opacity-80"></div>
-			<div class="container mx-auto px-4 relative z-10 text-center text-white">
-				<div class="max-w-3xl mx-auto">
-					<?php if ($cta_title) : ?>
-						<h2 class="text-3xl md:text-4xl font-bold mb-6"><?php echo esc_html($cta_title); ?></h2>
-					<?php endif; ?>
-					
-					<?php if ($cta_content) : ?>
-						<div class="text-xl mb-8"><?php echo wp_kses_post($cta_content); ?></div>
-					<?php endif; ?>
-					
-					<?php if ($cta_button_text && $cta_button_link) : ?>
-						<a href="<?php echo esc_url($cta_button_link); ?>" class="inline-block bg-white text-blue-900 hover:bg-gray-100 font-bold py-3 px-8 rounded-lg text-lg transition duration-300">
-							<?php echo esc_html($cta_button_text); ?>
-						</a>
-					<?php endif; ?>
-				</div>
-			</div>
-		</section>
-	<?php endif; ?>
+
 
 </main><!-- #main -->
 

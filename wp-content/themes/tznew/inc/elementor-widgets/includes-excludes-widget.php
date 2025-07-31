@@ -257,14 +257,9 @@ class TZnew_Includes_Excludes_Widget extends \Elementor\Widget_Base {
             return;
         }
         
-        // Get field names based on post type
-        if ($post_type === 'tours') {
-            $includes_field = 'inclusion';
-            $excludes_field = 'exclusion';
-        } else {
-            $includes_field = 'includes';
-            $excludes_field = 'excludes';
-        }
+        // Use standardized field names for both post types
+        $includes_field = 'inclusion';
+        $excludes_field = 'exclusion';
         
         $includes = tznew_get_elementor_field($includes_field, $post_id);
         $excludes = tznew_get_elementor_field($excludes_field, $post_id);

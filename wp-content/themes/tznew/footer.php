@@ -33,6 +33,12 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
 			<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
 				<div class="footer-section animate-fade-in-up">
 					<div class="mb-6">
+						<?php $footer_logo = tznew_get_footer_logo(); ?>
+						<?php if ($footer_logo): ?>
+							<div class="mb-4">
+								<img src="<?php echo esc_url($footer_logo); ?>" alt="<?php bloginfo('name'); ?>" class="footer-logo object-contain transition-all duration-300" style="max-width: 250px; max-height: 250px;">
+							</div>
+						<?php endif; ?>
 						<h3 class="text-2xl font-bold mb-4 bg-gradient-to-r from-green-400 to-teal-400 bg-clip-text text-transparent">
 							<?php bloginfo('name'); ?>
 						</h3>

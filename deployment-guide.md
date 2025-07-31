@@ -15,20 +15,20 @@ WordPress stores site URLs in the database. Before deployment:
 
 2. **Update Content URLs:**
    ```sql
-   UPDATE wp_posts SET post_content = REPLACE(post_content, 'http://dragonlatest.local', 'https://your-new-domain.com');
-   UPDATE wp_posts SET post_content = REPLACE(post_content, 'https://dragonlatest.local', 'https://your-new-domain.com');
+   UPDATE wp_posts SET post_content = REPLACE(post_content, 'http://your-old-domain.local', 'https://your-new-domain.com');
+UPDATE wp_posts SET post_content = REPLACE(post_content, 'https://your-old-domain.local', 'https://your-new-domain.com');
    ```
 
 3. **Update Meta Values:**
    ```sql
-   UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, 'http://dragonlatest.local', 'https://your-new-domain.com');
-   UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, 'https://dragonlatest.local', 'https://your-new-domain.com');
+   UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, 'http://your-old-domain.local', 'https://your-new-domain.com');
+UPDATE wp_postmeta SET meta_value = REPLACE(meta_value, 'https://your-old-domain.local', 'https://your-new-domain.com');
    ```
 
 ### Alternative: Use WordPress CLI
 ```bash
-wp search-replace 'http://dragonlatest.local' 'https://your-new-domain.com' --dry-run
-wp search-replace 'http://dragonlatest.local' 'https://your-new-domain.com'
+wp search-replace 'http://your-old-domain.local' 'https://your-new-domain.com' --dry-run
+wp search-replace 'http://your-old-domain.local' 'https://your-new-domain.com'
 ```
 
 ## 2. Configuration Files

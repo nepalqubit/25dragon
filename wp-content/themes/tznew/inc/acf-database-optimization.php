@@ -43,10 +43,11 @@ class TZnew_ACF_Database_Manager {
      * Initialize WordPress hooks
      */
     private function init_hooks() {
-        add_action('acf/save_post', array($this, 'validate_field_data'), 10);
+        // Re-enable validation with improved error handling
+        add_action('acf/save_post', array($this, 'validate_field_data'), 25);
         add_action('acf/save_post', array($this, 'sanitize_field_data'), 15);
         add_action('acf/save_post', array($this, 'backup_field_data'), 20);
-        add_action('acf/save_post', array($this, 'optimize_database_queries'), 25);
+        add_action('acf/save_post', array($this, 'optimize_database_queries'), 30);
         
         add_action('wp_loaded', array($this, 'check_field_integrity'));
         add_action('admin_init', array($this, 'register_cleanup_tasks'));
@@ -95,37 +96,42 @@ class TZnew_ACF_Database_Manager {
     }
     
     /**
-     * Validate field data before saving
+     * Validate field data after saving
      */
     public function validate_field_data($post_id) {
-        if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
-            return;
-        }
-        
-        $post_type = get_post_type($post_id);
-        
-        if (!isset($this->field_registry[$post_type])) {
-            return;
-        }
-        
-        $fields = $this->field_registry[$post_type];
-        $this->validation_errors = array();
-        
-        // Validate required fields
-        if (isset($fields['required_fields'])) {
-            foreach ($fields['required_fields'] as $field_name) {
-                $value = tznew_get_field_safe($field_name, $post_id);
-                if (empty($value)) {
-                    $this->validation_errors[] = sprintf(
-                        'Required field "%s" is empty for post ID %d',
-                        $field_name,
-                        $post_id
-                    );
+        try {
+            if (wp_is_post_revision($post_id) || wp_is_post_autosave($post_id)) {
+                return;
+            }
+            
+            $post_type = get_post_type($post_id);
+            
+            if (!isset($this->field_registry[$post_type])) {
+                return;
+            }
+            
+            $fields = $this->field_registry[$post_type];
+            $this->validation_errors = array();
+            
+            // Validate required fields (only log warnings, don't prevent save)
+            if (isset($fields['required_fields'])) {
+                foreach ($fields['required_fields'] as $field_name) {
+                    try {
+                        $value = tznew_get_field_safe($field_name, $post_id);
+                        if (empty($value)) {
+                            $this->validation_errors[] = sprintf(
+                                'Warning: Required field "%s" is empty for post ID %d',
+                                $field_name,
+                                $post_id
+                            );
+                        }
+                    } catch (Exception $e) {
+                        error_log('ACF Validation Error for field ' . $field_name . ': ' . $e->getMessage());
+                    }
                 }
             }
-        }
-        
-        // Validate numeric fields
+         
+            // Validate numeric fields
         if (isset($fields['numeric_fields'])) {
             foreach ($fields['numeric_fields'] as $field_name) {
                 $value = tznew_get_field_safe($field_name, $post_id);
@@ -146,14 +152,17 @@ class TZnew_ACF_Database_Manager {
             }
         }
         
-        // Log validation errors (with rate limiting to prevent spam)
-        if (!empty($this->validation_errors)) {
-            $log_key = 'validation_errors_' . $post_id;
-            $last_logged = get_transient($log_key);
-            if (!$last_logged) {
-                error_log('ACF Validation Errors: ' . implode('; ', $this->validation_errors));
-                set_transient($log_key, time(), 3600); // Log once per hour
+            // Log validation errors (with rate limiting to prevent spam)
+            if (!empty($this->validation_errors)) {
+                $log_key = 'validation_errors_' . $post_id;
+                $last_logged = get_transient($log_key);
+                if (!$last_logged) {
+                    error_log('ACF Validation Errors: ' . implode('; ', $this->validation_errors));
+                    set_transient($log_key, time(), 3600); // Log once per hour
+                }
             }
+        } catch (Exception $e) {
+            error_log('ACF Validation Function Error: ' . $e->getMessage());
         }
     }
     
@@ -349,7 +358,12 @@ class TZnew_ACF_Database_Manager {
         foreach ($fields_to_index as $field_name) {
             $value = tznew_get_field_safe($field_name, $post_id);
             if (!empty($value)) {
-                $searchable_content[] = strip_tags($value);
+                // Handle array values (like checkboxes)
+                if (is_array($value)) {
+                    $searchable_content[] = implode(' ', $value);
+                } else {
+                    $searchable_content[] = strip_tags($value);
+                }
             }
         }
         
@@ -361,9 +375,27 @@ class TZnew_ACF_Database_Manager {
                 $description = get_sub_field('description');
                 $place_name = get_sub_field('place_name');
                 
-                if (!empty($title)) $searchable_content[] = $title;
-                if (!empty($description)) $searchable_content[] = strip_tags($description);
-                if (!empty($place_name)) $searchable_content[] = $place_name;
+                if (!empty($title)) {
+                    if (is_array($title)) {
+                        $searchable_content[] = implode(' ', $title);
+                    } else {
+                        $searchable_content[] = strip_tags($title);
+                    }
+                }
+                if (!empty($description)) {
+                    if (is_array($description)) {
+                        $searchable_content[] = implode(' ', $description);
+                    } else {
+                        $searchable_content[] = strip_tags($description);
+                    }
+                }
+                if (!empty($place_name)) {
+                    if (is_array($place_name)) {
+                        $searchable_content[] = implode(' ', $place_name);
+                    } else {
+                        $searchable_content[] = strip_tags($place_name);
+                    }
+                }
             }
         }
         

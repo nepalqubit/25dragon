@@ -39,8 +39,8 @@
 - [ ] Use `deploy-url-update.php` script OR WordPress CLI:
   ```bash
   # Using WP-CLI (recommended)
-  wp search-replace 'http://dragonlatest.local' 'https://your-domain.com' --dry-run
-  wp search-replace 'http://dragonlatest.local' 'https://your-domain.com'
+  wp search-replace 'http://your-old-domain.local' 'https://your-new-domain.com' --dry-run
+wp search-replace 'http://your-old-domain.local' 'https://your-new-domain.com'
   
   # Or use the provided PHP script
   # Access: https://your-domain.com/deploy-url-update.php

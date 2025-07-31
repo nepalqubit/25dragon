@@ -1,7 +1,7 @@
 <?php
 /**
  * Sample Data Creator for Trekking Posts
- * Access this file via: http://dragonlatest.local/wp-content/themes/tznew/sample-data-creator.php
+ * Access this file via: [YOUR_DOMAIN]/wp-content/themes/tznew/sample-data-creator.php
  */
 
 // Include WordPress

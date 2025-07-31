@@ -269,8 +269,8 @@ $current_siteurl = $wpdb->get_var("SELECT option_value FROM {$wpdb->options} WHE
             <div class="form-group">
                 <label for="old_url">Old URL (from development/staging):</label>
                 <input type="url" id="old_url" name="old_url" 
-                       placeholder="https://dragonlatest.local" 
-                       value="<?php echo isset($_POST['old_url']) ? htmlspecialchars($_POST['old_url']) : 'http://dragonlatest.local'; ?>" 
+                       placeholder="https://your-old-domain.com"
+                value="<?php echo isset($_POST['old_url']) ? htmlspecialchars($_POST['old_url']) : ''; ?>" 
                        required>
             </div>
             

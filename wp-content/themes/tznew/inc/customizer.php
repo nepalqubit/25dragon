@@ -254,6 +254,19 @@ function tznew_customize_register($wp_customize) {
         'priority' => 40,
     ]);
 
+    // Footer Logo
+    $wp_customize->add_setting('tznew_footer_logo', [
+        'default'           => '',
+        'sanitize_callback' => 'esc_url_raw',
+        'transport'         => 'refresh',
+    ]);
+
+    $wp_customize->add_control(new WP_Customize_Image_Control($wp_customize, 'tznew_footer_logo', [
+        'label'       => __('Footer Logo', 'tznew'),
+        'section'     => 'tznew_footer_section',
+        'description' => __('Upload a logo to display in the footer. Recommended size: 150x150px', 'tznew'),
+    ]));
+
     // Footer Copyright Text
     $wp_customize->add_setting('tznew_footer_copyright', [
         'default'           => sprintf(__('© %s %s. All rights reserved.', 'tznew'), date('Y'), get_bloginfo('name')),

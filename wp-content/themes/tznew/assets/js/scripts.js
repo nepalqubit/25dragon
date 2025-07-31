@@ -637,8 +637,8 @@
      * Initialize mega menu functionality with enhanced animations and interactions
      */
     function initMegaMenu() {
-        // Desktop hover effects
-        $('.has-mega-menu').on('mouseenter', function() {
+        // Desktop hover effects - Only for custom mega menus, not Max Mega Menu
+        $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').on('mouseenter', function() {
             const $this = $(this);
             
             // Add active class
@@ -660,8 +660,8 @@
             }, 300);
         });
 
-        // Mobile click handler
-        $('.has-mega-menu').on('click', function(e) {
+        // Mobile click handler - Only for custom mega menus, not Max Mega Menu
+        $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').on('click', function(e) {
             e.preventDefault();
             
             // Toggle active state
@@ -671,7 +671,7 @@
                 $this.find('.mega-menu-dropdown').removeClass('show');
             } else {
                 // Close other open menus
-                $('.has-mega-menu').removeClass('active');
+                $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').removeClass('active');
                 $('.mega-menu-dropdown').removeClass('show');
                 
                 // Open this menu
@@ -681,22 +681,22 @@
             }
         });
 
-        // Close menu when clicking outside
+        // Close menu when clicking outside - Only for custom mega menus
         $(document).on('click', function(e) {
             if (!$(e.target).closest('.has-mega-menu').length) {
-                $('.has-mega-menu').removeClass('active');
-                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').removeClass('active');
+                $('.mega-menu-dropdown:not(#mega-menu-wrap-primary .mega-menu-dropdown)').removeClass('show');
             }
         });
 
-        // Add touch support
-        $('.has-mega-menu').on('touchstart', function(e) {
+        // Add touch support - Only for custom mega menus
+        $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').on('touchstart', function(e) {
             e.preventDefault();
             $(this).click();
         });
 
-        // Add keyboard navigation
-        $('.mega-menu > li > a').on('focus', function() {
+        // Add keyboard navigation - Only for custom mega menus
+        $('.mega-menu:not(#mega-menu-wrap-primary .mega-menu) > li > a').on('focus', function() {
             $(this).parent().addClass('active');
             $(this).parent().find('.mega-menu-dropdown').css('display', 'block').addClass('show');
         }).on('blur', function() {
@@ -704,17 +704,17 @@
             $(this).parent().find('.mega-menu-dropdown').removeClass('show');
         });
 
-        // Prevent dropdown from closing when clicking inside
-        $('.mega-menu-dropdown').on('click', function(e) {
+        // Prevent dropdown from closing when clicking inside - Only for custom mega menus
+        $('.mega-menu-dropdown:not(#mega-menu-wrap-primary .mega-menu-dropdown)').on('click', function(e) {
             e.stopPropagation();
         });
 
         // Handle window resize
         $(window).on('resize', debounce(function() {
-            // Close all mobile menus on desktop view
+            // Close all mobile menus on desktop view - Only for custom mega menus
             if ($(window).width() >= 1024) {
-                $('.has-mega-menu').removeClass('active');
-                $('.mega-menu-dropdown').removeClass('show');
+                $('.has-mega-menu:not(#mega-menu-wrap-primary .has-mega-menu)').removeClass('active');
+                $('.mega-menu-dropdown:not(#mega-menu-wrap-primary .mega-menu-dropdown)').removeClass('show');
             }
         }, 250));
     }

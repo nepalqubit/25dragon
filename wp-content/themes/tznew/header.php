@@ -53,6 +53,71 @@
     // Fallback: Hide after 2 seconds maximum
     setTimeout(hidePreloader, 2000);
 })();
+
+// Header transparency and logo visibility on scroll
+(function() {
+    function handleScroll() {
+        const header = document.querySelector('header');
+        const headerLogo = document.querySelector('header .custom-logo');
+        const footerLogo = document.querySelector('footer h3');
+        
+        if (header) {
+            if (window.scrollY > 50) {
+                header.classList.add('scrolled');
+                // Hide header logo
+                if (headerLogo) {
+                    headerLogo.style.opacity = '0';
+                    headerLogo.style.visibility = 'hidden';
+                    headerLogo.style.transform = 'translateY(-20px)';
+                }
+                // Create and show floating logo
+                let floatingLogo = document.getElementById('floating-logo');
+                if (!floatingLogo && headerLogo) {
+                    floatingLogo = document.createElement('div');
+                    floatingLogo.id = 'floating-logo';
+                    floatingLogo.innerHTML = '<img src="' + headerLogo.src + '" alt="' + headerLogo.alt + '" style="height: 40px; width: auto; border-radius: 8px;">';
+                    document.body.appendChild(floatingLogo);
+                }
+                if (floatingLogo) {
+                    floatingLogo.style.position = 'fixed';
+                    floatingLogo.style.top = '15px';
+                    floatingLogo.style.left = '20px';
+                    floatingLogo.style.zIndex = '50';
+                    floatingLogo.style.opacity = '1';
+                    floatingLogo.style.visibility = 'visible';
+                    floatingLogo.style.transform = 'translateY(0)';
+                    floatingLogo.style.transition = 'all 0.3s ease';
+                    floatingLogo.style.background = 'rgba(255, 255, 255, 0.9)';
+                    floatingLogo.style.padding = '8px';
+                    floatingLogo.style.borderRadius = '12px';
+                    floatingLogo.style.backdropFilter = 'blur(10px)';
+                    floatingLogo.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
+                }
+            } else {
+                header.classList.remove('scrolled');
+                // Show header logo
+                if (headerLogo) {
+                    headerLogo.style.opacity = '1';
+                    headerLogo.style.visibility = 'visible';
+                    headerLogo.style.transform = 'translateY(0)';
+                }
+                // Hide floating logo
+                const floatingLogo = document.getElementById('floating-logo');
+                if (floatingLogo) {
+                    floatingLogo.style.opacity = '0';
+                    floatingLogo.style.visibility = 'hidden';
+                    floatingLogo.style.transform = 'translateY(-20px)';
+                }
+            }
+        }
+    }
+    
+    // Add scroll event listener
+    window.addEventListener('scroll', handleScroll);
+    
+    // Check initial scroll position
+    handleScroll();
+})();
 </script>
 
 <?php
@@ -82,13 +147,26 @@ if ( function_exists( 'tznew_elementor_location_exists' ) && tznew_elementor_loc
                 <!-- Main Navigation -->
                 <nav class="hidden lg:block mega-menu-nav">
                     <?php
-                    wp_nav_menu( array(
-                        'theme_location' => 'primary',
-                        'menu_class'     => 'flex space-x-8 mega-menu',
-                        'container'      => false,
-                        'fallback_cb'    => 'tznew_primary_menu_fallback',
-                        'walker'         => new TZnew_Mega_Menu_Walker(),
-                    ) );
+                    // Check if Max Mega Menu is active and handling the primary menu
+                    if (class_exists('Mega_Menu') && function_exists('max_mega_menu_is_enabled') && max_mega_menu_is_enabled('primary')) {
+                        // Let Max Mega Menu handle the output with standard wp_nav_menu
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'menu_id'        => 'primary-menu',
+                            'container'      => false,
+                            'fallback_cb'    => 'tznew_fallback_menu',
+                        ));
+                    } else {
+                        // Use theme's custom mega menu walker
+                        wp_nav_menu(array(
+                            'theme_location' => 'primary',
+                            'menu_id'        => 'primary-menu',
+                            'menu_class'     => 'mega-menu',
+                            'container'      => false,
+                            'walker'         => new TZnew_Mega_Menu_Walker(),
+                            'fallback_cb'    => 'tznew_fallback_menu',
+                        ));
+                    }
                     ?>
                 </nav>
 

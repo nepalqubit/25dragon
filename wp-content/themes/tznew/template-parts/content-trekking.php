@@ -791,8 +791,8 @@ if (!defined('ABSPATH')) {
             
             <?php
             // Includes/Excludes section
-            $includes = tznew_get_field_safe('includes');
-            $excludes = tznew_get_field_safe('excludes');
+$includes = tznew_get_field_safe('inclusion');
+$excludes = tznew_get_field_safe('exclusion');
             if ($includes || $excludes) :
             ?>
                 <div class="trek-includes-excludes mb-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -904,7 +904,19 @@ if (!defined('ABSPATH')) {
                                     <i class="fas fa-file-alt mr-2" aria-hidden="true"></i>
                                     <?php esc_html_e('Permit Options', 'tznew'); ?>
                                 </h3>
-                                <div class="text-gray-700"><?php echo wp_kses_post(is_string($permits['permit_options']) ? $permits['permit_options'] : ''); ?></div>
+                                <div class="text-gray-700">
+                                    <?php 
+                                    if (is_array($permits['permit_options'])) {
+                                        echo '<ul class="list-disc list-inside space-y-1">';
+                                        foreach ($permits['permit_options'] as $permit) {
+                                            echo '<li>' . esc_html($permit) . '</li>';
+                                        }
+                                        echo '</ul>';
+                                    } elseif (is_string($permits['permit_options'])) {
+                                        echo wp_kses_post($permits['permit_options']);
+                                    }
+                                    ?>
+                                </div>
                             </div>
                         <?php endif; ?>
                         
